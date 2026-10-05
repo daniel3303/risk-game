@@ -28,7 +28,7 @@ jobs:
       - run: npm --prefix client test
       - run: npm --prefix client run build
       - run: docker compose up --build -d
-      - run: curl --retry 15 --retry-connrefused --retry-delay 2 --fail http://localhost:8092/healthz
+      - run: curl --retry 15 --retry-all-errors --retry-delay 2 --retry-max-time 60 --max-time 5 --fail http://localhost:8092/healthz
       - run: npx playwright install --with-deps chromium
         working-directory: client
       - run: npm --prefix client run test:e2e
@@ -37,5 +37,7 @@ jobs:
         with:
           name: browser-test-results
           path: artifacts/
+      - run: docker compose logs
+        if: failure()
       - run: docker compose down
         if: always()
