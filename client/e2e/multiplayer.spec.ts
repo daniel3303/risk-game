@@ -63,6 +63,7 @@ test('host configures mixed AI seats and bots advance the campaign', async ({ pa
 });
 
 test('phone layout supports lobby setup without horizontal scrolling', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(crypto, 'randomUUID', { value: undefined }));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByLabel('Your commander name').fill('Mobile');

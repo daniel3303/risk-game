@@ -1,6 +1,7 @@
 import { HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import type { Command, Options, Snapshot, Welcome } from '../game/types';
 import { acceptsSnapshot } from '../game/moves';
+import { actionId } from './action-id';
 
 interface SavedSeat { code: string; token: string; seat: number; name: string }
 interface SessionState { room: Snapshot | null; seat: number; status: 'offline' | 'connecting' | 'connected' | 'reconnecting'; error: string; pending: boolean }
@@ -101,7 +102,7 @@ export class Session {
 
   act(command: Command) {
     if (!this.state.room || this.state.status !== 'connected') return;
-    return this.invoke('Act', { id: crypto.randomUUID(), revision: this.state.room.revision, command });
+    return this.invoke('Act', { id: actionId(), revision: this.state.room.revision, command });
   }
 
   async leave() {
