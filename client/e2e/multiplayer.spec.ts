@@ -35,8 +35,6 @@ test('two friends share a table, complete a turn, and resume after reload', asyn
   await friend.locator('[data-testid^="territory-"][data-owner="1"]').first().click();
   await friend.getByRole('button', { name: /Deploy .* troops/ }).click();
   await expect(page.getByTestId('phase')).toHaveText('Attack');
-  await page.getByRole('button', { name: 'Territory list' }).click();
-  await page.screenshot({ path: '../artifacts/visual/game-desktop.png' });
   expect(errors).toEqual([]);
   await context.close();
 });
@@ -75,5 +73,4 @@ test('phone layout supports lobby setup without horizontal scrolling', async ({ 
   await page.getByRole('button', { name: /Deploy .* troops/ }).click();
   await expect(page.getByTestId('phase')).toHaveText('Attack');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: '../artifacts/visual/game-mobile.png', fullPage: true });
 });
