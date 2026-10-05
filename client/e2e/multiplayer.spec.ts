@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type WebSocketRoute } from '@playwright/test';
 
 test('two friends share a table, complete a turn, and resume after reload', async ({ browser, page }) => {
   const errors: string[] = [];
@@ -73,4 +73,37 @@ test('phone layout supports lobby setup without horizontal scrolling', async ({ 
   await page.getByRole('button', { name: /Deploy .* troops/ }).click();
   await expect(page.getByTestId('phase')).toHaveText('Attack');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('offline leave preserves the only seat credential until the server is reachable', async ({ browser, page }) => {
+  test.setTimeout(90_000);
+  let socket: WebSocketRoute | undefined;
+  await page.context().routeWebSocket('**/play**', route => { socket = route; route.connectToServer(); });
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Reconnect host');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  const code = await page.getByTestId('room-code').textContent();
+  const friendContext = await browser.newContext();
+  const friend = await friendContext.newPage();
+  await friend.goto(`/?room=${code}`);
+  await friend.getByLabel('Your commander name').fill('Waiting friend');
+  await friend.getByRole('button', { name: 'Join the table' }).click();
+  await expect(page.getByText('Waiting friend', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Draft');
+  const saved = await page.evaluate(() => sessionStorage.getItem('risk-game-seat'));
+  await page.context().setOffline(true);
+  socket!.close({ code: 1011, reason: 'Simulated connection loss' });
+  await page.getByRole('button', { name: 'Return home' }).waitFor({ timeout: 35_000 });
+  await page.getByRole('button', { name: 'Return home' }).click();
+  await expect(page.getByRole('button', { name: 'Reconnect', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => sessionStorage.getItem('risk-game-seat'))).toBe(saved);
+  await page.context().setOffline(false);
+  await page.getByRole('button', { name: 'Reconnect', exact: true }).click();
+  await expect(page.getByTestId('turn-status')).toHaveText('YOUR TURN');
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(friend.getByTestId('phase')).toHaveText('Attack');
+  await friendContext.close();
 });

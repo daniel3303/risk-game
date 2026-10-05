@@ -11,6 +11,7 @@ export class Session {
   private connection = new HubConnectionBuilder().withUrl('/play').withAutomaticReconnect([0, 2000, 5000, 10000]).configureLogging(LogLevel.Error).build();
   private listeners = new Set<() => void>();
   private saved: SavedSeat | null = null;
+  private attached = false;
   private state: SessionState = { room: null, seat: -1, status: 'offline', error: '', pending: false };
   private starting: Promise<void> | null = null;
   private restored = false;
@@ -19,9 +20,9 @@ export class Session {
 
   constructor() {
     this.connection.on('Snapshot', (room: Snapshot) => this.receive(room));
-    this.connection.onreconnecting(() => this.update({ status: 'reconnecting' }));
+    this.connection.onreconnecting(() => { this.attached = false; this.update({ status: 'reconnecting' }); });
     this.connection.onreconnected(() => { void this.restoreConnection(); });
-    this.connection.onclose(() => this.update({ status: 'offline', pending: false }));
+    this.connection.onclose(() => { this.attached = false; this.update({ status: 'offline', pending: false }); });
   }
 
   private update(patch: Partial<SessionState>) { this.state = { ...this.state, ...patch }; this.listeners.forEach(listener => listener()); }
@@ -54,6 +55,7 @@ export class Session {
   }
 
   private welcome(welcome: Welcome, name: string) {
+    this.attached = true;
     this.saved = { code: welcome.code, token: welcome.token, seat: welcome.seat, name };
     sessionStorage.setItem(storageKey, JSON.stringify(this.saved));
     this.update({ seat: welcome.seat, status: 'connected' });
@@ -89,7 +91,7 @@ export class Session {
   };
 
   private async restoreConnection() {
-    if (!this.saved) { this.update({ status: 'connected' }); return; }
+    if (!this.saved || this.attached) { this.update({ status: 'connected' }); return; }
     this.update({ status: 'reconnecting' });
     try {
       const { code, name, token } = this.saved;
@@ -107,11 +109,28 @@ export class Session {
 
   async leave() {
     if (this.state.pending) return;
-    if (this.connection.state === HubConnectionState.Connected) {
-      this.update({ error: '' });
-      try { await this.connection.invoke('Leave'); }
-      catch (error) { this.failure(error); return; }
+    this.update({ pending: true, error: '' });
+    try {
+      await this.connect();
+      if (this.saved && !this.attached) {
+        const { code, name, token } = this.saved;
+        try { this.welcome(await this.connection.invoke<Welcome>('Join', code, name, token), name); }
+        catch (error) {
+          const message = error instanceof Error ? error.message : '';
+          if (!message.includes('Your saved seat has expired.') && !message.includes('That six-letter room code was not found.')) throw error;
+          this.forgetSeat();
+          return;
+        }
+      }
+      await this.connection.invoke('Leave');
+      this.forgetSeat();
     }
+    catch (error) { this.failure(error); if (this.saved && !this.attached) this.update({ status: 'offline' }); }
+    finally { this.update({ pending: false }); }
+  }
+
+  private forgetSeat() {
+    this.attached = false;
     this.saved = null;
     sessionStorage.removeItem(storageKey);
     this.update({ room: null, seat: -1 });

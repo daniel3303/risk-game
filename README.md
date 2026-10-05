@@ -14,6 +14,7 @@ Open **http://localhost:8092**. Create a table, copy its invite link, and add up
 - Drag the board to rotate and scroll to zoom. Click your territory and a destination, then use the turn panel. **Territory list** provides keyboard and touch controls and remains usable without WebGL.
 - A browser reload or transport reconnect resumes the seat using a secret stored in that tab's session storage. A second device cannot resume the same seat without its credential.
 - Disconnecting preserves the seat and waits at that player's turn. **Leave table** replaces a started-game seat with an Easy AI. **Surrender** eliminates the commander and leaves passive armies on the board.
+- Leaving while offline first reconnects and releases the seat; if the server is unreachable, the saved credential is retained so the game can be resumed later.
 - Tables are in memory. Restarting the server ends them. Tables with no connected humans expire after 30 minutes. Bots stop when nobody is connected.
 - `PORT=8093 docker compose up --build -d` changes the exposed port.
 

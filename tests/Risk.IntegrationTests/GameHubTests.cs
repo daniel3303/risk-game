@@ -151,4 +151,30 @@ public sealed class GameHubTests : IClassFixture<GameFactory>
             if (snapshot.Revision >= revision) return snapshot;
         }
     }
+
+    [Fact]
+    public async Task Join_HostLeftWhileFriendDisconnected_PromotesResumedFriend()
+    {
+        var messages = Channel.CreateUnbounded<RoomSnapshot>();
+        await using var host = factory.Connection(s => messages.Writer.TryWrite(s));
+        await using var friend = factory.Connection();
+        await host.StartAsync(cancellation);
+        await friend.StartAsync(cancellation);
+        var first = await host.InvokeAsync<Welcome>("Create", "Host", new GameOptions(), cancellation);
+        var invited = await friend.InvokeAsync<Welcome>("Join", first.Code, "Friend", null, cancellation);
+        var nextRevision = invited.Snapshot.Revision + 1;
+        await friend.StopAsync(cancellation);
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
+        var disconnected = await Revision(messages.Reader, nextRevision, timeout.Token);
+        disconnected.Players.Single(p => p.Id == invited.Seat).Connected.Should().BeFalse();
+        await host.InvokeAsync("Leave", cancellation);
+        await friend.StartAsync(cancellation);
+        var resumed = await friend.InvokeAsync<Welcome>("Join", first.Code, "Friend", invited.Token, cancellation);
+        resumed.Snapshot.Host.Should().Be(invited.Seat);
+        await friend.InvokeAsync("AddBot", BotDifficulty.Easy, cancellation);
+        await friend.InvokeAsync("Start", cancellation);
+        var room = factory.Services.GetRequiredService<RoomRegistry>().For(friend.ConnectionId);
+        room.Game.Should().NotBeNull();
+    }
 }

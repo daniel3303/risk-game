@@ -65,6 +65,7 @@ public sealed class RoomRegistry
     private Welcome Attach(Room room, Seat seat, string connection)
     {
         seat.Connection = connection;
+        if (room.Seats[room.Host]?.Connection == null) room.Host = seat.Id;
         memberships.Add(connection, room);
         room.Changed();
         return new(room.Code, seat.Token, seat.Id, SnapshotBuilder.Build(room, seat));
