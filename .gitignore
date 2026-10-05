@@ -1,0 +1,9 @@
+worktrees/
+.claude/
+**/bin/
+**/obj/
+**/node_modules/
+client/dist/
+artifacts/
+.DS_Store
+.env

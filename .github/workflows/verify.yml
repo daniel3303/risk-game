@@ -1,0 +1,43 @@
+name: Verify
+on:
+  push:
+    branches: [main, 'feature/**', 'fix/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  rules-and-protocol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet test
+  client-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm --prefix client ci
+      - run: npm --prefix client test
+      - run: npm --prefix client run build
+      - run: docker compose up --build -d
+      - run: curl --retry 15 --retry-all-errors --retry-delay 2 --retry-max-time 60 --max-time 5 --fail http://localhost:8092/healthz
+      - run: npx playwright install --with-deps chromium
+        working-directory: client
+      - run: npm --prefix client run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-test-results
+          path: artifacts/
+      - run: docker compose logs
+        if: failure()
+      - run: docker compose down
+        if: always()
