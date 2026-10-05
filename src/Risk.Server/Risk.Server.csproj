@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup><ProjectReference Include="../Risk.Sim/Risk.Sim.csproj" /></ItemGroup>
+  <ItemGroup><PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" /></ItemGroup>
+  <ItemGroup><Content Include="../../content/classic.json" Link="content/classic.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+</Project>

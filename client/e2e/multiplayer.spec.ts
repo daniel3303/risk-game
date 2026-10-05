@@ -1,0 +1,78 @@
+import { test, expect } from '@playwright/test';
+
+test('two friends share a table, complete a turn, and resume after reload', async ({ browser, page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Ada');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  const code = await page.getByTestId('room-code').textContent();
+  const context = await browser.newContext();
+  const friend = await context.newPage();
+  friend.on('pageerror', error => errors.push(error.message));
+  await friend.goto(`/?room=${code}`);
+  await friend.getByLabel('Your commander name').fill('Grace');
+  await friend.getByRole('button', { name: 'Join the table' }).click();
+  await expect(friend.getByText('Waiting for the host')).toBeVisible();
+  await expect(page.getByText('Grace', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Draft');
+  await expect(friend.getByTestId('phase')).toHaveText('Draft');
+  await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  const owned = page.locator('[data-testid^="territory-"][data-owner="0"]').first();
+  await owned.click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+  await expect(friend.getByTestId('phase')).toHaveText('Attack');
+  await page.getByRole('button', { name: 'Finish attacking' }).click();
+  await page.getByRole('button', { name: 'Skip fortify · end turn' }).click();
+  await expect(friend.getByTestId('turn-status')).toHaveText('YOUR TURN');
+  await friend.reload();
+  await expect(friend.getByTestId('phase')).toHaveText('Draft');
+  await expect(friend.getByTestId('turn-status')).toHaveText('YOUR TURN');
+  await friend.getByRole('button', { name: 'Territory list' }).click();
+  await friend.locator('[data-testid^="territory-"][data-owner="1"]').first().click();
+  await friend.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.screenshot({ path: '../artifacts/visual/game-desktop.png' });
+  expect(errors).toEqual([]);
+  await context.close();
+});
+
+test('host configures mixed AI seats and bots advance the campaign', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByLabel('AI difficulty').selectOption('easy');
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByLabel('AI difficulty').selectOption('hard');
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await expect(page.getByText('Easy AI 2')).toBeVisible();
+  await expect(page.getByText('Hard AI 3')).toBeVisible();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await page.getByRole('button', { name: 'Finish attacking' }).click();
+  await page.getByRole('button', { name: 'Skip fortify · end turn' }).click();
+  await expect(page.getByTestId('turn-status')).toHaveText('AI IS THINKING');
+  await expect(page.getByTestId('turn-status')).toHaveText('YOUR TURN', { timeout: 40_000 });
+  await expect(page.getByTestId('phase')).toHaveText('Draft');
+});
+
+test('phone layout supports lobby setup without horizontal scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Mobile');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: '../artifacts/visual/game-mobile.png', fullPage: true });
+});
