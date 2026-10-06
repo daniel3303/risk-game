@@ -56,7 +56,7 @@ public static class StrategicMoves
         return new() { Kind = CommandKind.EndTurn };
     }
 
-    private static bool Connected(GameObservation o, int from, int to)
+    internal static bool Connected(GameObservation o, int from, int to)
     {
         var visited = new HashSet<int> { from };
         var queue = new Queue<int>();

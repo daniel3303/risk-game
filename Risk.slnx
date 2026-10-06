@@ -7,4 +7,7 @@
     <Project Path="tests/Risk.UnitTests/Risk.UnitTests.csproj" />
     <Project Path="tests/Risk.IntegrationTests/Risk.IntegrationTests.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Risk.Arena/Risk.Arena.csproj" />
+  </Folder>
 </Solution>
