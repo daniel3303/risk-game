@@ -141,6 +141,18 @@ test('landscape phone keeps six commanders and turn controls within the screen',
   await page.getByRole('button', { name: 'Begin World Domination' }).click();
   await page.setViewportSize({ width: 844, height: 390 });
   await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  const checkCameraControls = async () => {
+    for (const name of ['Zoom in', 'Zoom out', 'Reset camera']) {
+      const control = page.getByRole('button', { name, exact: true });
+      await expect.poll(() => control.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        const x = r.left + r.width / 2, y = r.top + r.height / 2;
+        return [[x, y], [x, r.top + 6], [r.right - 6, y], [x, r.bottom - 6], [r.left + 6, y]].every(([px, py]) => el.contains(document.elementFromPoint(px, py)));
+      })).toBe(true);
+      await control.click();
+    }
+  };
+  await checkCameraControls();
   await page.getByRole('button', { name: 'Territory list' }).click();
   await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
   const deploy = page.getByRole('button', { name: /Deploy .* troops/ });
@@ -152,6 +164,9 @@ test('landscape phone keeps six commanders and turn controls within the screen',
   const board = (await page.locator('.campaign-world > .world-board').boundingBox())!;
   const portraits = (await page.locator('.player-strip').boundingBox())!;
   expect(board.x + board.width).toBeLessThanOrEqual(portraits.x);
+  await checkCameraControls();
+  await page.setViewportSize({ width: 667, height: 375 });
+  await checkCameraControls();
   await deploy.click();
   await expect(page.getByTestId('phase')).toHaveText('Attack');
 });

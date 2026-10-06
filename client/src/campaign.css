@@ -155,7 +155,7 @@
  .player-stats svg { width: 14px; height: 14px; }
  .portrait-bot { width: 18px; height: 18px; bottom: -4px; border-width: 1px; }
  .portrait-bot svg { width: 12px; height: 12px; }
- .campaign-panel { bottom: 8px; width: 360px; max-width: calc(100% - 230px); }
+ .campaign-panel { bottom: 8px; left: calc(50% - 54px); width: 360px; max-width: calc(100% - 230px); }
  .turn-medallion { height: 70px; grid-template-columns: 64px minmax(0, 1fr) 64px; }
  .medallion-portrait { width: 60px; height: 60px; border-width: 3px; }
  .army-reserve { width: 58px; height: 58px; border-width: 3px; }
@@ -178,7 +178,7 @@
  .world-toolbar .card-deck-button { width: 60px; }
  .world-toolbar .territory-list-toggle { bottom: 75px; width: 44px; height: 44px; }
  .card-deck-button .badge { font-size: 28px; -webkit-text-stroke-width: 2px; }
- .camera-controls { bottom: 15px; right: 12px; }
+ .camera-controls { bottom: 15px; right: 12px; flex-direction: column; }
  .troop-counter { min-width: 28px; height: 26px; font-size: 20px; border-width: 1px; padding: 0 5px; -webkit-text-stroke-width: 1.6px; box-shadow: 0 3px 0 #10232d, 0 5px 0 #020609; }
  .map-label { min-width: 28px; min-height: 28px; }
  .in-game .territory-list, .in-game .cards-panel { left: 15px; top: 72px; bottom: auto; width: 310px; max-height: calc(100dvh - 86px); }
