@@ -4,7 +4,7 @@ export type CardMode = 'fixed' | 'progressive';
 export type SetupMode = 'automatic' | 'manual';
 export type CardSymbol = 'infantry' | 'cavalry' | 'artillery' | 'wild';
 export interface Options { cards: CardMode; setup: SetupMode }
-export interface TerritoryDefinition { id: number; key: string; name: string; continent: string; x: number; z: number; neighbors: number[]; shape: number[][] }
+export interface TerritoryDefinition { id: number; key: string; name: string; continent: string; x: number; z: number; neighbors: number[]; shape: number[][]; parts?: number[][][] }
 export interface Continent { id: string; name: string; bonus: number; color: string }
 export interface Territory { id: number; owner: number; troops: number }
 export interface Card { id: number; territory: number; symbol: CardSymbol }

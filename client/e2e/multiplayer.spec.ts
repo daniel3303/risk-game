@@ -1,4 +1,5 @@
 import { test, expect, type WebSocketRoute } from '@playwright/test';
+import topology from '../../content/classic-topology.json' with { type: 'json' };
 
 test('two friends share a table, complete a turn, and resume after reload', async ({ browser, page }) => {
   const errors: string[] = [];
@@ -106,4 +107,88 @@ test('offline leave preserves the only seat credential until the server is reach
   await page.getByRole('button', { name: /Deploy .* troops/ }).click();
   await expect(friend.getByTestId('phase')).toHaveText('Attack');
   await friendContext.close();
+});
+
+test('map markers support zoom, continent overlays, and direct troop deployment', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Map commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Continent bonuses' }).click();
+  await expect(page.locator('[data-continent-label="asia"]')).toContainText('+7');
+  await page.getByRole('button', { name: 'Continent bonuses' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  const own = page.locator('[data-testid^="territory-"][data-owner="0"]').first();
+  const id = (await own.getAttribute('data-testid'))!.replace('territory-', '');
+  await own.click();
+  const marker = page.getByTestId(`map-territory-${id}`);
+  const position = await marker.getAttribute('style');
+  await page.getByRole('button', { name: 'Zoom in', exact: true }).click();
+  await expect(marker).not.toHaveAttribute('style', position!);
+  await page.getByRole('button', { name: 'Reset camera' }).click();
+  await marker.click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+});
+
+test('landscape phone keeps six commanders and turn controls within the screen', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Landscape commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  for (let i = 0; i < 5; i++) await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
+  const deploy = page.getByRole('button', { name: /Deploy .* troops/ });
+  const button = (await deploy.boundingBox())!;
+  expect(button.y).toBeGreaterThanOrEqual(0);
+  expect(button.y + button.height).toBeLessThanOrEqual(390);
+  const lastCommander = (await page.locator('.player-chip').last().boundingBox())!;
+  expect(lastCommander.y + lastCommander.height).toBeLessThanOrEqual(390);
+  const board = (await page.locator('.campaign-world > .world-board').boundingBox())!;
+  const portraits = (await page.locator('.player-strip').boundingBox())!;
+  expect(board.x + board.width).toBeLessThanOrEqual(portraits.x);
+  await deploy.click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+});
+
+for (const height of [812, 667]) test(`portrait phone keeps manual combat controls, results, and journal accessible at ${height}px`, async ({ page }) => {
+  await page.setViewportSize({ width: 375, height });
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Phone commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  const owners = await page.locator('[data-testid^="territory-"]').evaluateAll(elements => elements.map(el => Number(el.getAttribute('data-owner'))));
+  const source = topology.territories.find(t => owners[t.id] === 0 && t.neighbors.some(id => owners[id] === 1))!;
+  const enemy = source.neighbors.find(id => owners[id] === 1)!;
+  await page.getByTestId(`territory-${source.id}`).click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await page.getByLabel('Destination').selectOption(String(enemy));
+  await page.getByRole('button', { name: 'Manual roll' }).click();
+  const zoom = page.getByRole('button', { name: 'Zoom in', exact: true });
+  await expect.poll(() => zoom.evaluate(el => {
+    const r = el.getBoundingClientRect();
+    return [[r.left + 4, r.top + 4], [r.right - 4, r.bottom - 4]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)));
+  })).toBe(true);
+  await zoom.click();
+  const roll = page.getByRole('button', { name: 'Roll dice', exact: true });
+  await expect(roll).toBeInViewport({ ratio: 1 });
+  await roll.click();
+  await expect(page.locator('.mobile-battle-summary')).toBeVisible();
+  await expect(page.locator('.mobile-battle-summary')).toContainText('Attacker');
+  await page.getByRole('button', { name: 'Territory list', exact: true }).click();
+  const search = page.getByLabel('Search territories');
+  await expect(search).toBeInViewport({ ratio: 1 });
+  expect((await search.boundingBox())!.y).toBeGreaterThanOrEqual(54);
+  await page.getByRole('button', { name: 'Close territory list' }).click();
+  await page.getByLabel('Game menu').click();
+  await page.getByText('Campaign journal', { exact: true }).click();
+  await expect(page.locator('.history-battle .dice').first()).toBeVisible();
+  expect(await page.locator('.activity li').count()).toBeGreaterThan(0);
 });

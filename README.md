@@ -1,6 +1,6 @@
 # Risk Game
 
-A multiplayer browser game of World Domination: an original raised 3D Classic board, private tables for friends, and selectable AI opponents. The .NET server owns every rule and dice result; the TypeScript client displays the board and sends commands.
+A multiplayer browser game of World Domination: a detailed 3D Classic map, private tables for friends, and selectable AI opponents. The .NET server owns every rule and dice result; the TypeScript client displays the board and sends commands.
 
 ## Play locally
 
@@ -12,6 +12,8 @@ Open **http://localhost:8092**. Create a table, copy its invite link, and add up
 
 - Friends must reach the same server address. For LAN play, open the host computer's LAN IP on port 8092 before copying the invite; a `localhost` invite works only on the host computer.
 - Drag the board to rotate and scroll to zoom. Click your territory and a destination, then use the turn panel. **Territory list** provides keyboard and touch controls and remains usable without WebGL.
+- The board uses detailed coastlines, raised borders, a blue ocean chart, infantry figures, readable troop counters, and commander portraits. **Continent bonuses** switches to a colored overlay showing each region's bonus and your control progress. Zoom buttons also support touch play.
+- **Game menu → Campaign journal** shows recent moves and the last battle's dice. Phones also show a compact casualty result below turn controls; map controls move when the turn panel expands.
 - A browser reload or transport reconnect resumes the seat using a secret stored in that tab's session storage. A second device cannot resume the same seat without its credential.
 - Disconnecting preserves the seat and waits at that player's turn. **Leave table** replaces a started-game seat with an Easy AI. **Surrender** eliminates the commander and leaves passive armies on the board.
 - Leaving while offline first reconnects and releases the seat; if the server is unreachable, the saved credential is retained so the game can be resumed later.
@@ -20,7 +22,7 @@ Open **http://localhost:8092**. Create a table, copy its invite link, and add up
 
 ## Implemented rules
 
-The initial ruleset is **Classic World Domination with True Random dice**, using the mobile publisher's documented draft, attack, fortification, and card rules. This is an independent implementation with original board geometry and interface.
+The initial ruleset is **Classic World Domination with True Random dice**, using the mobile publisher's documented draft, attack, fortification, and card rules. The visual style follows the mobile game's map, counter, and control conventions with independently created presentation and attributed open cartography.
 
 | Rule | Behavior |
 | --- | --- |
@@ -80,8 +82,8 @@ Babylon.js 3D board          ◄── private snapshots ──┤
 ```
 
 - **.NET 10:** pure simulation library, SignalR room host, Newtonsoft.Json camelCase protocol, central NuGet versions, warnings as errors, xUnit v3 on Microsoft Testing Platform.
-- **React + TypeScript + Vite:** Babylon.js 3D board, self-hosted fonts, original procedural meshes and textures, responsive turn controls.
-- **Shared content:** `content/classic.json` defines the legal graph and rendering metadata. `tools/generate-map.py` reproduces the original display geometry.
+- **React + TypeScript + Vite:** Babylon.js 3D terrain and infantry, an original ocean chart, screen-sized labels, commander portraits, dice, self-hosted fonts, and responsive turn controls.
+- **Shared content:** `content/classic-topology.json` defines legal borders; `content/cartography.json` contains attributed vector paths. `npm --prefix client run generate:map` produces `content/classic.json` with sampled coastlines, islands, and interior label anchors. The geometry retains [CC BY-SA 4.0](content/CARTOGRAPHY-LICENSE.md); the mobile app's assets are not bundled.
 - **Authority:** one lock per room; server binds connections to seats; host-only lobby mutation; expected room revisions and bounded action IDs prevent stale or repeated mutation.
 - **Privacy:** each recipient gets a separately built snapshot containing only their cards. Reconnect secrets appear only in the joining player's welcome response.
 - **Bounds:** six seats, 64 rooms, 512 connections, 4 KiB hub messages, 20 RPCs/second per connection, negotiation rate limiting, inactive room cleanup.
@@ -92,6 +94,7 @@ Babylon.js 3D board          ◄── private snapshots ──┤
 ```sh
 dotnet test
 npm --prefix client ci
+npm --prefix client run generate:map
 npm --prefix client test
 npm --prefix client run build
 docker compose up --build -d
@@ -99,14 +102,18 @@ npm --prefix client exec playwright install chromium
 npm --prefix client run test:e2e
 ```
 
-`RISK_BASE_URL` can point browser tests at a different Docker endpoint. Tests cover deterministic setup, draft counts, card schedules, dice ties, committed armies, mandatory capture movement, elimination chains, fortification paths, complete mixed-AI games, real SignalR fallback transport, private hands, host permissions, duplicate/stale commands, two browser clients, seat restoration, AI turns, and phone layout.
+`RISK_BASE_URL` can point browser tests at a different Docker endpoint. Tests cover deterministic setup, draft counts, card schedules, dice ties, committed armies, mandatory capture movement, elimination chains, fortification paths, complete mixed-AI games, real SignalR fallback transport, private hands, host permissions, duplicate/stale commands, two browser clients, seat restoration, AI turns, phone manual combat, and six-player landscape layout. A browser fixture renders the real card panel with five cards and verifies scrolling, the +2 territory selector, and the submitted trade command; server trade validation is covered by the .NET tests.
 
 ## Project layout
 
 ```text
 Risk/
 ├── AGENTS.md
-├── content/classic.json
+├── content/
+│   ├── classic-topology.json     authoritative territory borders
+│   ├── cartography.json          attributed vector coastlines
+│   ├── classic.json              generated geometry and label anchors
+│   └── CARTOGRAPHY-LICENSE.md
 ├── src/
 │   ├── Risk.Sim/                 rules, state, seeded randomness, AI strategies
 │   └── Risk.Server/              SignalR, rooms, snapshots, bot scheduling
@@ -115,6 +122,7 @@ Risk/
 │   ├── src/net/                 reconnecting session
 │   ├── src/render/              original 3D board
 │   ├── src/ui/                  home, lobby, orders, cards, rules
+│   ├── scripts/generate-map.mjs  offline geometry generation
 │   └── e2e/                    multiplayer browser tests
 ├── tests/
 │   ├── Risk.UnitTests/
