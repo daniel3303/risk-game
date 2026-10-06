@@ -107,3 +107,50 @@ test('offline leave preserves the only seat credential until the server is reach
   await expect(friend.getByTestId('phase')).toHaveText('Attack');
   await friendContext.close();
 });
+
+test('map markers support zoom, continent overlays, and direct troop deployment', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Map commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Continent bonuses' }).click();
+  await expect(page.locator('[data-continent-label="asia"]')).toContainText('+7');
+  await page.getByRole('button', { name: 'Continent bonuses' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  const own = page.locator('[data-testid^="territory-"][data-owner="0"]').first();
+  const id = (await own.getAttribute('data-testid'))!.replace('territory-', '');
+  await own.click();
+  const marker = page.getByTestId(`map-territory-${id}`);
+  const position = await marker.getAttribute('style');
+  await page.getByRole('button', { name: 'Zoom in', exact: true }).click();
+  await expect(marker).not.toHaveAttribute('style', position!);
+  await page.getByRole('button', { name: 'Reset camera' }).click();
+  await marker.click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+});
+
+test('landscape phone keeps six commanders and turn controls within the screen', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Landscape commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  for (let i = 0; i < 5; i++) await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.getByTestId('world-board')).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  await page.locator('[data-testid^="territory-"][data-owner="0"]').first().click();
+  const deploy = page.getByRole('button', { name: /Deploy .* troops/ });
+  const button = (await deploy.boundingBox())!;
+  expect(button.y).toBeGreaterThanOrEqual(0);
+  expect(button.y + button.height).toBeLessThanOrEqual(390);
+  const lastCommander = (await page.locator('.player-chip').last().boundingBox())!;
+  expect(lastCommander.y + lastCommander.height).toBeLessThanOrEqual(390);
+  const board = (await page.locator('.campaign-world > .world-board').boundingBox())!;
+  const portraits = (await page.locator('.player-strip').boundingBox())!;
+  expect(board.x + board.width).toBeLessThanOrEqual(portraits.x);
+  await deploy.click();
+  await expect(page.getByTestId('phase')).toHaveText('Attack');
+});

@@ -20,8 +20,8 @@ export function Home({ pending }: { pending: boolean }) {
   return <main className="home">
     <div className="home-copy">
       <div className="eyebrow"><span className="gold-line" /> THE WORLD IS YOURS TO TAKE</div>
-      <h1>Every border.<br />A new <em>possibility.</em></h1>
-      <p className="home-description">An evening with friends. A battle of nerve.<br />One world, and only one can rule it.</p>
+      <h1>Conquer<br />the <em>world.</em></h1>
+      <p className="home-description">Rally your friends. Challenge your rivals.<br />Your next great campaign starts here.</p>
       <form className="entry-card" onSubmit={submit}>
         <div className="tabs"><button type="button" className={mode === 'create' ? 'active' : ''} onClick={() => setMode('create')}>Create a table</button><button type="button" className={mode === 'join' ? 'active' : ''} onClick={() => setMode('join')}>Join friends</button></div>
         <label>Your commander name<input name="name" autoComplete="nickname" required minLength={1} maxLength={24} value={name} onChange={e => setName(e.target.value)} placeholder="What should we call you?" /></label>
