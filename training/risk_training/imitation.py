@@ -12,14 +12,20 @@ def batch(data, indices):
 def metrics(policy, data, batch_size=128):
     policy.set_training_mode(False)
     loss, correct, count = 0.0, 0, 0
+    choice_correct, choice_count = 0, 0
     with torch.no_grad():
         for start in range(0, len(data[2]), batch_size):
             observation, masks, labels, _ = batch(data, slice(start, start + batch_size))
             distribution = policy.get_distribution(observation, action_masks=masks)
             loss -= distribution.log_prob(labels).sum().item()
-            correct += (distribution.get_actions(deterministic=True) == labels).sum().item()
+            matches = distribution.get_actions(deterministic=True) == labels
+            choices = masks.sum(dim=1) > 1
+            correct += matches.sum().item()
+            choice_correct += (matches & choices).sum().item()
+            choice_count += choices.sum().item()
             count += len(labels)
-    return {"crossEntropy": loss / count, "accuracy": correct / count, "decisions": count}
+    return {"crossEntropy": loss / count, "accuracy": correct / count, "decisions": count,
+            "choiceAccuracy": choice_correct / choice_count if choice_count else None, "choiceDecisions": choice_count}
 
 
 def clone(model, training, validation, epochs, path):

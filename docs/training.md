@@ -34,12 +34,17 @@ docker compose -f compose.training.yml down --rmi local
 - `training.json` records parameters, validation history, package versions, seed banks, elapsed time, dataset checksums, assembly checksums, and checkpoint checksums; `progress.csv` records PPO metrics.
 - Dataset checksums are verified before training; evaluation checks the checkpoint and rules/feature assemblies against the recorded run.
 - Only the best imitation and final RL checkpoints are retained; checkpoint files contain Python serialization and must come from trusted runs.
-- CLI commands support `--help`; training accepts `--epochs`, `--steps`, and `--seed`; evaluation accepts `--opponent`, `--seeds`, and `--first-seed`.
+- CLI commands support `--help`; training accepts `--epochs`, `--steps`, `--seed`, `--width`, and `--depth`; evaluation accepts `--opponent`, `--seeds`, and `--first-seed`.
+- Training requires a fresh output directory so an experiment cannot overwrite saved checkpoints.
+- Run metadata records policy width, depth, parameter count, and imitation accuracy on both training and validation data.
+- `choiceAccuracy` excludes decisions with only one candidate; forced decisions still contribute to the original accuracy and cross-entropy metrics.
 
 ## Policy and action limits
 
 - A 481-feature state embedding and shared scorer rank up to 128 candidate moves, each with 68 features including the identities of traded cards; padding is masked and candidate permutations preserve predictions.
-- The actor has a 64-unit state embedding and 64-unit scoring layer; the critic has two 64-unit layers. Activations are tanh.
+- The default actor has a 64-unit state embedding and 64-unit scoring layer; the critic has two 64-unit layers. Activations are tanh.
+- `--width` sets each hidden layer to 64, 128, 256, or 512 units; `--depth` sets actor context and scoring depth to 1–3 layers, with one additional critic layer.
+- Saved PPO checkpoints retain the architecture; the defaults preserve the first experiment's checkpoint format and predictions.
 - Inference does not query Expert for the learner's decision. Expert supplies demonstration labels or plays as a configured opposing player.
 - Candidates include all boundary attacks using full-army blitz, valid duel card sets and owned-territory bonuses, all/half reinforcement placement, and minimum/middle/maximum/guarded occupation.
 - Fortification considers the six largest sources, four connected frontier targets per source, and full/half/guarded amounts; ending attack or the turn is available in the corresponding phase.
@@ -76,7 +81,24 @@ docker compose -f compose.training.yml down --rmi local
 - PPO improved the observed win count against Expert in this batch and slightly reduced it against Hard; these point estimates do not establish a statistically reliable improvement across opponents.
 - Both checkpoints remain weaker than Expert. Neither was promoted to a lobby difficulty, and no human-level strength claim is established.
 - [rl-results.json](rl-results.json) retains parameters, source/assembly/checkpoint hashes, validation history, conservative intervals, and every evaluation outcome.
-- Larger demonstration sets, longer training, and stronger network/search combinations are future experiments; each needs a separate untouched evaluation bank before promotion.
+- Larger demonstration sets and stronger network/search combinations need separate untouched evaluation banks before promotion.
+
+## Model size experiment
+
+- Compare the default 64-unit, one-layer actor with a 256-unit, two-layer actor using the same Expert dataset, 20 imitation epochs, random seed 123, opponents, rewards, and PPO hyperparameters.
+- Give both models 32,768 RL decisions; compare both with the original 16,384-step checkpoint on the same new evaluation seeds 11000–11063 from both seats.
+- This single training seed is a pilot comparison; multiple independent training seeds are needed before a reliable model-size conclusion or lobby promotion.
+- The original evaluation seeds 9000–9063 are now development evidence, rather than an untouched test bank for later tuning.
+
+```sh
+docker compose -f compose.training.yml run --rm trainer train \
+  --output /artifacts/size-64 --width 64 --depth 1 --steps 32768
+docker compose -f compose.training.yml run --rm trainer train \
+  --output /artifacts/size-256 --width 256 --depth 2 --steps 32768
+docker compose -f compose.training.yml run --rm trainer evaluate \
+  --model /artifacts/size-256/rl.zip --opponent expert \
+  --first-seed 11000 --seeds 64 --output /artifacts/size-256/rl-vs-expert.json
+```
 
 ## Verification
 

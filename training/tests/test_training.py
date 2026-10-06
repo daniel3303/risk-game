@@ -13,6 +13,7 @@ from risk_training.evaluate import summarize
 from risk_training.policy import CandidatePolicy
 from risk_training.validation import disjoint_training_seeds, disjoint_evaluation_seeds
 from risk_training.records import collect_split, sha256
+from risk_training.imitation import metrics
 
 
 class TrainingTests(unittest.TestCase):
@@ -42,7 +43,8 @@ class TrainingTests(unittest.TestCase):
     def test_ppo_update_and_checkpoint_roundtrip_use_the_real_rules_process(self):
         env = RiskEnv(opponents=("easy",))
         try:
-            model = MaskablePPO(CandidatePolicy, env, n_steps=8, batch_size=8, n_epochs=1, device="cpu", seed=9)
+            model = MaskablePPO(CandidatePolicy, env, n_steps=8, batch_size=8, n_epochs=1, device="cpu", seed=9,
+                                policy_kwargs={"width": 256, "depth": 2})
             before = {name: value.clone() for name, value in model.policy.state_dict().items()}
             model.learn(total_timesteps=16)
             self.assertTrue(any(not torch.equal(value, before[name]) for name, value in model.policy.state_dict().items()))
@@ -54,6 +56,27 @@ class TrainingTests(unittest.TestCase):
                 loaded = MaskablePPO.load(path, device="cpu")
                 actual, _ = loaded.predict(observation, deterministic=True, action_masks=env.action_masks())
                 self.assertEqual(int(expected), int(actual))
+                self.assertEqual((loaded.policy.width, loaded.policy.depth), (256, 2))
+                for name, value in model.policy.state_dict().items():
+                    torch.testing.assert_close(loaded.policy.state_dict()[name], value)
+        finally:
+            env.close()
+
+    def test_choice_accuracy_excludes_forced_decisions(self):
+        env = RiskEnv()
+        try:
+            observation, _ = env.reset(options={"game_seed": 12, "seat": 0})
+            model = MaskablePPO(CandidatePolicy, env, n_steps=8, batch_size=8, device="cpu")
+            masks = np.zeros((2, env.schema["capacity"]), dtype=bool)
+            masks[0, 0] = True
+            masks[1, :2] = True
+            action, _ = model.predict(observation, deterministic=True, action_masks=masks[1])
+            data = ({key: np.stack((value, value)) for key, value in observation.items()},
+                    masks, np.asarray((0, 1 - int(action))), np.zeros(2, np.float32))
+            result = metrics(model.policy, data)
+            self.assertEqual(result["accuracy"], 0.5)
+            self.assertEqual(result["choiceAccuracy"], 0)
+            self.assertEqual(result["choiceDecisions"], 1)
         finally:
             env.close()
 
