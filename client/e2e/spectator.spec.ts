@@ -36,7 +36,7 @@ test('host watches AI players, invites spectators, and resumes after reload', as
   await page.setViewportSize({ width: 375, height: 667 });
   await expect(page.getByRole('button', { name: 'Battle history', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-  await page.getByRole('button', { name: 'Game menu', exact: true }).click();
+  await page.getByLabel('Game menu', { exact: true }).click();
   await page.getByRole('button', { name: 'Leave table', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Create your table', exact: true })).toBeVisible();
   await expect(guest.getByTestId('turn-status')).toContainText('SPECTATING');
