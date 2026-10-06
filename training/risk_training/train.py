@@ -15,7 +15,7 @@ from .validation import disjoint_training_seeds
 
 
 def train(args):
-    if any((args.output / name).exists() for name in ("imitation.zip", "rl.zip", "training.json")):
+    if args.output.exists() and any(args.output.iterdir()):
         raise ValueError("Use a new output directory to preserve existing checkpoints")
     args.output.mkdir(parents=True, exist_ok=True)
     random.seed(args.seed)

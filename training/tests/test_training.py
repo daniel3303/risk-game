@@ -3,6 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import torch
@@ -14,6 +15,7 @@ from risk_training.policy import CandidatePolicy
 from risk_training.validation import disjoint_training_seeds, disjoint_evaluation_seeds
 from risk_training.records import collect_split, sha256
 from risk_training.imitation import metrics
+from risk_training.train import train
 
 
 class TrainingTests(unittest.TestCase):
@@ -62,21 +64,43 @@ class TrainingTests(unittest.TestCase):
         finally:
             env.close()
 
+    def test_default_policy_keeps_the_first_experiment_checkpoint_layout(self):
+        env = RiskEnv()
+        try:
+            model = MaskablePPO(CandidatePolicy, env, n_steps=8, batch_size=8, device="cpu")
+            shapes = {name: tuple(value.shape) for name, value in model.policy.named_parameters()}
+            self.assertEqual(shapes, {
+                "mlp_extractor.context.0.weight": (64, 481), "mlp_extractor.context.0.bias": (64,),
+                "mlp_extractor.scorer.0.weight": (64, 132), "mlp_extractor.scorer.0.bias": (64,),
+                "mlp_extractor.scorer.2.weight": (1, 64), "mlp_extractor.scorer.2.bias": (1,),
+                "mlp_extractor.critic.0.weight": (64, 481), "mlp_extractor.critic.0.bias": (64,),
+                "mlp_extractor.critic.2.weight": (64, 64), "mlp_extractor.critic.2.bias": (64,),
+                "value_net.weight": (1, 64), "value_net.bias": (1,)})
+            self.assertEqual(sum(value.numel() for value in model.policy.parameters()), 74498)
+        finally:
+            env.close()
+
+    def test_training_refuses_a_nonempty_output_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory) / "progress.csv").write_text("")
+            with self.assertRaisesRegex(ValueError, "new output directory"):
+                train(SimpleNamespace(output=Path(directory)))
+
     def test_choice_accuracy_excludes_forced_decisions(self):
         env = RiskEnv()
         try:
             observation, _ = env.reset(options={"game_seed": 12, "seat": 0})
             model = MaskablePPO(CandidatePolicy, env, n_steps=8, batch_size=8, device="cpu")
-            masks = np.zeros((2, env.schema["capacity"]), dtype=bool)
+            masks = np.zeros((3, env.schema["capacity"]), dtype=bool)
             masks[0, 0] = True
-            masks[1, :2] = True
+            masks[1:, :2] = True
             action, _ = model.predict(observation, deterministic=True, action_masks=masks[1])
-            data = ({key: np.stack((value, value)) for key, value in observation.items()},
-                    masks, np.asarray((0, 1 - int(action))), np.zeros(2, np.float32))
+            data = ({key: np.stack((value,) * 3) for key, value in observation.items()},
+                    masks, np.asarray((0, int(action), 1 - int(action))), np.zeros(3, np.float32))
             result = metrics(model.policy, data)
-            self.assertEqual(result["accuracy"], 0.5)
-            self.assertEqual(result["choiceAccuracy"], 0)
-            self.assertEqual(result["choiceDecisions"], 1)
+            self.assertAlmostEqual(result["accuracy"], 2 / 3)
+            self.assertEqual(result["choiceAccuracy"], 0.5)
+            self.assertEqual(result["choiceDecisions"], 2)
         finally:
             env.close()
 
