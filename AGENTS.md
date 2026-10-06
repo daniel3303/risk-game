@@ -10,4 +10,5 @@
 - Run `npm --prefix client run test:e2e` against Docker for multiplayer and player flows.
 - Run an independent audit-only full-diff review after implementation and testing.
 - Keep generated test artifacts under ignored `artifacts/`.
+- Compare the running game with supplied visual references at matching viewport dimensions before delivery.
 - Keep repository-wide instructions in this root file.

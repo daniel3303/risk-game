@@ -12,7 +12,8 @@ Open **http://localhost:8092**. Create a table, copy its invite link, and add up
 
 - Friends must reach the same server address. For LAN play, open the host computer's LAN IP on port 8092 before copying the invite; a `localhost` invite works only on the host computer.
 - Drag the board to rotate and scroll to zoom. Click your territory and a destination, then use the turn panel. **Territory list** provides keyboard and touch controls and remains usable without WebGL.
-- The board uses detailed coastlines, raised borders, a blue ocean chart, infantry figures, readable troop counters, and commander portraits. **Continent bonuses** switches to a colored overlay showing each region's bonus and your control progress. Zoom buttons also support touch play.
+- The full-screen board uses angular coastlines, deep black territory edges, shaded land, a textured ocean chart, outlined troop discs, and illustrated commander portraits. The bottom medallion shows the current commander, phase, and deployable army. Territory names appear on keyboard focus and remain available in **Territory list**.
+- **Continent bonuses** (the chart button) switches to a colored overlay showing each region's bonus and your control progress. The card stack opens your hand. Zoom buttons also support touch play; the top question mark opens the rules.
 - **Game menu → Campaign journal** shows recent moves and the last battle's dice. Phones also show a compact casualty result below turn controls; map controls move when the turn panel expands.
 - A browser reload or transport reconnect resumes the seat using a secret stored in that tab's session storage. A second device cannot resume the same seat without its credential.
 - Disconnecting preserves the seat and waits at that player's turn. **Leave table** replaces a started-game seat with an Easy AI. **Surrender** eliminates the commander and leaves passive armies on the board.

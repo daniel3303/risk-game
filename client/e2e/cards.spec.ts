@@ -40,7 +40,10 @@ test('landscape forced trade scrolls to the territory bonus and submits a valid 
   });
   const script = [result].flat().flatMap(item => 'output' in item ? item.output : []).find(item => item.type === 'chunk');
   if (!script) throw new Error('Cards fixture did not produce a browser bundle.');
-  const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+  const styles = (await Promise.all([
+    readFile(new URL('../src/styles.css', import.meta.url), 'utf8'),
+    readFile(new URL('../src/campaign.css', import.meta.url), 'utf8'),
+  ])).join('\n');
   await page.setViewportSize({ width: 844, height: 390 });
   await page.route('**/__cards-fixture.js', route => route.fulfill({ contentType: 'text/javascript', body: script.code }));
   await page.route('**/__cards-fixture', route => route.fulfill({

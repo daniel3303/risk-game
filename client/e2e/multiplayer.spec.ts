@@ -174,7 +174,8 @@ for (const height of [812, 667]) test(`portrait phone keeps manual combat contro
   const zoom = page.getByRole('button', { name: 'Zoom in', exact: true });
   await expect.poll(() => zoom.evaluate(el => {
     const r = el.getBoundingClientRect();
-    return [[r.left + 4, r.top + 4], [r.right - 4, r.bottom - 4]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)));
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    return [[x, r.top + 6], [r.right - 6, y], [x, r.bottom - 6], [r.left + 6, y]].every(([px, py]) => el.contains(document.elementFromPoint(px, py)));
   })).toBe(true);
   await zoom.click();
   const roll = page.getByRole('button', { name: 'Roll dice', exact: true });
