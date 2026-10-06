@@ -156,8 +156,8 @@ test('landscape phone keeps six commanders and turn controls within the screen',
   await expect(page.getByTestId('phase')).toHaveText('Attack');
 });
 
-test('portrait phone keeps manual combat controls, results, and journal accessible', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+for (const height of [812, 667]) test(`portrait phone keeps manual combat controls, results, and journal accessible at ${height}px`, async ({ page }) => {
+  await page.setViewportSize({ width: 375, height });
   await page.goto('/');
   await page.getByLabel('Your commander name').fill('Phone commander');
   await page.getByRole('button', { name: 'Create your table' }).click();
@@ -182,6 +182,11 @@ test('portrait phone keeps manual combat controls, results, and journal accessib
   await roll.click();
   await expect(page.locator('.mobile-battle-summary')).toBeVisible();
   await expect(page.locator('.mobile-battle-summary')).toContainText('Attacker');
+  await page.getByRole('button', { name: 'Territory list', exact: true }).click();
+  const search = page.getByLabel('Search territories');
+  await expect(search).toBeInViewport({ ratio: 1 });
+  expect((await search.boundingBox())!.y).toBeGreaterThanOrEqual(54);
+  await page.getByRole('button', { name: 'Close territory list' }).click();
   await page.getByLabel('Game menu').click();
   await page.getByText('Campaign journal', { exact: true }).click();
   await expect(page.locator('.history-battle .dice').first()).toBeVisible();
