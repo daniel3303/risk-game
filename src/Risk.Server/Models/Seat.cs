@@ -10,6 +10,7 @@ public sealed class Seat(int id, string name)
     public string Connection { get; set; }
     public int GamePlayer { get; set; } = -1;
     public bool IsBot { get; set; }
+    public bool IsSpectator { get; init; }
     public BotDifficulty Difficulty { get; set; }
     public IPlayerStrategy Strategy { get; set; }
     public HashSet<Guid> AppliedActions { get; } = [];

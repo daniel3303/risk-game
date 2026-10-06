@@ -10,7 +10,7 @@ public sealed class RoomPublisher(IHubContext<GameHub> hub)
         if (room == null) return Task.CompletedTask;
         (string Connection, RoomSnapshot Snapshot)[] messages;
         lock (room.Sync)
-            messages = room.Occupied.Where(s => s.Connection != null).Select(s => (s.Connection, SnapshotBuilder.Build(room, s))).ToArray();
+            messages = room.Members.Where(s => s.Connection != null).Select(s => (s.Connection, SnapshotBuilder.Build(room, s))).ToArray();
         return Task.WhenAll(messages.Select(m => hub.Clients.Client(m.Connection).SendAsync("Snapshot", m.Snapshot, cancellation)));
     }
 }

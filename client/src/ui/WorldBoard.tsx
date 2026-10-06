@@ -18,7 +18,7 @@ export function WorldBoard({ game, selected = null, reachable = [], onSelect, pr
   }, [preview]);
   useEffect(() => { art.current?.update(game, selected, reachable, continentOverlay, viewer); }, [game, selected, reachable, continentOverlay, viewer]);
   return <div className={`world-board ${preview ? 'preview-board' : ''}`}>
-    <canvas ref={canvas} aria-label="Interactive 3D Classic world map. Drag to rotate, scroll to zoom; use Territory list for keyboard controls." data-testid="world-board" />
+    <canvas ref={canvas} aria-label="Interactive 3D Classic world map. Drag to pan, scroll to zoom; use Territory list for keyboard controls." data-testid="world-board" />
     <div ref={labels} className={`map-labels ${continentOverlay ? 'continent-mode' : ''}`} aria-hidden={preview}>{map.territories.map(territory => {
       const state = game?.territories[territory.id];
       const color = state && state.owner >= 0 ? playerColors[state.owner] : map.continents.find(c => c.id === territory.continent)!.color;
@@ -26,10 +26,10 @@ export function WorldBoard({ game, selected = null, reachable = [], onSelect, pr
     })}{map.continents.map(continent => {
       const region = map.territories.filter(t => t.continent === continent.id);
       const owned = region.filter(t => game?.territories[t.id].owner === viewer).length;
-      return <div key={continent.id} data-continent-label={continent.id} className="continent-label" style={{ '--continent-color': continent.color } as React.CSSProperties}><strong>+{continent.bonus}</strong><span>{continent.name}</span><small>{owned}/{region.length} territories</small></div>;
+      return <div key={continent.id} data-continent-label={continent.id} className="continent-label" style={{ '--continent-color': continent.color } as React.CSSProperties}><strong>+{continent.bonus}</strong><span>{continent.name}</span><small>{viewer < 0 ? `${region.length} territories` : `${owned}/${region.length} territories`}</small></div>;
     })}</div>
     {!failed && <div className="board-loading" role="status"><span />Preparing the world…</div>}
     {failed && <div className="board-fallback">3D graphics are unavailable on this device. Use the Territory list to play.</div>}
-    {!preview && <><div className="board-caption">CLASSIC WORLD <span>42 TERRITORIES · 6 CONTINENTS</span></div><div className="camera-controls"><button className="icon-button" aria-label="Zoom in" onClick={() => art.current?.zoom(-1)}><Plus size={19} /></button><button className="icon-button" aria-label="Zoom out" onClick={() => art.current?.zoom(1)}><Minus size={19} /></button><button className="icon-button" aria-label="Reset camera" onClick={() => art.current?.resetCamera()}><RotateCcw size={17} /></button></div><div className="board-hint">Drag to rotate · Pinch or scroll to zoom</div></>}
+    {!preview && <><div className="board-caption">CLASSIC WORLD <span>42 TERRITORIES · 6 CONTINENTS</span></div><div className="camera-controls"><button className="icon-button" aria-label="Zoom in" onClick={() => art.current?.zoom(-1)}><Plus size={19} /></button><button className="icon-button" aria-label="Zoom out" onClick={() => art.current?.zoom(1)}><Minus size={19} /></button><button className="icon-button" aria-label="Reset camera" onClick={() => art.current?.resetCamera()}><RotateCcw size={17} /></button></div><div className="board-hint">Drag to pan · Pinch or scroll to zoom</div></>}
   </div>;
 }

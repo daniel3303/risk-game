@@ -17,7 +17,7 @@ public sealed class RoomRegistry
         lock (sync) return connections.Count < 512 && connections.Add(connection);
     }
 
-    public Welcome Create(string connection, string name, GameOptions options)
+    public Welcome Create(string connection, string name, GameOptions options, bool aiOnly = false)
     {
         lock (sync)
         {
@@ -26,9 +26,10 @@ public sealed class RoomRegistry
             name = CleanName(name);
             if (rooms.Count >= 64) throw new HubException("All tables are occupied. Try again shortly.");
             var code = NewCode();
-            var room = new Room(code, options);
-            var seat = new Seat(0, name);
-            room.Seats[0] = seat;
+            var room = new Room(code, options, aiOnly);
+            var seat = aiOnly ? AddSpectator(room, name) : new Seat(0, name);
+            if (!aiOnly) room.Seats[0] = seat;
+            room.Host = seat.Id;
             rooms.Add(code, room);
             return Attach(room, seat, connection);
         }
@@ -45,17 +46,13 @@ public sealed class RoomRegistry
                 Seat seat;
                 if (!string.IsNullOrEmpty(token))
                 {
-                    seat = room.Occupied.FirstOrDefault(s => !s.IsBot && s.Token == token);
+                    seat = room.Members.FirstOrDefault(s => !s.IsBot && s.Token == token);
                     if (seat == null) throw new HubException("Your saved seat has expired.");
                     if (seat.Connection != null) throw new HubException("This seat is already connected in another tab.");
                 }
                 else
                 {
-                    if (room.Game != null) throw new HubException("This game has already started.");
-                    var slot = Array.FindIndex(room.Seats, s => s == null);
-                    if (slot < 0) throw new HubException("This table has six players.");
-                    seat = new Seat(slot, CleanName(name));
-                    room.Seats[slot] = seat;
+                    seat = AddMember(room, name);
                 }
                 return Attach(room, seat, connection);
             }
@@ -65,7 +62,7 @@ public sealed class RoomRegistry
     private Welcome Attach(Room room, Seat seat, string connection)
     {
         seat.Connection = connection;
-        if (room.Seats[room.Host]?.Connection == null) room.Host = seat.Id;
+        if (room.HostMember?.Connection == null) room.Host = seat.Id;
         memberships.Add(connection, room);
         room.Changed();
         return new(room.Code, seat.Token, seat.Id, SnapshotBuilder.Build(room, seat));
@@ -83,11 +80,12 @@ public sealed class RoomRegistry
             if (!memberships.Remove(connection, out var room)) return null;
             lock (room.Sync)
             {
-                var seat = room.Occupied.First(s => s.Connection == connection);
+                var seat = room.Members.First(s => s.Connection == connection);
                 seat.Connection = null;
                 if (explicitLeave)
                 {
-                    if (room.Game == null) room.Seats[seat.Id] = null;
+                    if (seat.IsSpectator) room.Spectators.Remove(seat);
+                    else if (room.Game == null) room.Seats[seat.Id] = null;
                     else
                     {
                         seat.IsBot = true;
@@ -98,9 +96,9 @@ public sealed class RoomRegistry
                     }
                 }
                 if (room.Host == seat.Id)
-                    room.Host = room.Occupied.FirstOrDefault(s => !s.IsBot && s.Connection != null)?.Id ?? room.Host;
+                    room.Host = room.Members.FirstOrDefault(s => !s.IsBot && s.Connection != null)?.Id ?? room.Host;
                 room.Changed();
-                if (room.Game == null && !room.Occupied.Any(s => !s.IsBot)) rooms.Remove(room.Code);
+                if (room.Game == null && !room.Members.Any(s => !s.IsBot)) rooms.Remove(room.Code);
             }
             return room;
         }
@@ -119,7 +117,7 @@ public sealed class RoomRegistry
         {
             foreach (var room in rooms.Values.ToArray())
                 lock (room.Sync)
-                    if (!room.Occupied.Any(s => s.Connection != null) && now - room.LastActive > TimeSpan.FromMinutes(30)) rooms.Remove(room.Code);
+                    if (!room.HasViewers && now - room.LastActive > TimeSpan.FromMinutes(30)) rooms.Remove(room.Code);
         }
     }
 
@@ -127,6 +125,26 @@ public sealed class RoomRegistry
     {
         if (!connections.Contains(connection)) throw new HubException("Connection unavailable.");
         if (memberships.ContainsKey(connection)) throw new HubException("Leave your current table first.");
+    }
+
+    private static Seat AddMember(Room room, string name)
+    {
+        name = CleanName(name);
+        if (room.AiOnly) return AddSpectator(room, name);
+        if (room.Game != null) throw new HubException("This game has already started.");
+        var slot = Array.FindIndex(room.Seats, s => s == null);
+        if (slot < 0) throw new HubException("This table has six players.");
+        return room.Seats[slot] = new Seat(slot, name);
+    }
+
+    private static Seat AddSpectator(Room room, string name)
+    {
+        const int maxSpectators = 16;
+        if (room.Spectators.Count >= maxSpectators) throw new HubException("This room has sixteen spectators.");
+        var id = Enumerable.Range(room.Seats.Length, maxSpectators).First(id => room.Spectators.All(s => s.Id != id));
+        var spectator = new Seat(id, name) { IsSpectator = true };
+        room.Spectators.Add(spectator);
+        return spectator;
     }
 
     public static string CleanName(string name)

@@ -13,7 +13,7 @@ public sealed class BotRunner(RoomPublisher publisher, ILogger<BotRunner> logger
         lock (room.Sync)
         {
             if (room.BotQueued || room.Game == null || room.Game.State.Phase == Phase.Finished || room.Current?.IsBot != true) return;
-            if (!room.Occupied.Any(s => s.Connection != null)) return;
+            if (!room.HasViewers) return;
             room.BotQueued = queue.Writer.TryWrite(room);
         }
     }
@@ -30,7 +30,7 @@ public sealed class BotRunner(RoomPublisher publisher, ILogger<BotRunner> logger
             long revision;
             lock (room.Sync)
             {
-                if (room.Game.State.Phase == Phase.Finished || !room.Current.IsBot || !room.Occupied.Any(s => s.Connection != null))
+                if (room.Game.State.Phase == Phase.Finished || !room.Current.IsBot || !room.HasViewers)
                 { room.BotQueued = false; continue; }
                 strategy = room.Current.Strategy;
                 observation = GameObservation.From(room.Game);

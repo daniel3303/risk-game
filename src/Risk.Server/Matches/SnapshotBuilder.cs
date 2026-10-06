@@ -9,7 +9,8 @@ public static class SnapshotBuilder
     {
         var players = room.Occupied.Select(s => Player(room, s)).ToArray();
         var game = room.Game == null ? null : Game(room, viewer);
-        return new(room.Code, room.Revision, room.Host, room.Options, players, game);
+        var spectators = room.Spectators.Select(s => new SpectatorView(s.Id, s.Name, s.Connection != null)).ToArray();
+        return new(room.Code, room.Revision, room.Host, room.Options, players, game, room.AiOnly, spectators);
     }
 
     private static PlayerView Player(Room room, Seat seat)
@@ -28,6 +29,6 @@ public static class SnapshotBuilder
         return new(state.Phase, room.PublicPlayer(state.CurrentPlayer), state.Round, state.Reinforcements, state.Trades,
             room.PublicPlayer(state.Winner), current.SetupTroops, state.Phase == Phase.Draft && current.Cards.Count >= 5,
             state.Territories.Select(t => new TerritoryView(t.Id, room.PublicPlayer(t.Owner), t.Troops)).ToArray(),
-            state.Players[viewer.GamePlayer].Cards.Select(CardRules.Card).ToArray(), state.Capture, state.Battle, state.Log.ToArray());
+            viewer.IsSpectator ? [] : state.Players[viewer.GamePlayer].Cards.Select(CardRules.Card).ToArray(), state.Capture, state.Battle, state.Log.ToArray());
     }
 }
