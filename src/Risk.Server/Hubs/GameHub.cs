@@ -20,6 +20,13 @@ public sealed class GameHub(RoomRegistry registry, RoomCommands commands, RoomPu
         return welcome;
     }
 
+    public async Task<Welcome> CreateSpectatorRoom(string name, GameOptions options)
+    {
+        var welcome = registry.Create(Context.ConnectionId, name, options, aiOnly: true);
+        await Changed(registry.For(Context.ConnectionId));
+        return welcome;
+    }
+
     public async Task<Welcome> Join(string code, string name, string token = null)
     {
         var welcome = registry.Join(Context.ConnectionId, code, name, token);

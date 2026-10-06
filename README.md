@@ -10,13 +10,16 @@ docker compose up --build -d
 
 Open **http://localhost:8092**. Create a table, copy its invite link, and add up to five friends or AI players. The host starts the game when at least two commanders are seated. Each AI seat has its own difficulty.
 
+To watch AI strategies, select **Your role → Spectate an AI-only game**, create the room, and add 2–6 AI commanders with individual difficulties. The host watches without occupying a commander seat. Friends can use the invite link to spectate before or after the game starts; the current turn, troop counts, and battle journal update automatically.
+
 - Friends must reach the same server address. For LAN play, open the host computer's LAN IP on port 8092 before copying the invite; a `localhost` invite works only on the host computer.
-- Drag the board to rotate and scroll to zoom. Click your territory and a destination, then use the turn panel. **Territory list** provides keyboard and touch controls and remains usable without WebGL.
+- The map keeps a fixed viewing angle. Drag to pan and use the wheel, pinch gesture, or zoom buttons to inspect territories. Click your territory and a destination, then use the turn panel. **Territory list** provides keyboard and touch controls and remains usable without WebGL.
 - The full-screen board uses angular coastlines, deep black territory edges, shaded land, a textured ocean chart, outlined troop discs, and illustrated commander portraits. The bottom medallion shows the current commander, phase, and deployable army. Territory names appear on keyboard focus and remain available in **Territory list**.
 - **Continent bonuses** (the chart button) switches to a colored overlay showing each region's bonus and your control progress. The card stack opens your hand. Zoom buttons also support touch play; the top question mark opens the rules.
 - **Game menu → Campaign journal** shows recent moves and the last battle's dice. Phones also show a compact casualty result below turn controls; map controls move when the turn panel expands.
 - A browser reload or transport reconnect resumes the seat using a secret stored in that tab's session storage. A second device cannot resume the same seat without its credential.
 - Disconnecting preserves the seat and waits at that player's turn. **Leave table** replaces a started-game seat with an Easy AI. **Surrender** eliminates the commander and leaves passive armies on the board.
+- Spectators have no army or private card hand and cannot submit gameplay commands. Leaving releases only their spectator place; reloading or reconnecting restores it. AI turns pause when nobody is connected and resume when a spectator returns.
 - Leaving while offline first reconnects and releases the seat; if the server is unreachable, the saved credential is retained so the game can be resumed later.
 - Tables are in memory. Restarting the server ends them. Tables with no connected humans expire after 30 minutes. Bots stop when nobody is connected.
 - `PORT=8093 docker compose up --build -d` changes the exposed port.
@@ -87,7 +90,7 @@ Babylon.js 3D board          ◄── private snapshots ──┤
 - **Shared content:** `content/classic-topology.json` defines legal borders; `content/cartography.json` contains attributed vector paths. `npm --prefix client run generate:map` produces `content/classic.json` with sampled coastlines, islands, and interior label anchors. The geometry retains [CC BY-SA 4.0](content/CARTOGRAPHY-LICENSE.md); the mobile app's assets are not bundled.
 - **Authority:** one lock per room; server binds connections to seats; host-only lobby mutation; expected room revisions and bounded action IDs prevent stale or repeated mutation.
 - **Privacy:** each recipient gets a separately built snapshot containing only their cards. Reconnect secrets appear only in the joining player's welcome response.
-- **Bounds:** six seats, 64 rooms, 512 connections, 4 KiB hub messages, 20 RPCs/second per connection, negotiation rate limiting, inactive room cleanup.
+- **Bounds:** six commander seats and up to 16 spectators per AI-only room, 64 rooms, 512 connections, 4 KiB hub messages, 20 RPCs/second per connection, negotiation rate limiting, inactive room cleanup.
 - **Docker:** multi-stage client/server build, non-root runtime, read-only filesystem, dropped capabilities, no production host deployment.
 
 ## Verify

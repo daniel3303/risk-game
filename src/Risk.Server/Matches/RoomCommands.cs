@@ -47,7 +47,7 @@ public sealed class RoomCommands(RoomRegistry registry, WorldMap map)
             RequireHost(room, connection);
             RequireLobby(room);
             var seats = room.Occupied.ToArray();
-            if (seats.Length < 2) throw new HubException("Invite a friend or add an AI opponent.");
+            if (seats.Length < 2) throw new HubException(room.AiOnly ? "Add at least two AI players." : "Invite a friend or add an AI opponent.");
             if (seats.Any(s => !s.IsBot && s.Connection == null)) throw new HubException("Wait for every human player to reconnect.");
             for (var i = 0; i < seats.Length; i++) seats[i].GamePlayer = i;
             room.Game = new(map, seats.Select(s => s.Name).ToArray(), room.Options, new SeededRandom(RandomNumberGenerator.GetInt32(int.MaxValue)));
@@ -61,7 +61,8 @@ public sealed class RoomCommands(RoomRegistry registry, WorldMap map)
         var room = registry.For(connection);
         lock (room.Sync)
         {
-            var seat = room.Occupied.First(s => s.Connection == connection);
+            var seat = room.Members.First(s => s.Connection == connection);
+            if (seat.IsSpectator) throw new HubException("Spectators cannot submit game moves.");
             if (room.Game == null) throw new HubException("Start the game first.");
             if (request == null || !Guid.TryParseExact(request.Id, "D", out var action)) throw new HubException("Invalid action identifier.");
             if (seat.AppliedActions.Contains(action)) return room;
@@ -81,6 +82,6 @@ public sealed class RoomCommands(RoomRegistry registry, WorldMap map)
 
     private static void RequireHost(Room room, string connection)
     {
-        if (room.Seats[room.Host]?.Connection != connection) throw new HubException("Only the host can change this table.");
+        if (room.HostMember?.Connection != connection) throw new HubException("Only the host can change this table.");
     }
 }

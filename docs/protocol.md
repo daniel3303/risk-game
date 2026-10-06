@@ -3,11 +3,16 @@
 - Hub: `/play`; health endpoint: `/healthz`.
 - JSON uses camelCase properties and camelCase string enums through Newtonsoft.Json.
 - `Create(name, {cards, setup})` and `Join(code, name, token)` return `{code, token, seat, snapshot}`.
+- `CreateSpectatorRoom(name, {cards, setup})` returns the same welcome shape for an AI-only room; its creator is a spectator host.
+- AI-only rooms reserve commander IDs 0–5 for bots and spectator IDs 6–21 for observers; spectators do not consume commander seats.
 - Supply `null` as the token for a new lobby seat; supply the saved token to restore a disconnected seat.
+- In an AI-only room, joining without a token creates a spectator before or after the game starts. A saved spectator token restores its identity and permissions.
 - `AddBot(difficulty)`, `RemoveBot(seat)`, and `Start()` are host-only lobby calls.
 - `Act({id, revision, command})` applies a gameplay command; `id` is a canonical UUID, and `revision` is the last received room revision.
 - `Leave()` releases a lobby seat or replaces a started seat with Easy AI.
-- The `Snapshot` event sends `{code, revision, host, options, players, game}` separately to each connected human.
+- A spectator's `Leave()` only releases that spectator; its `Act()` always returns a permission error.
+- The `Snapshot` event sends `{code, revision, host, options, players, game, aiOnly, spectators}` separately to each connected participant.
+- `spectators[]` contains only `{id, name, connected}`; spectator snapshots always contain an empty `game.hand`.
 - `game.hand` contains only the recipient's cards; public `players[].cards` contains counts.
 - Territory owners, current player, and winner use stable public seat IDs; simulation indexes stay internal.
 - Discard snapshots with an older revision. Never apply a snapshot from another table.

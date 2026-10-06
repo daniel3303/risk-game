@@ -96,6 +96,7 @@ footer > span:first-child { font-weight: 700; letter-spacing: 1.8px; }
 .ai-controls .form-row { margin-bottom: 9px; }
 .ai-controls .secondary { flex: .85; padding: 13px 9px; font-size: 11px; }
 .lobby-rules { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid #8caec43b; margin-top: 23px; padding: 18px 0; font-size: 8px; font-weight: 800; color: #bfdbe6; }
+.spectator-lobby { padding: 10px 12px; border: 1px solid #739aac; border-radius: 8px; background: #163c50; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .lobby-map { position: relative; height: 630px; align-self: center; min-width: 0; border-radius: 25px; overflow: hidden; }
 .lobby-map .world-board { height: 100%; }
 .waiting-message { padding: 17px; border: 1px solid #90a6b1; border-radius: 10px; background: #19384e; color: #e7deaa; font-size: 12px; text-align: center; }

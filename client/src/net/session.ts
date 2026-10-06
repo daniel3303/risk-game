@@ -62,8 +62,8 @@ export class Session {
     this.receive(welcome.snapshot);
   }
 
-  async create(name: string, options: Options) {
-    await this.enter('Create', name, [name, options]);
+  async create(name: string, options: Options, spectate = false) {
+    await this.enter(spectate ? 'CreateSpectatorRoom' : 'Create', name, [name, options]);
   }
   async join(code: string, name: string) {
     await this.enter('Join', name, [code.toUpperCase(), name, null]);

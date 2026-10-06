@@ -12,6 +12,7 @@ export interface Capture { from: number; to: number; minimum: number; maximum: n
 export interface Battle { from: number; to: number; attackerLosses: number; defenderLosses: number; attackDice: number[]; defendDice: number[]; captured: boolean }
 export interface Player { id: number; name: string; isBot: boolean; difficulty: Difficulty; strategy: string | null; connected: boolean; eliminated: boolean; cards: number; territories: number; troops: number }
 export interface GameView { phase: Phase; currentPlayer: number; round: number; reinforcements: number; trades: number; winner: number; setupTroops: number; forcedTrade: boolean; territories: Territory[]; hand: Card[]; capture: Capture | null; battle: Battle | null; log: string[] }
-export interface Snapshot { code: string; revision: number; host: number; options: Options; players: Player[]; game: GameView | null }
+export interface Spectator { id: number; name: string; connected: boolean }
+export interface Snapshot { code: string; revision: number; host: number; options: Options; players: Player[]; game: GameView | null; aiOnly: boolean; spectators: Spectator[] }
 export interface Welcome { code: string; token: string; seat: number; snapshot: Snapshot }
 export interface Command { kind: 'claim' | 'place' | 'trade' | 'attack' | 'occupy' | 'endAttack' | 'fortify' | 'endTurn' | 'surrender'; from?: number; to?: number; count?: number; dice?: number; blitz?: boolean; cards?: number[]; bonusTerritory?: number }

@@ -51,10 +51,17 @@ export class Board {
     this.scene.skipPointerMovePicking = true;
     this.camera = new ArcRotateCamera('camera', -Math.PI / 2, .26, 42, new Vector3(0, 0, mapCenterZ), this.scene);
     this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
-    this.camera.lowerBetaLimit = .05; this.camera.upperBetaLimit = .65;
+    this.camera.lowerAlphaLimit = this.camera.upperAlphaLimit = -Math.PI / 2;
+    this.camera.lowerBetaLimit = this.camera.upperBetaLimit = .26;
     this.camera.lowerRadiusLimit = 16; this.camera.upperRadiusLimit = 70;
     this.camera.wheelPrecision = 15; this.camera.panningSensibility = 110;
-    if (!preview) this.camera.attachControl(canvas, true);
+    if (!preview) {
+      this.camera.attachControl(canvas, true);
+      const input = this.camera.movement.input;
+      input.inputMap = input.inputMap.filter(entry => entry.interaction !== 'rotate');
+      input.setInteraction('pointer', { button: 0 }, 'pan');
+      input.setInteraction('touch', { touchCount: 1 }, 'pan');
+    }
     const ambient = new HemisphericLight('ambient', new Vector3(0, 1, 0), this.scene);
     ambient.intensity = .78; ambient.groundColor = Color3.FromHexString('#243645');
     const sun = new DirectionalLight('sun', new Vector3(-.4, -1.5, .6), this.scene);
@@ -159,7 +166,7 @@ export class Board {
       const state = game?.territories[territory.id];
       const continentColor = map.continents.find(c => c.id === territory.continent)!.color;
       const color = !continentOverlay && state && state.owner >= 0 ? playerColors[state.owner] : continentColor;
-      const brightness = continentOverlay && state && state.owner !== viewer ? .35 : selected === territory.id ? 1.05 : .74;
+      const brightness = continentOverlay && viewer >= 0 && state && state.owner !== viewer ? .35 : selected === territory.id ? 1.05 : .74;
       art.material.diffuseColor = Color3.FromHexString(color).toLinearSpace().scale(brightness);
       art.material.emissiveColor = Color3.FromHexString(color).toLinearSpace().scale(reachable.includes(territory.id) ? .23 : .025);
       art.ring.setEnabled(selected === territory.id || reachable.includes(territory.id));
@@ -202,6 +209,10 @@ export class Board {
   }
 
   zoom(direction: number) { this.camera.radius = Math.max(16, Math.min(70, this.camera.radius + direction * 5)); this.wakeCamera(); }
-  resetCamera() { this.camera.alpha = -Math.PI / 2; this.camera.beta = .26; this.camera.radius = 42; this.camera.target.set(0, 0, mapCenterZ); this.wakeCamera(); }
+  resetCamera() {
+    this.camera.movement.resetPanVelocity(); this.camera.movement.resetZoomVelocity(); this.camera.movement.resetRotationVelocity();
+    this.camera.alpha = -Math.PI / 2; this.camera.beta = .26; this.camera.radius = 42;
+    this.camera.target.set(0, 0, mapCenterZ); this.wakeCamera();
+  }
   dispose() { this.canvas.removeEventListener('wheel', this.wakeCamera); this.resize.disconnect(); this.scene.dispose(); this.engine.dispose(); }
 }
