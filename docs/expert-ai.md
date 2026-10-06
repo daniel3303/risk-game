@@ -14,7 +14,7 @@
 - Search up to six consecutive captures with a beam of eight positions and ten prioritized attacks per position.
 - Value continent income, army preservation, denying rival income, first-conquest cards, and elimination bounties.
 - Weight successful and failed battle branches by their probabilities; successful planning states use conditional expected surviving armies rounded down.
-- Compare forward occupation with a guarded source territory, obeying the real capture's minimum and maximum movement.
+- Compare forward occupation with a guarded source territory, obeying the real capture's minimum and maximum movement; projected captures conservatively reserve up to three surviving armies for the final maximum-dice roll.
 - Move interior or surplus frontier armies toward connected useful borders during fortification.
 - Estimate counterattacks using visible forces, part of the next reinforcement award, and possible card trades inferred from public counts.
 
@@ -35,18 +35,18 @@
 
 | Configuration | Wins / games | Win rate | Unfinished |
 | --- | ---: | ---: | ---: |
-| 2 players, fixed cards | 118 / 128 | 92.2% | 0 |
-| 2 players, progressive cards | 119 / 128 | 93.0% | 0 |
-| 6 players, fixed cards | 92 / 192 | 47.9% | 0 |
-| 6 players, progressive cards | 137 / 192 | 71.4% | 7 |
-| 3 players, fixed cards, manual setup | 31 / 48 | 64.6% | 0 |
+| 2 players, fixed cards | 115 / 128 | 89.8% | 0 |
+| 2 players, progressive cards | 120 / 128 | 93.8% | 0 |
+| 6 players, fixed cards | 100 / 192 | 52.1% | 0 |
+| 6 players, progressive cards | 136 / 192 | 70.8% | 6 |
+| 3 players, fixed cards, manual setup | 32 / 48 | 66.7% | 0 |
 
 - Full parameters, conservative intervals, policy source hash, and per-match results are in [ai-results.json](ai-results.json).
 - These are results against the bundled Hard policy, with no human or external strong-policy matches; the three-player manual batch has only 16 seed blocks and a wide interval.
 
 ```sh
 dotnet run --project tools/Risk.Arena -c Release -- \
-  --seeds 64 --first-seed 2000 --players 2 \
+  --seeds 64 --first-seed 3000 --players 2 \
   --candidate expert --opponent hard --cards fixed --setup automatic
 ```
 
@@ -56,5 +56,5 @@ dotnet run --project tools/Risk.Arena -c Release -- \
 - Unfinished games at the configured 200-round/20,000-action default limits are reported separately and count as non-wins; no material-based winner is invented.
 - The conservative 95% interval uses Hoeffding's bound on seed-level win fractions, treating matches sharing a seed as one block. It assumes independent sampled starting seeds, and measures the benchmark population only.
 - The CLI validates options and supports `--help`, `--max-rounds`, and `--max-actions`.
-- Development batches used seeds 0–11 and 1000–1063. The final published batch uses previously uninspected seeds starting at 2000, after freezing the decision policy.
+- Development and pre-review batches used seeds 0–11, 1000–1063, and 2000–2063. The final published batch uses previously uninspected seeds starting at 3000, after freezing the corrected decision policy.
 - Human matches, stronger independent opponents, and self-play training are the next evidence needed for a claim of human-level or stronger play.

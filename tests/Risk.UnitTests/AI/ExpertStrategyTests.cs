@@ -96,6 +96,25 @@ public sealed class ExpertStrategyTests
     }
 
     [Fact]
+    public void Search_CompletingAustralia_ReservesTheFinalRollsOccupationArmies()
+    {
+        var game = TestWorld.Game(2);
+        foreach (var territory in game.State.Territories) { territory.Owner = 1; territory.Troops = 1; }
+        foreach (var id in new[] { 38, 40, 41 }) game.State.Territories[id].Owner = 0;
+        game.State.Territories[38].Troops = 6;
+        game.State.Territories[37].Troops = 8;
+        game.State.CurrentPlayer = 0;
+        game.State.Phase = Phase.Attack;
+        var observation = GameObservation.From(game);
+        var plan = new AttackPlanner(new(observation)).Search(PlannerBoard.From(observation));
+        plan.First.From.Should().Be(38);
+        plan.First.To.Should().Be(39);
+        // New Guinea has no further hostile neighbor, so these armies cannot depart in this chain.
+        plan.Board.Owners[39].Should().Be(0);
+        plan.Board.Troops[39].Should().BeGreaterThanOrEqualTo(3);
+    }
+
+    [Fact]
     public void Choose_Occupation_RespectsMandatoryMovementAndLeavesOneBehind()
     {
         var game = TestWorld.Game();

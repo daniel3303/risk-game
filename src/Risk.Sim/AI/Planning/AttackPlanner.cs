@@ -52,7 +52,9 @@ public sealed class AttackPlanner(PositionEvaluator evaluator)
         failure.Troops[action.From] = 1;
         failure.Troops[action.To] = Math.Max(1, (int)Math.Ceiling(odds.DefendersOnLoss));
         var failureValue = evaluator.Evaluate(failure);
-        foreach (var occupation in Occupations(success, action.From, action.To, 1))
+        // The final maximum-dice roll can require three armies to enter the capture.
+        var minimum = Math.Min(3, success.Troops[action.To]);
+        foreach (var occupation in Occupations(success, action.From, action.To, minimum))
         {
             var value = evaluator.Evaluate(occupation);
             var gain = node.Gain + node.Probability * (odds.WinChance * (value - node.Value) + (1 - odds.WinChance) * (failureValue - node.Value));

@@ -75,9 +75,9 @@ Hard uses battle-level Monte Carlo evaluation, rather than full-game Monte Carlo
 
 Expert compares capture chains and troop allocations using exact battle odds for stacks up to 512, with a scale-aware approximation above that limit. It considers public opponent card counts without seeing their card identities. See [the implementation and evaluation limits](docs/expert-ai.md); beating the existing bots does not establish that it can beat every human.
 
-In a 688-game, seat-balanced evaluation on new seeds, Expert won 92.2% of fixed-card duels and 93.0% of progressive-card duels against Hard. Six-player win rates were 47.9% and 71.4%; seven progressive matches reached the round limit and count as non-wins. [Full results and methodology](docs/expert-ai.md#reproducible-evaluation) are included.
+In a 688-game, seat-balanced evaluation on new seeds, Expert won 89.8% of fixed-card duels and 93.8% of progressive-card duels against Hard. Six-player win rates were 52.1% and 70.8%; six progressive matches reached the round limit and count as non-wins. [Full results and methodology](docs/expert-ai.md#reproducible-evaluation) are included.
 
-Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Arena -c Release -- --seeds 64 --first-seed 2000 --players 2 --candidate expert --opponent hard --cards fixed`. JSON reports include unfinished games and a conservative seed-level confidence interval.
+Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Arena -c Release -- --seeds 64 --first-seed 3000 --players 2 --candidate expert --opponent hard --cards fixed`. JSON reports include unfinished games and a conservative seed-level confidence interval.
 
 `IPlayerStrategy` accepts a copied `GameObservation` and returns a `GameCommand`. Observations contain the public board and the acting player's cards, never opponents' hands or the live game RNG. Every proposed action passes through `Game.Apply`, exactly like human commands. `StrategyCatalog` maps lobby difficulty to an implementation; add future policy/model adapters there. Bots use their own RNG, so evaluating possibilities cannot advance or predict authoritative dice. The server schedules bot work after state changes and runs up to four workers, with a short delay for readable gameplay.
 
@@ -138,8 +138,13 @@ Risk/
 ├── tests/
 │   ├── Risk.UnitTests/
 │   └── Risk.IntegrationTests/
-├── tools/generate-map.py
-├── docs/protocol.md
+├── tools/
+│   ├── Risk.Arena/              headless, reproducible AI evaluation
+│   └── generate-map.py
+├── docs/
+│   ├── protocol.md
+│   ├── expert-ai.md             planning policy and evaluation limits
+│   └── ai-results.json          frozen-policy per-match results
 ├── Dockerfile
 └── docker-compose.yml
 ```
