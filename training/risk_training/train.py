@@ -15,6 +15,8 @@ from .validation import disjoint_training_seeds
 
 
 def train(args):
+    if args.output.exists() and any(args.output.iterdir()):
+        raise ValueError("Use a new output directory to preserve existing checkpoints")
     args.output.mkdir(parents=True, exist_ok=True)
     random.seed(args.seed)
     np.random.seed(args.seed)
@@ -30,11 +32,15 @@ def train(args):
     with_env = RiskEnv(first_seed=args.first_seed)
     try:
         model = MaskablePPO(CandidatePolicy, with_env, n_steps=512, batch_size=64, n_epochs=4, learning_rate=1e-4,
-                            gamma=0.995, ent_coef=0.005, target_kl=0.02, seed=args.seed, device="cpu", verbose=1)
+                            gamma=0.995, ent_coef=0.005, target_kl=0.02, seed=args.seed, device="cpu", verbose=1,
+                            policy_kwargs={"width": args.width, "depth": args.depth})
+        policy = {"width": args.width, "depth": args.depth,
+                  "parameters": sum(parameter.numel() for parameter in model.policy.parameters())}
         initial = metrics(model.policy, validation)
         history = clone(model, training, validation, args.epochs, args.output / "imitation")
         imitation = MaskablePPO.load(args.output / "imitation.zip", device="cpu")
         cloned = metrics(imitation.policy, validation)
+        cloned_training = metrics(imitation.policy, training)
         del model, training, validation
         steps = reinforce(args, imitation)
         write_json(args.output / "training.json", {"provenance": provenance(), "datasetSha256": sha256(args.dataset / "dataset.json"),
@@ -43,7 +49,8 @@ def train(args):
                    "actualRlSteps": steps, "algorithm": "MaskablePPO", "reward": "terminal win +1, loss -1, unfinished 0",
                    "ppo": {"nSteps": 512, "batchSize": 64, "epochs": 4, "learningRate": 0.0001, "gamma": 0.995, "entropyCoefficient": 0.005, "targetKl": 0.02},
                    "opponents": ["normal", "hard", "expert", "frozen imitation checkpoint"],
-                   "elapsedSeconds": time.monotonic() - start, "untrainedValidation": initial, "imitationValidation": cloned,
+                   "policy": policy, "elapsedSeconds": time.monotonic() - start,
+                   "untrainedValidation": initial, "imitationValidation": cloned, "imitationTraining": cloned_training,
                    "imitationHistory": history, "checkpoints": {name: sha256(args.output / (name + ".zip")) for name in ("imitation", "rl")}})
     finally:
         with_env.close()
