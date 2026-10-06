@@ -1,4 +1,5 @@
 import { test, expect, type WebSocketRoute } from '@playwright/test';
+import topology from '../../content/classic-topology.json' with { type: 'json' };
 
 test('two friends share a table, complete a turn, and resume after reload', async ({ browser, page }) => {
   const errors: string[] = [];
@@ -153,4 +154,36 @@ test('landscape phone keeps six commanders and turn controls within the screen',
   expect(board.x + board.width).toBeLessThanOrEqual(portraits.x);
   await deploy.click();
   await expect(page.getByTestId('phase')).toHaveText('Attack');
+});
+
+test('portrait phone keeps manual combat controls, results, and journal accessible', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  await page.getByLabel('Your commander name').fill('Phone commander');
+  await page.getByRole('button', { name: 'Create your table' }).click();
+  await page.getByRole('button', { name: 'Add AI player' }).click();
+  await page.getByRole('button', { name: 'Begin World Domination' }).click();
+  await page.getByRole('button', { name: 'Territory list' }).click();
+  const owners = await page.locator('[data-testid^="territory-"]').evaluateAll(elements => elements.map(el => Number(el.getAttribute('data-owner'))));
+  const source = topology.territories.find(t => owners[t.id] === 0 && t.neighbors.some(id => owners[id] === 1))!;
+  const enemy = source.neighbors.find(id => owners[id] === 1)!;
+  await page.getByTestId(`territory-${source.id}`).click();
+  await page.getByRole('button', { name: /Deploy .* troops/ }).click();
+  await page.getByLabel('Destination').selectOption(String(enemy));
+  await page.getByRole('button', { name: 'Manual roll' }).click();
+  const zoom = page.getByRole('button', { name: 'Zoom in', exact: true });
+  await expect.poll(() => zoom.evaluate(el => {
+    const r = el.getBoundingClientRect();
+    return [[r.left + 4, r.top + 4], [r.right - 4, r.bottom - 4]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)));
+  })).toBe(true);
+  await zoom.click();
+  const roll = page.getByRole('button', { name: 'Roll dice', exact: true });
+  await expect(roll).toBeInViewport({ ratio: 1 });
+  await roll.click();
+  await expect(page.locator('.mobile-battle-summary')).toBeVisible();
+  await expect(page.locator('.mobile-battle-summary')).toContainText('Attacker');
+  await page.getByLabel('Game menu').click();
+  await page.getByText('Campaign journal', { exact: true }).click();
+  await expect(page.locator('.history-battle .dice').first()).toBeVisible();
+  expect(await page.locator('.activity li').count()).toBeGreaterThan(0);
 });
