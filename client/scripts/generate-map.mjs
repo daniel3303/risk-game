@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { svgPathProperties } from 'svg-path-properties';
 import polylabel from 'polylabel';
+import simplify from 'simplify-js';
 
 const content = new URL('../../content/', import.meta.url);
 const topology = JSON.parse(await readFile(new URL('classic-topology.json', content), 'utf8'));
@@ -22,11 +23,12 @@ function polygons(path) {
       const steps = ['C', 'Q', 'A'].includes(part.details?.[0]) ? Math.max(1, Math.ceil(part.length / 2.5)) : 1;
       for (let i = 0; i < steps; i++) {
         const point = part.getPointAtLength(part.length * i / steps);
-        const next = [round((point.x + dx - 542) / 16), round((316.5 - point.y - dy) / 16 * 0.75 + 2.7)];
+        const next = [round((point.x + dx - 542) / 16), round((316.5 - point.y - dy) / 16 * 1.15 + 2.7)];
         if (!points.length || Math.hypot(next[0] - points.at(-1)[0], next[1] - points.at(-1)[1]) > 0.012) points.push(next);
       }
     }
-    return points;
+    const contour = simplify([...points, points[0]].map(([x, y]) => ({ x, y })), 0.16, true).slice(0, -1).map(({ x, y }) => [x, y]);
+    return contour.length >= 3 && area(contour) > 0.002 ? contour : points;
   }).filter(points => points.length >= 3 && area(points) > 0.002).sort((a, b) => area(b) - area(a));
 }
 

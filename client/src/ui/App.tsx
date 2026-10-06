@@ -16,7 +16,7 @@ export function App() {
     {state.error && <div className="error-banner" role="alert"><span>{state.error}</span><button className="icon-button" aria-label="Dismiss error" onClick={session.clearError}><X size={16} /></button></div>}
     {state.pending && state.room && <div className="pending-notice" role="status">Sending your move…</div>}
     {(state.room || state.status === 'reconnecting') && state.status !== 'connected' && <div className="reconnect-banner" role="status">{state.status === 'offline' ? 'Connection lost. Your seat is saved in this tab.' : 'Reconnecting to your table…'}{state.status === 'offline' && <><button className="secondary" onClick={() => void session.retry()}>Reconnect</button><button className="text-button" onClick={() => void session.leave()}>Return home</button></>}</div>}
-    {!state.room ? <Home pending={state.pending || state.status === 'connecting' || state.status === 'reconnecting'} /> : state.room.game ? <GameScreen room={state.room} seat={state.seat} disabled={disabled} /> : <Lobby room={state.room} seat={state.seat} disabled={disabled} />}
+    {!state.room ? <Home pending={state.pending || state.status === 'connecting' || state.status === 'reconnecting'} /> : state.room.game ? <GameScreen room={state.room} seat={state.seat} disabled={disabled} onHelp={() => setHelp(true)} /> : <Lobby room={state.room} seat={state.seat} disabled={disabled} />}
     {!state.room?.game && <footer><span>FORTUNE FAVORS THE THOUGHTFUL.</span><span>Independent project · Classic rules · 3D world</span></footer>}
     {help && <Help onClose={() => setHelp(false)} />}
   </div>;
