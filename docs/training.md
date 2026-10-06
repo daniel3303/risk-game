@@ -35,7 +35,7 @@ docker compose -f compose.training.yml down --rmi local
 - Dataset checksums are verified before training; evaluation checks the checkpoint and rules/feature assemblies against the recorded run.
 - Only the best imitation and final RL checkpoints are retained; checkpoint files contain Python serialization and must come from trusted runs.
 - CLI commands support `--help`; training accepts `--epochs`, `--steps`, `--seed`, `--width`, and `--depth`; evaluation accepts `--opponent`, `--seeds`, and `--first-seed`.
-- Training requires a fresh output directory so an experiment cannot overwrite saved checkpoints.
+- Training requires a new or empty output directory so an experiment cannot overwrite saved checkpoints.
 - Run metadata records policy width, depth, parameter count, and imitation accuracy on both training and validation data.
 - `choiceAccuracy` excludes decisions with only one candidate; forced decisions still contribute to the original accuracy and cross-entropy metrics.
 
@@ -94,8 +94,8 @@ docker compose -f compose.training.yml down --rmi local
 
 - The 256×2 policy has 593,666 parameters; the 64×1 policy has 74,498.
 - Imitation validation accuracy: 81.5% for 256×2 and 81.1% for 64×1; excluding forced moves, 79.4% and 79.0%.
-- Training accuracy is 82.1% for both, so the larger network did not fit the Expert demonstrations better.
-- Training took 942 seconds for 256×2 and 390 seconds for 64×1 in the same CPU-only container.
+- The retained checkpoints, selected by lowest validation loss at epochs 19 (64×1) and 12 (256×2), both reach 82.1% training accuracy.
+- Training took 942 seconds for 256×2 and 390 seconds for 64×1 under the same container limits; the 64×1 run overlapped evaluation jobs, so this understates the larger network's cost.
 
 | Policy | Checkpoint | Opponent | Wins / games | Win rate | Unfinished |
 | --- | --- | --- | ---: | ---: | ---: |
@@ -123,7 +123,7 @@ docker compose -f compose.training.yml run --rm trainer train \
   --output /artifacts/size-256 --width 256 --depth 2 --steps 32768
 docker compose -f compose.training.yml run --rm trainer evaluate \
   --model /artifacts/size-256/rl.zip --opponent expert \
-  --first-seed 11000 --seeds 64 --output /artifacts/size-256/rl-vs-expert.json
+  --first-seed 11000 --seeds 64 --output /artifacts/size-256/rl-vs-expert-11000.json
 ```
 
 ## Verification

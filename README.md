@@ -87,7 +87,7 @@ The [Docker training pipeline](docs/training.md) records Expert decisions, train
 
 The first run used 11,689 Expert demonstrations and 16,384 PPO steps. Across 512 fresh-seed evaluation matches, the PPO checkpoint won 61.7% of duels against Hard and 31.3% against Expert. The learned model remains experimental; Expert is still the strongest validated lobby opponent. [Training details and all results](docs/training.md#first-completed-experiment) are recorded.
 
-A follow-up pilot gave the original 74,000-parameter policy and an eight-times-larger policy 32,768 PPO steps each. The larger network showed no benefit; on new seeds the original-size policy won 31.3% against Expert and 79.7% against Hard. [Model size results](docs/training.md#model-size-experiment) are recorded.
+A follow-up pilot gave the original policy (about 74,500 parameters) and an eight-times-larger policy 32,768 PPO steps each. The larger network produced no observed benefit. On new seeds, the original-size policy won 31.3% against Expert and 79.7% against Hard, compared with 21.1% and 63.3% for the 16,384-step checkpoint on the same seeds. [Model size results](docs/training.md#model-size-experiment) are recorded.
 
 ```text
 React menus and turn controls ── commands ──► SignalR /play

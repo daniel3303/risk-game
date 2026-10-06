@@ -8,7 +8,9 @@
     11063
   ],
   "totalEvaluationGames": 1024,
-  "trainingSeeds": 1,
+  "trainingRandomSeeds": [
+    123
+  ],
   "runs": {
     "run-1": {
       "details": "rl-results.json",
