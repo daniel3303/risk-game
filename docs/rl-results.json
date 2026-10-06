@@ -1,0 +1,5325 @@
+{
+  "schemaVersion": 1,
+  "implementationCommit": "e558de8",
+  "humanOpponentsEvaluated": false,
+  "lobbyIntegration": false,
+  "evaluationSeedRange": [
+    9000,
+    9063
+  ],
+  "developmentEvaluationSeedRange": [
+    8000,
+    8063
+  ],
+  "totalEvaluationGames": 512,
+  "training": {
+    "provenance": {
+      "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+      "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+      "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+      "packages": {
+        "torch": "2.14.1+cpu",
+        "sb3-contrib": "2.9.0",
+        "stable-baselines3": "2.9.0",
+        "gymnasium": "1.4.0",
+        "numpy": "2.5.3"
+      }
+    },
+    "datasetSha256": "7202cd3eda50b6b0d5e7fdec999c7e1660cda15be0aad914a55e467ef1ed5f15",
+    "dataset": {
+      "provenance": {
+        "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+        "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+        "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+        "packages": {
+          "torch": "2.14.1+cpu",
+          "sb3-contrib": "2.9.0",
+          "stable-baselines3": "2.9.0",
+          "gymnasium": "1.4.0",
+          "numpy": "2.5.3"
+        }
+      },
+      "training": {
+        "firstSeed": 4000,
+        "seeds": 48,
+        "games": 96,
+        "decisions": 11689,
+        "schema": {
+          "version": 2,
+          "stateSize": 481,
+          "candidateSize": 68,
+          "capacity": 128
+        },
+        "sha256": "2f076f4c03ff022f737dbb1c76b6eb00cd82e0819def3dfb1534b13b30df19c8",
+        "outcomes": [
+          {
+            "seed": 4000,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4000,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4001,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4001,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4002,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4002,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4003,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4003,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4004,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4004,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4005,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4005,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4006,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4006,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4007,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4007,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4008,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4008,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4009,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4009,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4010,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4010,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4011,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4011,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4012,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4012,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4013,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4013,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4014,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4014,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4015,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4015,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4016,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4016,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4017,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4017,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4018,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4018,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4019,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4019,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4020,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4020,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4021,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4021,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4022,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4022,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4023,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4023,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4024,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4024,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4025,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4025,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4026,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4026,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4027,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4027,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4028,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4028,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4029,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4029,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4030,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4030,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4031,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4031,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4032,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4032,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4033,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4033,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4034,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4034,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4035,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4035,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4036,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4036,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4037,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4037,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4038,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4038,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4039,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4039,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4040,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4040,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4041,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4041,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4042,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4042,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4043,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4043,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4044,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4044,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4045,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4045,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4046,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4046,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4047,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4047,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          }
+        ]
+      },
+      "validation": {
+        "firstSeed": 4500,
+        "seeds": 12,
+        "games": 24,
+        "decisions": 2905,
+        "schema": {
+          "version": 2,
+          "stateSize": 481,
+          "candidateSize": 68,
+          "capacity": 128
+        },
+        "sha256": "7231de1d544ebc802f5888ae35bbd81f90a90b7f08fc029da42e543a22107507",
+        "outcomes": [
+          {
+            "seed": 4500,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4500,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4501,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4501,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4502,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4502,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4503,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4503,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4504,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4504,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4505,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4505,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4506,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4506,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4507,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4507,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 1,
+            "finished": true
+          },
+          {
+            "seed": 4508,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4508,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4509,
+            "seat": 0,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4509,
+            "seat": 1,
+            "opponent": "normal",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4510,
+            "seat": 0,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4510,
+            "seat": 1,
+            "opponent": "hard",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4511,
+            "seat": 0,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          },
+          {
+            "seed": 4511,
+            "seat": 1,
+            "opponent": "expert",
+            "winner": 0,
+            "finished": true
+          }
+        ]
+      }
+    },
+    "randomSeed": 123,
+    "trainingSeeds": [
+      6000,
+      6999
+    ],
+    "requestedRlSteps": 16384,
+    "actualRlSteps": 16384,
+    "algorithm": "MaskablePPO",
+    "reward": "terminal win +1, loss -1, unfinished 0",
+    "ppo": {
+      "nSteps": 512,
+      "batchSize": 64,
+      "epochs": 4,
+      "learningRate": 0.0001,
+      "gamma": 0.995,
+      "entropyCoefficient": 0.005,
+      "targetKl": 0.02
+    },
+    "opponents": [
+      "normal",
+      "hard",
+      "expert",
+      "frozen imitation checkpoint"
+    ],
+    "elapsedSeconds": 529.1341071140196,
+    "untrainedValidation": {
+      "crossEntropy": 1.767407982936209,
+      "accuracy": 0.1838209982788296,
+      "decisions": 2905
+    },
+    "imitationValidation": {
+      "crossEntropy": 0.5249292186533523,
+      "accuracy": 0.8113597246127366,
+      "decisions": 2905
+    },
+    "imitationHistory": [
+      {
+        "epoch": 1,
+        "crossEntropy": 1.2915218701255917,
+        "accuracy": 0.7163511187607573,
+        "decisions": 2905
+      },
+      {
+        "epoch": 2,
+        "crossEntropy": 0.8502266941300358,
+        "accuracy": 0.7487091222030982,
+        "decisions": 2905
+      },
+      {
+        "epoch": 3,
+        "crossEntropy": 0.720211894417794,
+        "accuracy": 0.7583476764199656,
+        "decisions": 2905
+      },
+      {
+        "epoch": 4,
+        "crossEntropy": 0.6671316189527922,
+        "accuracy": 0.7666092943201377,
+        "decisions": 2905
+      },
+      {
+        "epoch": 5,
+        "crossEntropy": 0.6329651049615594,
+        "accuracy": 0.7755593803786575,
+        "decisions": 2905
+      },
+      {
+        "epoch": 6,
+        "crossEntropy": 0.609646886146007,
+        "accuracy": 0.7824440619621342,
+        "decisions": 2905
+      },
+      {
+        "epoch": 7,
+        "crossEntropy": 0.5924933822553047,
+        "accuracy": 0.7831325301204819,
+        "decisions": 2905
+      },
+      {
+        "epoch": 8,
+        "crossEntropy": 0.5799541742584176,
+        "accuracy": 0.7827882960413081,
+        "decisions": 2905
+      },
+      {
+        "epoch": 9,
+        "crossEntropy": 0.5697376139603055,
+        "accuracy": 0.7845094664371772,
+        "decisions": 2905
+      },
+      {
+        "epoch": 10,
+        "crossEntropy": 0.5621859236961798,
+        "accuracy": 0.7896729776247848,
+        "decisions": 2905
+      },
+      {
+        "epoch": 11,
+        "crossEntropy": 0.554269208267921,
+        "accuracy": 0.7944922547332186,
+        "decisions": 2905
+      },
+      {
+        "epoch": 12,
+        "crossEntropy": 0.5488615210002958,
+        "accuracy": 0.7941480206540448,
+        "decisions": 2905
+      },
+      {
+        "epoch": 13,
+        "crossEntropy": 0.5442195780716337,
+        "accuracy": 0.7955249569707401,
+        "decisions": 2905
+      },
+      {
+        "epoch": 14,
+        "crossEntropy": 0.5437647414084351,
+        "accuracy": 0.7924268502581756,
+        "decisions": 2905
+      },
+      {
+        "epoch": 15,
+        "crossEntropy": 0.5402910505022321,
+        "accuracy": 0.7996557659208262,
+        "decisions": 2905
+      },
+      {
+        "epoch": 16,
+        "crossEntropy": 0.5329556516033441,
+        "accuracy": 0.8034423407917384,
+        "decisions": 2905
+      },
+      {
+        "epoch": 17,
+        "crossEntropy": 0.5327821478786239,
+        "accuracy": 0.8048192771084337,
+        "decisions": 2905
+      },
+      {
+        "epoch": 18,
+        "crossEntropy": 0.5358058108725359,
+        "accuracy": 0.7969018932874354,
+        "decisions": 2905
+      },
+      {
+        "epoch": 19,
+        "crossEntropy": 0.5249292186533523,
+        "accuracy": 0.8113597246127366,
+        "decisions": 2905
+      },
+      {
+        "epoch": 20,
+        "crossEntropy": 0.5253834013684481,
+        "accuracy": 0.8024096385542169,
+        "decisions": 2905
+      }
+    ],
+    "checkpoints": {
+      "imitation": "9a3746848041ac2f87bdf5fa3796b27bb9337c817823f1b1d6d5a90fb29c4eae",
+      "rl": "9375508c5cb2e2799b5e45e70753ef7c68917d77394380676aa9b5849c241096"
+    }
+  },
+  "reports": [
+    {
+      "games": 128,
+      "wins": 81,
+      "losses": 47,
+      "unfinished": 0,
+      "winRate": 0.6328125,
+      "lower95": 0.46304981053242256,
+      "upper95": 0.8025751894675774,
+      "intervalMethod": "Hoeffding bound on seed blocks; unfinished games are non-wins",
+      "modelSha256": "9a3746848041ac2f87bdf5fa3796b27bb9337c817823f1b1d6d5a90fb29c4eae",
+      "provenance": {
+        "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+        "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+        "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+        "packages": {
+          "torch": "2.14.1+cpu",
+          "sb3-contrib": "2.9.0",
+          "stable-baselines3": "2.9.0",
+          "gymnasium": "1.4.0",
+          "numpy": "2.5.3"
+        }
+      },
+      "opponent": "hard",
+      "firstSeed": 9000,
+      "seeds": 64,
+      "players": 2,
+      "cards": "fixed",
+      "setup": "automatic",
+      "maxRounds": 100,
+      "maxActions": 5000,
+      "limitBoundary": "next learner decision",
+      "opponentSafetyActions": 1000,
+      "deterministicPolicy": true,
+      "humanOpponentsEvaluated": false,
+      "matches": [
+        {
+          "seed": 9000,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 158
+        },
+        {
+          "seed": 9000,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 203
+        },
+        {
+          "seed": 9001,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 414
+        },
+        {
+          "seed": 9001,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 347
+        },
+        {
+          "seed": 9002,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 415
+        },
+        {
+          "seed": 9002,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 233
+        },
+        {
+          "seed": 9003,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 111
+        },
+        {
+          "seed": 9003,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 595
+        },
+        {
+          "seed": 9004,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 399
+        },
+        {
+          "seed": 9004,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 522
+        },
+        {
+          "seed": 9005,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 178
+        },
+        {
+          "seed": 9005,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 281
+        },
+        {
+          "seed": 9006,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 185
+        },
+        {
+          "seed": 9006,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 25,
+          "actions": 717
+        },
+        {
+          "seed": 9007,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 194
+        },
+        {
+          "seed": 9007,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 429
+        },
+        {
+          "seed": 9008,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 215
+        },
+        {
+          "seed": 9008,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 369
+        },
+        {
+          "seed": 9009,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 263
+        },
+        {
+          "seed": 9009,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 245
+        },
+        {
+          "seed": 9010,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 227
+        },
+        {
+          "seed": 9010,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 317
+        },
+        {
+          "seed": 9011,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 381
+        },
+        {
+          "seed": 9011,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 320
+        },
+        {
+          "seed": 9012,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 197
+        },
+        {
+          "seed": 9012,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 170
+        },
+        {
+          "seed": 9013,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 353
+        },
+        {
+          "seed": 9013,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 184
+        },
+        {
+          "seed": 9014,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 150
+        },
+        {
+          "seed": 9014,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 344
+        },
+        {
+          "seed": 9015,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 250
+        },
+        {
+          "seed": 9015,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 185
+        },
+        {
+          "seed": 9016,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 150
+        },
+        {
+          "seed": 9016,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 662
+        },
+        {
+          "seed": 9017,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 251
+        },
+        {
+          "seed": 9017,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 29,
+          "actions": 841
+        },
+        {
+          "seed": 9018,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 304
+        },
+        {
+          "seed": 9018,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 428
+        },
+        {
+          "seed": 9019,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 219
+        },
+        {
+          "seed": 9019,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 293
+        },
+        {
+          "seed": 9020,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 236
+        },
+        {
+          "seed": 9020,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 399
+        },
+        {
+          "seed": 9021,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 397
+        },
+        {
+          "seed": 9021,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 242
+        },
+        {
+          "seed": 9022,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 369
+        },
+        {
+          "seed": 9022,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 304
+        },
+        {
+          "seed": 9023,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 293
+        },
+        {
+          "seed": 9023,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 357
+        },
+        {
+          "seed": 9024,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 279
+        },
+        {
+          "seed": 9024,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 345
+        },
+        {
+          "seed": 9025,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 201
+        },
+        {
+          "seed": 9025,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 4,
+          "actions": 123
+        },
+        {
+          "seed": 9026,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 120
+        },
+        {
+          "seed": 9026,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 277
+        },
+        {
+          "seed": 9027,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 180
+        },
+        {
+          "seed": 9027,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 308
+        },
+        {
+          "seed": 9028,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 318
+        },
+        {
+          "seed": 9028,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 326
+        },
+        {
+          "seed": 9029,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 281
+        },
+        {
+          "seed": 9029,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 21,
+          "actions": 540
+        },
+        {
+          "seed": 9030,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 269
+        },
+        {
+          "seed": 9030,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 563
+        },
+        {
+          "seed": 9031,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 240
+        },
+        {
+          "seed": 9031,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 356
+        },
+        {
+          "seed": 9032,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 317
+        },
+        {
+          "seed": 9032,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 422
+        },
+        {
+          "seed": 9033,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 114
+        },
+        {
+          "seed": 9033,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 241
+        },
+        {
+          "seed": 9034,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 148
+        },
+        {
+          "seed": 9034,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 217
+        },
+        {
+          "seed": 9035,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 202
+        },
+        {
+          "seed": 9035,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 383
+        },
+        {
+          "seed": 9036,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 345
+        },
+        {
+          "seed": 9036,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 490
+        },
+        {
+          "seed": 9037,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 256
+        },
+        {
+          "seed": 9037,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 180
+        },
+        {
+          "seed": 9038,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 130
+        },
+        {
+          "seed": 9038,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 394
+        },
+        {
+          "seed": 9039,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 125
+        },
+        {
+          "seed": 9039,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 361
+        },
+        {
+          "seed": 9040,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 153
+        },
+        {
+          "seed": 9040,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 187
+        },
+        {
+          "seed": 9041,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 399
+        },
+        {
+          "seed": 9041,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 389
+        },
+        {
+          "seed": 9042,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 270
+        },
+        {
+          "seed": 9042,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 194
+        },
+        {
+          "seed": 9043,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 180
+        },
+        {
+          "seed": 9043,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 497
+        },
+        {
+          "seed": 9044,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 349
+        },
+        {
+          "seed": 9044,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 288
+        },
+        {
+          "seed": 9045,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 296
+        },
+        {
+          "seed": 9045,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 233
+        },
+        {
+          "seed": 9046,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 308
+        },
+        {
+          "seed": 9046,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 190
+        },
+        {
+          "seed": 9047,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 140
+        },
+        {
+          "seed": 9047,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 231
+        },
+        {
+          "seed": 9048,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 508
+        },
+        {
+          "seed": 9048,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 393
+        },
+        {
+          "seed": 9049,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 248
+        },
+        {
+          "seed": 9049,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 371
+        },
+        {
+          "seed": 9050,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 430
+        },
+        {
+          "seed": 9050,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 211
+        },
+        {
+          "seed": 9051,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 185
+        },
+        {
+          "seed": 9051,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 182
+        },
+        {
+          "seed": 9052,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 153
+        },
+        {
+          "seed": 9052,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 365
+        },
+        {
+          "seed": 9053,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 215
+        },
+        {
+          "seed": 9053,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 335
+        },
+        {
+          "seed": 9054,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 230
+        },
+        {
+          "seed": 9054,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 216
+        },
+        {
+          "seed": 9055,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 184
+        },
+        {
+          "seed": 9055,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 213
+        },
+        {
+          "seed": 9056,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 238
+        },
+        {
+          "seed": 9056,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 364
+        },
+        {
+          "seed": 9057,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 589
+        },
+        {
+          "seed": 9057,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 315
+        },
+        {
+          "seed": 9058,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 123
+        },
+        {
+          "seed": 9058,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 229
+        },
+        {
+          "seed": 9059,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 226
+        },
+        {
+          "seed": 9059,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 154
+        },
+        {
+          "seed": 9060,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 369
+        },
+        {
+          "seed": 9060,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 201
+        },
+        {
+          "seed": 9061,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 166
+        },
+        {
+          "seed": 9061,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 311
+        },
+        {
+          "seed": 9062,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 336
+        },
+        {
+          "seed": 9062,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 444
+        },
+        {
+          "seed": 9063,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 191
+        },
+        {
+          "seed": 9063,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 449
+        }
+      ],
+      "checkpoint": "imitation"
+    },
+    {
+      "games": 128,
+      "wins": 23,
+      "losses": 105,
+      "unfinished": 0,
+      "winRate": 0.1796875,
+      "lower95": 0.009924810532422557,
+      "upper95": 0.34945018946757744,
+      "intervalMethod": "Hoeffding bound on seed blocks; unfinished games are non-wins",
+      "modelSha256": "9a3746848041ac2f87bdf5fa3796b27bb9337c817823f1b1d6d5a90fb29c4eae",
+      "provenance": {
+        "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+        "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+        "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+        "packages": {
+          "torch": "2.14.1+cpu",
+          "sb3-contrib": "2.9.0",
+          "stable-baselines3": "2.9.0",
+          "gymnasium": "1.4.0",
+          "numpy": "2.5.3"
+        }
+      },
+      "opponent": "expert",
+      "firstSeed": 9000,
+      "seeds": 64,
+      "players": 2,
+      "cards": "fixed",
+      "setup": "automatic",
+      "maxRounds": 100,
+      "maxActions": 5000,
+      "limitBoundary": "next learner decision",
+      "opponentSafetyActions": 1000,
+      "deterministicPolicy": true,
+      "humanOpponentsEvaluated": false,
+      "matches": [
+        {
+          "seed": 9000,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 379
+        },
+        {
+          "seed": 9000,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 164
+        },
+        {
+          "seed": 9001,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 370
+        },
+        {
+          "seed": 9001,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 94
+        },
+        {
+          "seed": 9002,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 153
+        },
+        {
+          "seed": 9002,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 239
+        },
+        {
+          "seed": 9003,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 168
+        },
+        {
+          "seed": 9003,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 172
+        },
+        {
+          "seed": 9004,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 290
+        },
+        {
+          "seed": 9004,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 163
+        },
+        {
+          "seed": 9005,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 236
+        },
+        {
+          "seed": 9005,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 118
+        },
+        {
+          "seed": 9006,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 252
+        },
+        {
+          "seed": 9006,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 82
+        },
+        {
+          "seed": 9007,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 220
+        },
+        {
+          "seed": 9007,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 372
+        },
+        {
+          "seed": 9008,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 184
+        },
+        {
+          "seed": 9008,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 136
+        },
+        {
+          "seed": 9009,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 270
+        },
+        {
+          "seed": 9009,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 215
+        },
+        {
+          "seed": 9010,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 378
+        },
+        {
+          "seed": 9010,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 156
+        },
+        {
+          "seed": 9011,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 276
+        },
+        {
+          "seed": 9011,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 126
+        },
+        {
+          "seed": 9012,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 239
+        },
+        {
+          "seed": 9012,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 239
+        },
+        {
+          "seed": 9013,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 513
+        },
+        {
+          "seed": 9013,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 187
+        },
+        {
+          "seed": 9014,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 343
+        },
+        {
+          "seed": 9014,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 238
+        },
+        {
+          "seed": 9015,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 255
+        },
+        {
+          "seed": 9015,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 153
+        },
+        {
+          "seed": 9016,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 208
+        },
+        {
+          "seed": 9016,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 199
+        },
+        {
+          "seed": 9017,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 202
+        },
+        {
+          "seed": 9017,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 180
+        },
+        {
+          "seed": 9018,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 351
+        },
+        {
+          "seed": 9018,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 199
+        },
+        {
+          "seed": 9019,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 247
+        },
+        {
+          "seed": 9019,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 175
+        },
+        {
+          "seed": 9020,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 223
+        },
+        {
+          "seed": 9020,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 113
+        },
+        {
+          "seed": 9021,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 217
+        },
+        {
+          "seed": 9021,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 429
+        },
+        {
+          "seed": 9022,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 211
+        },
+        {
+          "seed": 9022,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 315
+        },
+        {
+          "seed": 9023,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 239
+        },
+        {
+          "seed": 9023,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 130
+        },
+        {
+          "seed": 9024,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 278
+        },
+        {
+          "seed": 9024,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 326
+        },
+        {
+          "seed": 9025,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 544
+        },
+        {
+          "seed": 9025,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 227
+        },
+        {
+          "seed": 9026,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 215
+        },
+        {
+          "seed": 9026,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 161
+        },
+        {
+          "seed": 9027,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 231
+        },
+        {
+          "seed": 9027,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 193
+        },
+        {
+          "seed": 9028,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 151
+        },
+        {
+          "seed": 9028,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 263
+        },
+        {
+          "seed": 9029,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 588
+        },
+        {
+          "seed": 9029,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 182
+        },
+        {
+          "seed": 9030,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 529
+        },
+        {
+          "seed": 9030,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 376
+        },
+        {
+          "seed": 9031,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 271
+        },
+        {
+          "seed": 9031,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 172
+        },
+        {
+          "seed": 9032,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 249
+        },
+        {
+          "seed": 9032,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 216
+        },
+        {
+          "seed": 9033,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 159
+        },
+        {
+          "seed": 9033,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 84
+        },
+        {
+          "seed": 9034,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 277
+        },
+        {
+          "seed": 9034,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 197
+        },
+        {
+          "seed": 9035,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 238
+        },
+        {
+          "seed": 9035,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 198
+        },
+        {
+          "seed": 9036,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 4,
+          "actions": 107
+        },
+        {
+          "seed": 9036,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 208
+        },
+        {
+          "seed": 9037,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 390
+        },
+        {
+          "seed": 9037,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 218
+        },
+        {
+          "seed": 9038,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 171
+        },
+        {
+          "seed": 9038,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 112
+        },
+        {
+          "seed": 9039,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 306
+        },
+        {
+          "seed": 9039,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 114
+        },
+        {
+          "seed": 9040,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 193
+        },
+        {
+          "seed": 9040,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 3,
+          "actions": 83
+        },
+        {
+          "seed": 9041,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 147
+        },
+        {
+          "seed": 9041,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 189
+        },
+        {
+          "seed": 9042,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 581
+        },
+        {
+          "seed": 9042,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 169
+        },
+        {
+          "seed": 9043,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 349
+        },
+        {
+          "seed": 9043,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 315
+        },
+        {
+          "seed": 9044,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 255
+        },
+        {
+          "seed": 9044,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 200
+        },
+        {
+          "seed": 9045,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 143
+        },
+        {
+          "seed": 9045,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 211
+        },
+        {
+          "seed": 9046,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 270
+        },
+        {
+          "seed": 9046,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 148
+        },
+        {
+          "seed": 9047,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 396
+        },
+        {
+          "seed": 9047,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 162
+        },
+        {
+          "seed": 9048,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 314
+        },
+        {
+          "seed": 9048,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 99
+        },
+        {
+          "seed": 9049,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 168
+        },
+        {
+          "seed": 9049,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 162
+        },
+        {
+          "seed": 9050,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 281
+        },
+        {
+          "seed": 9050,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 359
+        },
+        {
+          "seed": 9051,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 211
+        },
+        {
+          "seed": 9051,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 383
+        },
+        {
+          "seed": 9052,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 163
+        },
+        {
+          "seed": 9052,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 194
+        },
+        {
+          "seed": 9053,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 265
+        },
+        {
+          "seed": 9053,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 169
+        },
+        {
+          "seed": 9054,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 260
+        },
+        {
+          "seed": 9054,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 285
+        },
+        {
+          "seed": 9055,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 370
+        },
+        {
+          "seed": 9055,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 105
+        },
+        {
+          "seed": 9056,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 270
+        },
+        {
+          "seed": 9056,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 172
+        },
+        {
+          "seed": 9057,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 133
+        },
+        {
+          "seed": 9057,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 399
+        },
+        {
+          "seed": 9058,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 400
+        },
+        {
+          "seed": 9058,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 91
+        },
+        {
+          "seed": 9059,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 318
+        },
+        {
+          "seed": 9059,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 127
+        },
+        {
+          "seed": 9060,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 300
+        },
+        {
+          "seed": 9060,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 239
+        },
+        {
+          "seed": 9061,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 285
+        },
+        {
+          "seed": 9061,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 209
+        },
+        {
+          "seed": 9062,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 235
+        },
+        {
+          "seed": 9062,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 343
+        },
+        {
+          "seed": 9063,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 247
+        },
+        {
+          "seed": 9063,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 147
+        }
+      ],
+      "checkpoint": "imitation"
+    },
+    {
+      "games": 128,
+      "wins": 79,
+      "losses": 49,
+      "unfinished": 0,
+      "winRate": 0.6171875,
+      "lower95": 0.44742481053242256,
+      "upper95": 0.7869501894675774,
+      "intervalMethod": "Hoeffding bound on seed blocks; unfinished games are non-wins",
+      "modelSha256": "9375508c5cb2e2799b5e45e70753ef7c68917d77394380676aa9b5849c241096",
+      "provenance": {
+        "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+        "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+        "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+        "packages": {
+          "torch": "2.14.1+cpu",
+          "sb3-contrib": "2.9.0",
+          "stable-baselines3": "2.9.0",
+          "gymnasium": "1.4.0",
+          "numpy": "2.5.3"
+        }
+      },
+      "opponent": "hard",
+      "firstSeed": 9000,
+      "seeds": 64,
+      "players": 2,
+      "cards": "fixed",
+      "setup": "automatic",
+      "maxRounds": 100,
+      "maxActions": 5000,
+      "limitBoundary": "next learner decision",
+      "opponentSafetyActions": 1000,
+      "deterministicPolicy": true,
+      "humanOpponentsEvaluated": false,
+      "matches": [
+        {
+          "seed": 9000,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 331
+        },
+        {
+          "seed": 9000,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 428
+        },
+        {
+          "seed": 9001,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 463
+        },
+        {
+          "seed": 9001,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 378
+        },
+        {
+          "seed": 9002,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 387
+        },
+        {
+          "seed": 9002,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 27,
+          "actions": 607
+        },
+        {
+          "seed": 9003,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 255
+        },
+        {
+          "seed": 9003,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 329
+        },
+        {
+          "seed": 9004,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 192
+        },
+        {
+          "seed": 9004,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 464
+        },
+        {
+          "seed": 9005,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 345
+        },
+        {
+          "seed": 9005,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 58,
+          "actions": 1500
+        },
+        {
+          "seed": 9006,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 25,
+          "actions": 611
+        },
+        {
+          "seed": 9006,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 27,
+          "actions": 651
+        },
+        {
+          "seed": 9007,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 338
+        },
+        {
+          "seed": 9007,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 318
+        },
+        {
+          "seed": 9008,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 153
+        },
+        {
+          "seed": 9008,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 363
+        },
+        {
+          "seed": 9009,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 372
+        },
+        {
+          "seed": 9009,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 327
+        },
+        {
+          "seed": 9010,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 25,
+          "actions": 512
+        },
+        {
+          "seed": 9010,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 438
+        },
+        {
+          "seed": 9011,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 412
+        },
+        {
+          "seed": 9011,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 227
+        },
+        {
+          "seed": 9012,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 482
+        },
+        {
+          "seed": 9012,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 207
+        },
+        {
+          "seed": 9013,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 27,
+          "actions": 706
+        },
+        {
+          "seed": 9013,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 299
+        },
+        {
+          "seed": 9014,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 24,
+          "actions": 519
+        },
+        {
+          "seed": 9014,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 295
+        },
+        {
+          "seed": 9015,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 245
+        },
+        {
+          "seed": 9015,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 122
+        },
+        {
+          "seed": 9016,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 208
+        },
+        {
+          "seed": 9016,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 163
+        },
+        {
+          "seed": 9017,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 27,
+          "actions": 634
+        },
+        {
+          "seed": 9017,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 307
+        },
+        {
+          "seed": 9018,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 26,
+          "actions": 541
+        },
+        {
+          "seed": 9018,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 358
+        },
+        {
+          "seed": 9019,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 205
+        },
+        {
+          "seed": 9019,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 291
+        },
+        {
+          "seed": 9020,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 158
+        },
+        {
+          "seed": 9020,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 27,
+          "actions": 657
+        },
+        {
+          "seed": 9021,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 22,
+          "actions": 532
+        },
+        {
+          "seed": 9021,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 487
+        },
+        {
+          "seed": 9022,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 491
+        },
+        {
+          "seed": 9022,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 424
+        },
+        {
+          "seed": 9023,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 345
+        },
+        {
+          "seed": 9023,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 364
+        },
+        {
+          "seed": 9024,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 34,
+          "actions": 818
+        },
+        {
+          "seed": 9024,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 190
+        },
+        {
+          "seed": 9025,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 277
+        },
+        {
+          "seed": 9025,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 224
+        },
+        {
+          "seed": 9026,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 28,
+          "actions": 664
+        },
+        {
+          "seed": 9026,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 32,
+          "actions": 1001
+        },
+        {
+          "seed": 9027,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 466
+        },
+        {
+          "seed": 9027,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 25,
+          "actions": 724
+        },
+        {
+          "seed": 9028,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 712
+        },
+        {
+          "seed": 9028,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 27,
+          "actions": 709
+        },
+        {
+          "seed": 9029,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 269
+        },
+        {
+          "seed": 9029,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 365
+        },
+        {
+          "seed": 9030,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 529
+        },
+        {
+          "seed": 9030,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 273
+        },
+        {
+          "seed": 9031,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 168
+        },
+        {
+          "seed": 9031,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 358
+        },
+        {
+          "seed": 9032,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 373
+        },
+        {
+          "seed": 9032,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 22,
+          "actions": 574
+        },
+        {
+          "seed": 9033,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 278
+        },
+        {
+          "seed": 9033,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 189
+        },
+        {
+          "seed": 9034,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 317
+        },
+        {
+          "seed": 9034,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 256
+        },
+        {
+          "seed": 9035,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 365
+        },
+        {
+          "seed": 9035,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 250
+        },
+        {
+          "seed": 9036,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 178
+        },
+        {
+          "seed": 9036,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 353
+        },
+        {
+          "seed": 9037,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 483
+        },
+        {
+          "seed": 9037,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 396
+        },
+        {
+          "seed": 9038,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 259
+        },
+        {
+          "seed": 9038,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 465
+        },
+        {
+          "seed": 9039,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 370
+        },
+        {
+          "seed": 9039,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 239
+        },
+        {
+          "seed": 9040,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 228
+        },
+        {
+          "seed": 9040,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 306
+        },
+        {
+          "seed": 9041,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 26,
+          "actions": 577
+        },
+        {
+          "seed": 9041,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 24,
+          "actions": 602
+        },
+        {
+          "seed": 9042,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 275
+        },
+        {
+          "seed": 9042,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 414
+        },
+        {
+          "seed": 9043,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 22,
+          "actions": 546
+        },
+        {
+          "seed": 9043,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 23,
+          "actions": 669
+        },
+        {
+          "seed": 9044,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 260
+        },
+        {
+          "seed": 9044,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 24,
+          "actions": 748
+        },
+        {
+          "seed": 9045,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 26,
+          "actions": 700
+        },
+        {
+          "seed": 9045,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 32,
+          "actions": 837
+        },
+        {
+          "seed": 9046,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 286
+        },
+        {
+          "seed": 9046,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 496
+        },
+        {
+          "seed": 9047,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 191
+        },
+        {
+          "seed": 9047,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 261
+        },
+        {
+          "seed": 9048,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 200
+        },
+        {
+          "seed": 9048,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 355
+        },
+        {
+          "seed": 9049,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 208
+        },
+        {
+          "seed": 9049,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 371
+        },
+        {
+          "seed": 9050,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 194
+        },
+        {
+          "seed": 9050,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 210
+        },
+        {
+          "seed": 9051,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 431
+        },
+        {
+          "seed": 9051,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 564
+        },
+        {
+          "seed": 9052,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 273
+        },
+        {
+          "seed": 9052,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 307
+        },
+        {
+          "seed": 9053,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 472
+        },
+        {
+          "seed": 9053,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 275
+        },
+        {
+          "seed": 9054,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 273
+        },
+        {
+          "seed": 9054,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 265
+        },
+        {
+          "seed": 9055,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 252
+        },
+        {
+          "seed": 9055,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 283
+        },
+        {
+          "seed": 9056,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 601
+        },
+        {
+          "seed": 9056,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 289
+        },
+        {
+          "seed": 9057,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 376
+        },
+        {
+          "seed": 9057,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 322
+        },
+        {
+          "seed": 9058,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 265
+        },
+        {
+          "seed": 9058,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 371
+        },
+        {
+          "seed": 9059,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 235
+        },
+        {
+          "seed": 9059,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 279
+        },
+        {
+          "seed": 9060,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 452
+        },
+        {
+          "seed": 9060,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 195
+        },
+        {
+          "seed": 9061,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 440
+        },
+        {
+          "seed": 9061,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 163
+        },
+        {
+          "seed": 9062,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 341
+        },
+        {
+          "seed": 9062,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 297
+        },
+        {
+          "seed": 9063,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 225
+        },
+        {
+          "seed": 9063,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 84,
+          "actions": 2001
+        }
+      ],
+      "checkpoint": "rl"
+    },
+    {
+      "games": 128,
+      "wins": 40,
+      "losses": 88,
+      "unfinished": 0,
+      "winRate": 0.3125,
+      "lower95": 0.14273731053242256,
+      "upper95": 0.48226268946757744,
+      "intervalMethod": "Hoeffding bound on seed blocks; unfinished games are non-wins",
+      "modelSha256": "9375508c5cb2e2799b5e45e70753ef7c68917d77394380676aa9b5849c241096",
+      "provenance": {
+        "pythonSourceSha256": "6edfddbba85dabc4b522cb1d555cb5de7289662417eb6dfb8b0309dc2a930675",
+        "rulesAssemblySha256": "d2d00b30c02c8abf4481b36696737941c971eb7c058bc9e11ccda853c6109824",
+        "bridgeAssemblySha256": "3af03eb90a0f9964ef4c1c0f763c777f6e97db7a7b41e91125b387f9ea7fa4bc",
+        "packages": {
+          "torch": "2.14.1+cpu",
+          "sb3-contrib": "2.9.0",
+          "stable-baselines3": "2.9.0",
+          "gymnasium": "1.4.0",
+          "numpy": "2.5.3"
+        }
+      },
+      "opponent": "expert",
+      "firstSeed": 9000,
+      "seeds": 64,
+      "players": 2,
+      "cards": "fixed",
+      "setup": "automatic",
+      "maxRounds": 100,
+      "maxActions": 5000,
+      "limitBoundary": "next learner decision",
+      "opponentSafetyActions": 1000,
+      "deterministicPolicy": true,
+      "humanOpponentsEvaluated": false,
+      "matches": [
+        {
+          "seed": 9000,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 219
+        },
+        {
+          "seed": 9000,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 230
+        },
+        {
+          "seed": 9001,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 259
+        },
+        {
+          "seed": 9001,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 139
+        },
+        {
+          "seed": 9002,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 232
+        },
+        {
+          "seed": 9002,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 172
+        },
+        {
+          "seed": 9003,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 253
+        },
+        {
+          "seed": 9003,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 220
+        },
+        {
+          "seed": 9004,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 340
+        },
+        {
+          "seed": 9004,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 208
+        },
+        {
+          "seed": 9005,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 26,
+          "actions": 734
+        },
+        {
+          "seed": 9005,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 311
+        },
+        {
+          "seed": 9006,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 366
+        },
+        {
+          "seed": 9006,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 92
+        },
+        {
+          "seed": 9007,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 390
+        },
+        {
+          "seed": 9007,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 478
+        },
+        {
+          "seed": 9008,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 262
+        },
+        {
+          "seed": 9008,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 119
+        },
+        {
+          "seed": 9009,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 483
+        },
+        {
+          "seed": 9009,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 133
+        },
+        {
+          "seed": 9010,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 242
+        },
+        {
+          "seed": 9010,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 236
+        },
+        {
+          "seed": 9011,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 540
+        },
+        {
+          "seed": 9011,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 171
+        },
+        {
+          "seed": 9012,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 215
+        },
+        {
+          "seed": 9012,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 292
+        },
+        {
+          "seed": 9013,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 22,
+          "actions": 624
+        },
+        {
+          "seed": 9013,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 253
+        },
+        {
+          "seed": 9014,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 232
+        },
+        {
+          "seed": 9014,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 146
+        },
+        {
+          "seed": 9015,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 344
+        },
+        {
+          "seed": 9015,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 157
+        },
+        {
+          "seed": 9016,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 469
+        },
+        {
+          "seed": 9016,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 169
+        },
+        {
+          "seed": 9017,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 296
+        },
+        {
+          "seed": 9017,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 273
+        },
+        {
+          "seed": 9018,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 467
+        },
+        {
+          "seed": 9018,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 231
+        },
+        {
+          "seed": 9019,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 287
+        },
+        {
+          "seed": 9019,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 233
+        },
+        {
+          "seed": 9020,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 428
+        },
+        {
+          "seed": 9020,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 111
+        },
+        {
+          "seed": 9021,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 396
+        },
+        {
+          "seed": 9021,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 415
+        },
+        {
+          "seed": 9022,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 124
+        },
+        {
+          "seed": 9022,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 563
+        },
+        {
+          "seed": 9023,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 303
+        },
+        {
+          "seed": 9023,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 178
+        },
+        {
+          "seed": 9024,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 20,
+          "actions": 491
+        },
+        {
+          "seed": 9024,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 173
+        },
+        {
+          "seed": 9025,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 304
+        },
+        {
+          "seed": 9025,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 319
+        },
+        {
+          "seed": 9026,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 355
+        },
+        {
+          "seed": 9026,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 199
+        },
+        {
+          "seed": 9027,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 325
+        },
+        {
+          "seed": 9027,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 182
+        },
+        {
+          "seed": 9028,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 127
+        },
+        {
+          "seed": 9028,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 220
+        },
+        {
+          "seed": 9029,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 206
+        },
+        {
+          "seed": 9029,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 317
+        },
+        {
+          "seed": 9030,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 394
+        },
+        {
+          "seed": 9030,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 143
+        },
+        {
+          "seed": 9031,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 223
+        },
+        {
+          "seed": 9031,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 300
+        },
+        {
+          "seed": 9032,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 190
+        },
+        {
+          "seed": 9032,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 21,
+          "actions": 472
+        },
+        {
+          "seed": 9033,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 289
+        },
+        {
+          "seed": 9033,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 168
+        },
+        {
+          "seed": 9034,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 222
+        },
+        {
+          "seed": 9034,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 150
+        },
+        {
+          "seed": 9035,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 201
+        },
+        {
+          "seed": 9035,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 245
+        },
+        {
+          "seed": 9036,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 167
+        },
+        {
+          "seed": 9036,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 327
+        },
+        {
+          "seed": 9037,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 401
+        },
+        {
+          "seed": 9037,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 332
+        },
+        {
+          "seed": 9038,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 228
+        },
+        {
+          "seed": 9038,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 154
+        },
+        {
+          "seed": 9039,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 383
+        },
+        {
+          "seed": 9039,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 114
+        },
+        {
+          "seed": 9040,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 162
+        },
+        {
+          "seed": 9040,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 3,
+          "actions": 83
+        },
+        {
+          "seed": 9041,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 390
+        },
+        {
+          "seed": 9041,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 196
+        },
+        {
+          "seed": 9042,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 340
+        },
+        {
+          "seed": 9042,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 174
+        },
+        {
+          "seed": 9043,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 396
+        },
+        {
+          "seed": 9043,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 171
+        },
+        {
+          "seed": 9044,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 355
+        },
+        {
+          "seed": 9044,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 162
+        },
+        {
+          "seed": 9045,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 239
+        },
+        {
+          "seed": 9045,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 229
+        },
+        {
+          "seed": 9046,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 527
+        },
+        {
+          "seed": 9046,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 119
+        },
+        {
+          "seed": 9047,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 282
+        },
+        {
+          "seed": 9047,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 149
+        },
+        {
+          "seed": 9048,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 227
+        },
+        {
+          "seed": 9048,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 99
+        },
+        {
+          "seed": 9049,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 277
+        },
+        {
+          "seed": 9049,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 230
+        },
+        {
+          "seed": 9050,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 163
+        },
+        {
+          "seed": 9050,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 327
+        },
+        {
+          "seed": 9051,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 273
+        },
+        {
+          "seed": 9051,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 220
+        },
+        {
+          "seed": 9052,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 173
+        },
+        {
+          "seed": 9052,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 161
+        },
+        {
+          "seed": 9053,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 284
+        },
+        {
+          "seed": 9053,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 176
+        },
+        {
+          "seed": 9054,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 162
+        },
+        {
+          "seed": 9054,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 161
+        },
+        {
+          "seed": 9055,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 404
+        },
+        {
+          "seed": 9055,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 112
+        },
+        {
+          "seed": 9056,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 22,
+          "actions": 550
+        },
+        {
+          "seed": 9056,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 148
+        },
+        {
+          "seed": 9057,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 304
+        },
+        {
+          "seed": 9057,
+          "seat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 414
+        },
+        {
+          "seed": 9058,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 331
+        },
+        {
+          "seed": 9058,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 106
+        },
+        {
+          "seed": 9059,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 320
+        },
+        {
+          "seed": 9059,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 171
+        },
+        {
+          "seed": 9060,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 408
+        },
+        {
+          "seed": 9060,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 298
+        },
+        {
+          "seed": 9061,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 393
+        },
+        {
+          "seed": 9061,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 206
+        },
+        {
+          "seed": 9062,
+          "seat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 309
+        },
+        {
+          "seed": 9062,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 228
+        },
+        {
+          "seed": 9063,
+          "seat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 325
+        },
+        {
+          "seed": 9063,
+          "seat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 230
+        }
+      ],
+      "checkpoint": "rl"
+    }
+  ]
+}

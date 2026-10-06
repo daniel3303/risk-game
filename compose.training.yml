@@ -1,0 +1,19 @@
+name: risk-training
+services:
+  trainer:
+    build:
+      context: .
+      dockerfile: training/Dockerfile
+    volumes:
+      - ./artifacts/rl:/artifacts
+    cpus: 3
+    mem_limit: 2g
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    command: ["--help"]

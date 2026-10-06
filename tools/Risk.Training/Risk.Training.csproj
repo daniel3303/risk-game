@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Risk.Sim/Risk.Sim.csproj" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="../../content/classic.json" LogicalName="Risk.Training.classic.json" /></ItemGroup>
+</Project>
