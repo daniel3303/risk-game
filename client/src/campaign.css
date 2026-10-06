@@ -226,3 +226,9 @@
  .orders-panel .troop-input > div { margin-top: 3px; padding: 1px; }
  .orders-panel .selected-territory { margin-bottom: 3px; padding-bottom: 3px; }
 }
+@media (min-width:1101px) {
+ .player-strip { --portrait-size: clamp(54px, 10.4vh, 112px); top: clamp(75px, 9.75vh, 105px); }
+ .player-chip { width: calc(var(--portrait-size) + 112px); height: var(--portrait-size); }
+ .player-chip .portrait-frame { width: var(--portrait-size); height: var(--portrait-size); }
+ .player-stats > span > strong { font-size: clamp(18px, 2.4vh, 26px); }
+}
