@@ -2,5 +2,6 @@
   <PropertyGroup><IsPackable>false</IsPackable><IsTestProject>true</IsTestProject><OutputType>Exe</OutputType><TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport></PropertyGroup>
   <ItemGroup><PackageReference Include="xunit.v3" /><PackageReference Include="xunit.analyzers" /><PackageReference Include="AwesomeAssertions" /></ItemGroup>
   <ItemGroup><ProjectReference Include="../../src/Risk.Sim/Risk.Sim.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../../tools/Risk.Arena/Risk.Arena.csproj" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="../../content/classic.json" Link="classic.json" /></ItemGroup>
 </Project>

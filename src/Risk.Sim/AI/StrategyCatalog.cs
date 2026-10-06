@@ -7,6 +7,7 @@ public static class StrategyCatalog
         BotDifficulty.Easy => new HeuristicStrategy(true),
         BotDifficulty.Normal => new HeuristicStrategy(false),
         BotDifficulty.Hard => new MonteCarloStrategy(new SeededRandom(seed)),
+        BotDifficulty.Expert => new ExpertStrategy(),
         _ => throw new RuleException("Choose a valid AI difficulty."),
     };
 }

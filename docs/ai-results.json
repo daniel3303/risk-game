@@ -1,0 +1,5630 @@
+{
+  "schemaVersion": 1,
+  "policy": "expert-turn-planner",
+  "policySourceSha256": "bd1a8ebd774e8cbe3663af539a3115154911df09f923abba54a883a51d056a63",
+  "humanOpponentsEvaluated": false,
+  "developmentSeeds": "0\u201311 and 1000\u20131063",
+  "evaluationSeeds": "2000 onward; exact ranges are in each report",
+  "totalGames": 688,
+  "reports": [
+    {
+      "options": {
+        "seeds": 64,
+        "firstSeed": 2000,
+        "players": 2,
+        "candidate": "expert",
+        "opponent": "hard",
+        "cards": "fixed",
+        "setup": "automatic",
+        "maxRounds": 200,
+        "maxActions": 20000
+      },
+      "games": 128,
+      "wins": 118,
+      "losses": 10,
+      "unfinished": 0,
+      "winRate": 0.921875,
+      "confidenceLower": 0.7521123105324226,
+      "confidenceUpper": 1.0,
+      "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+      "matches": [
+        {
+          "seed": 2000,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 155
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 207
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 101
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 316
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 158
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 185
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 161
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 132
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 121
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 244
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 88
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 211
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 224
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 236
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 151
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 172
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 145
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 248
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 117
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 459
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 113
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 174
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 189
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 318
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 86
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 467
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 208
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 166
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 74
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 141
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 118
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 24,
+          "actions": 718
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 162
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 409
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 143
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 196
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 119
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 144
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 196
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 227
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 165
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 190
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 222
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 198
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 147
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 236
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 137
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 334
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 138
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 302
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 264
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 265
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 230
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 24,
+          "actions": 685
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 137
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 229
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 86
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 192
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 435
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 180
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 139
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 138
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 119
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 132
+        },
+        {
+          "seed": 2032,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 136
+        },
+        {
+          "seed": 2032,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 280
+        },
+        {
+          "seed": 2033,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 143
+        },
+        {
+          "seed": 2033,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 176
+        },
+        {
+          "seed": 2034,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 154
+        },
+        {
+          "seed": 2034,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 106
+        },
+        {
+          "seed": 2035,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 144
+        },
+        {
+          "seed": 2035,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 155
+        },
+        {
+          "seed": 2036,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 134
+        },
+        {
+          "seed": 2036,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 316
+        },
+        {
+          "seed": 2037,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 92
+        },
+        {
+          "seed": 2037,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 169
+        },
+        {
+          "seed": 2038,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 148
+        },
+        {
+          "seed": 2038,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 193
+        },
+        {
+          "seed": 2039,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 132
+        },
+        {
+          "seed": 2039,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 196
+        },
+        {
+          "seed": 2040,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 135
+        },
+        {
+          "seed": 2040,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 225
+        },
+        {
+          "seed": 2041,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 201
+        },
+        {
+          "seed": 2041,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 366
+        },
+        {
+          "seed": 2042,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 102
+        },
+        {
+          "seed": 2042,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 224
+        },
+        {
+          "seed": 2043,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 159
+        },
+        {
+          "seed": 2043,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 222
+        },
+        {
+          "seed": 2044,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 145
+        },
+        {
+          "seed": 2044,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 257
+        },
+        {
+          "seed": 2045,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 128
+        },
+        {
+          "seed": 2045,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 172
+        },
+        {
+          "seed": 2046,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 172
+        },
+        {
+          "seed": 2046,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 186
+        },
+        {
+          "seed": 2047,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 168
+        },
+        {
+          "seed": 2047,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 248
+        },
+        {
+          "seed": 2048,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 156
+        },
+        {
+          "seed": 2048,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 236
+        },
+        {
+          "seed": 2049,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 117
+        },
+        {
+          "seed": 2049,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 245
+        },
+        {
+          "seed": 2050,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 149
+        },
+        {
+          "seed": 2050,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 213
+        },
+        {
+          "seed": 2051,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 185
+        },
+        {
+          "seed": 2051,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 143
+        },
+        {
+          "seed": 2052,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 96
+        },
+        {
+          "seed": 2052,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 265
+        },
+        {
+          "seed": 2053,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 158
+        },
+        {
+          "seed": 2053,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 284
+        },
+        {
+          "seed": 2054,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 166
+        },
+        {
+          "seed": 2054,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 236
+        },
+        {
+          "seed": 2055,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 163
+        },
+        {
+          "seed": 2055,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 232
+        },
+        {
+          "seed": 2056,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 165
+        },
+        {
+          "seed": 2056,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 254
+        },
+        {
+          "seed": 2057,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 166
+        },
+        {
+          "seed": 2057,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 278
+        },
+        {
+          "seed": 2058,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 146
+        },
+        {
+          "seed": 2058,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 187
+        },
+        {
+          "seed": 2059,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 131
+        },
+        {
+          "seed": 2059,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 413
+        },
+        {
+          "seed": 2060,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 142
+        },
+        {
+          "seed": 2060,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 287
+        },
+        {
+          "seed": 2061,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 122
+        },
+        {
+          "seed": 2061,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 262
+        },
+        {
+          "seed": 2062,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 180
+        },
+        {
+          "seed": 2062,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 313
+        },
+        {
+          "seed": 2063,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 88
+        },
+        {
+          "seed": 2063,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 15,
+          "actions": 396
+        }
+      ]
+    },
+    {
+      "options": {
+        "seeds": 32,
+        "firstSeed": 2000,
+        "players": 6,
+        "candidate": "expert",
+        "opponent": "hard",
+        "cards": "fixed",
+        "setup": "automatic",
+        "maxRounds": 200,
+        "maxActions": 20000
+      },
+      "games": 192,
+      "wins": 92,
+      "losses": 100,
+      "unfinished": 0,
+      "winRate": 0.4791666666666667,
+      "confidenceLower": 0.2390859688366865,
+      "confidenceUpper": 0.7192473644966468,
+      "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+      "matches": [
+        {
+          "seed": 2000,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 31,
+          "actions": 1565
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 20,
+          "actions": 903
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 2,
+          "winner": 5,
+          "finished": true,
+          "rounds": 60,
+          "actions": 2998
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1087
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 43,
+          "actions": 1984
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1070
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 928
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 896
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 559
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 19,
+          "actions": 990
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 525
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 17,
+          "actions": 862
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 837
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 851
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1271
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 13,
+          "actions": 696
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 4,
+          "winner": 0,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1113
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1403
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 0,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1315
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 540
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 12,
+          "actions": 530
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 15,
+          "actions": 713
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 27,
+          "actions": 1387
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 18,
+          "actions": 914
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 915
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 1,
+          "winner": 2,
+          "finished": true,
+          "rounds": 17,
+          "actions": 853
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1235
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1483
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 18,
+          "actions": 953
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1160
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 907
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 1,
+          "winner": 3,
+          "finished": true,
+          "rounds": 32,
+          "actions": 1613
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 692
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 3,
+          "winner": 1,
+          "finished": true,
+          "rounds": 49,
+          "actions": 2171
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 14,
+          "actions": 719
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 5,
+          "winner": 0,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1024
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 943
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1218
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 2,
+          "winner": 3,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1401
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 17,
+          "actions": 926
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 42,
+          "actions": 1979
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 19,
+          "actions": 920
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1028
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 536
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 726
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1110
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 19,
+          "actions": 993
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1113
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1053
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 1,
+          "winner": 4,
+          "finished": true,
+          "rounds": 103,
+          "actions": 3483
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1389
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 12,
+          "actions": 627
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 15,
+          "actions": 854
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 5,
+          "winner": 4,
+          "finished": true,
+          "rounds": 24,
+          "actions": 987
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 17,
+          "actions": 746
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1546
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1091
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1148
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 4,
+          "winner": 5,
+          "finished": true,
+          "rounds": 38,
+          "actions": 1685
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 12,
+          "actions": 755
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1243
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1156
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 2,
+          "winner": 5,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1032
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1302
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1060
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 10,
+          "actions": 653
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 0,
+          "winner": 5,
+          "finished": true,
+          "rounds": 27,
+          "actions": 1493
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 525
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 584
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 14,
+          "actions": 648
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1502
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 5,
+          "winner": 2,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1173
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 0,
+          "winner": 5,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1593
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 40,
+          "actions": 1884
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 2,
+          "winner": 5,
+          "finished": true,
+          "rounds": 29,
+          "actions": 1345
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1556
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 11,
+          "actions": 493
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 13,
+          "actions": 728
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 44,
+          "actions": 2051
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 709
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1081
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 19,
+          "actions": 948
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1358
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 5,
+          "winner": 4,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1166
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1101
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1086
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 2,
+          "winner": 3,
+          "finished": true,
+          "rounds": 17,
+          "actions": 793
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1155
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1135
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 5,
+          "winner": 3,
+          "finished": true,
+          "rounds": 22,
+          "actions": 947
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 867
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1517
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1273
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 29,
+          "actions": 1508
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 803
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1048
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 22,
+          "actions": 979
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 787
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 2,
+          "winner": 4,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1048
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 18,
+          "actions": 977
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 11,
+          "actions": 622
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 13,
+          "actions": 716
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 644
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1174
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 2,
+          "winner": 4,
+          "finished": true,
+          "rounds": 26,
+          "actions": 973
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 13,
+          "actions": 746
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1204
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 5,
+          "winner": 3,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1305
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 403
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1231
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 2,
+          "winner": 3,
+          "finished": true,
+          "rounds": 31,
+          "actions": 1609
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 59,
+          "actions": 2387
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 16,
+          "actions": 920
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1136
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 580
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 29,
+          "actions": 1460
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 2,
+          "winner": 5,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1233
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1385
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 20,
+          "actions": 922
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1160
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 752
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 1,
+          "winner": 4,
+          "finished": true,
+          "rounds": 27,
+          "actions": 1308
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1208
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1055
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 4,
+          "winner": 0,
+          "finished": true,
+          "rounds": 32,
+          "actions": 1280
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1010
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 0,
+          "winner": 4,
+          "finished": true,
+          "rounds": 51,
+          "actions": 1990
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 1,
+          "winner": 3,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1191
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 519
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 67,
+          "actions": 2947
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 4,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1154
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 17,
+          "actions": 951
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 0,
+          "winner": 5,
+          "finished": true,
+          "rounds": 16,
+          "actions": 784
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 664
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 2,
+          "winner": 5,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1764
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1534
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 32,
+          "actions": 1513
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1214
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 720
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 874
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1319
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1269
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 18,
+          "actions": 819
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 5,
+          "winner": 2,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1780
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 36,
+          "actions": 1689
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 654
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 554
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1006
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 581
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 5,
+          "winner": 4,
+          "finished": true,
+          "rounds": 15,
+          "actions": 711
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1312
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 874
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 2,
+          "winner": 4,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1224
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 54,
+          "actions": 2858
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 14,
+          "actions": 786
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1384
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1301
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1213
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 18,
+          "actions": 917
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1064
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 12,
+          "actions": 657
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 5,
+          "winner": 2,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1193
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 0,
+          "winner": 5,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1061
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1018
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 799
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1431
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 4,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 529
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 12,
+          "actions": 649
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 965
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 41,
+          "actions": 2100
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 2,
+          "winner": 3,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1223
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 3,
+          "winner": 4,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1074
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 16,
+          "actions": 849
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 21,
+          "actions": 960
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 842
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 1,
+          "winner": 3,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1331
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 33,
+          "actions": 1622
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 20,
+          "actions": 955
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 46,
+          "actions": 1903
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 5,
+          "winner": 3,
+          "finished": true,
+          "rounds": 21,
+          "actions": 947
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 674
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 88,
+          "actions": 3787
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1043
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 3,
+          "winner": 4,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1068
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 34,
+          "actions": 1725
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 43,
+          "actions": 2199
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 45,
+          "actions": 2142
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1118
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 2,
+          "winner": 4,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1581
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 3,
+          "winner": 4,
+          "finished": true,
+          "rounds": 15,
+          "actions": 790
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1050
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 16,
+          "actions": 945
+        }
+      ]
+    },
+    {
+      "options": {
+        "seeds": 16,
+        "firstSeed": 2000,
+        "players": 3,
+        "candidate": "expert",
+        "opponent": "hard",
+        "cards": "fixed",
+        "setup": "manual",
+        "maxRounds": 200,
+        "maxActions": 20000
+      },
+      "games": 48,
+      "wins": 31,
+      "losses": 17,
+      "unfinished": 0,
+      "winRate": 0.6458333333333334,
+      "confidenceLower": 0.3063079543981785,
+      "confidenceUpper": 0.9853587122684883,
+      "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+      "matches": [
+        {
+          "seed": 2000,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 340
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 529
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 523
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 411
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 371
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 9,
+          "actions": 472
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 560
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 378
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 529
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 421
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 399
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 20,
+          "actions": 935
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 258
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 446
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 34,
+          "actions": 1455
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 426
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 1,
+          "winner": 2,
+          "finished": true,
+          "rounds": 36,
+          "actions": 1433
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 10,
+          "actions": 524
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 345
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 571
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 7,
+          "actions": 372
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 293
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 616
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 536
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 354
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 645
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 10,
+          "actions": 508
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 483
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 861
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 802
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 285
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 724
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 435
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 367
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 550
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 563
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 300
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 353
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 23,
+          "actions": 841
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 292
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 388
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 793
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 300
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 551
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 568
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 247
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 322
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 755
+        }
+      ]
+    },
+    {
+      "options": {
+        "seeds": 64,
+        "firstSeed": 2000,
+        "players": 2,
+        "candidate": "expert",
+        "opponent": "hard",
+        "cards": "progressive",
+        "setup": "automatic",
+        "maxRounds": 200,
+        "maxActions": 20000
+      },
+      "games": 128,
+      "wins": 119,
+      "losses": 9,
+      "unfinished": 0,
+      "winRate": 0.9296875,
+      "confidenceLower": 0.7599248105324226,
+      "confidenceUpper": 1.0,
+      "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+      "matches": [
+        {
+          "seed": 2000,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 137
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 257
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 101
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 244
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 150
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 158
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 134
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 129
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 125
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 231
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 88
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 25,
+          "actions": 870
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 272
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 542
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 151
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 115
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 130
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 236
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 106
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 270
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 120
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 129
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 185
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 207
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 86
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 326
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 213
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 156
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 4,
+          "actions": 74
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 168
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 118
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 264
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 164
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 310
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 139
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 163
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 119
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 140
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 611
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 159
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 135
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 170
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 184
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 174
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 147
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 241
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 141
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 641
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 122
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 313
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 346
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 275
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 174
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 275
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 136
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 192
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 86
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 222
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 355
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 164
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 139
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 162
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 144
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 5,
+          "actions": 136
+        },
+        {
+          "seed": 2032,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 143
+        },
+        {
+          "seed": 2032,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 231
+        },
+        {
+          "seed": 2033,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 143
+        },
+        {
+          "seed": 2033,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 188
+        },
+        {
+          "seed": 2034,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 154
+        },
+        {
+          "seed": 2034,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 152
+        },
+        {
+          "seed": 2035,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 135
+        },
+        {
+          "seed": 2035,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 155
+        },
+        {
+          "seed": 2036,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 153
+        },
+        {
+          "seed": 2036,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 378
+        },
+        {
+          "seed": 2037,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 92
+        },
+        {
+          "seed": 2037,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 184
+        },
+        {
+          "seed": 2038,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 172
+        },
+        {
+          "seed": 2038,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 159
+        },
+        {
+          "seed": 2039,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 132
+        },
+        {
+          "seed": 2039,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 177
+        },
+        {
+          "seed": 2040,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 117
+        },
+        {
+          "seed": 2040,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 201
+        },
+        {
+          "seed": 2041,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 126
+        },
+        {
+          "seed": 2041,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 327
+        },
+        {
+          "seed": 2042,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 102
+        },
+        {
+          "seed": 2042,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 214
+        },
+        {
+          "seed": 2043,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 158
+        },
+        {
+          "seed": 2043,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 209
+        },
+        {
+          "seed": 2044,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 137
+        },
+        {
+          "seed": 2044,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 210
+        },
+        {
+          "seed": 2045,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 128
+        },
+        {
+          "seed": 2045,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 173
+        },
+        {
+          "seed": 2046,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 123
+        },
+        {
+          "seed": 2046,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 163
+        },
+        {
+          "seed": 2047,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 246
+        },
+        {
+          "seed": 2047,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 220
+        },
+        {
+          "seed": 2048,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 184
+        },
+        {
+          "seed": 2048,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 234
+        },
+        {
+          "seed": 2049,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 125
+        },
+        {
+          "seed": 2049,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 6,
+          "actions": 155
+        },
+        {
+          "seed": 2050,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 115
+        },
+        {
+          "seed": 2050,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 194
+        },
+        {
+          "seed": 2051,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 168
+        },
+        {
+          "seed": 2051,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 4,
+          "actions": 109
+        },
+        {
+          "seed": 2052,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 5,
+          "actions": 96
+        },
+        {
+          "seed": 2052,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 225
+        },
+        {
+          "seed": 2053,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 158
+        },
+        {
+          "seed": 2053,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 239
+        },
+        {
+          "seed": 2054,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 157
+        },
+        {
+          "seed": 2054,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 7,
+          "actions": 200
+        },
+        {
+          "seed": 2055,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 134
+        },
+        {
+          "seed": 2055,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 223
+        },
+        {
+          "seed": 2056,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 199
+        },
+        {
+          "seed": 2056,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 236
+        },
+        {
+          "seed": 2057,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 140
+        },
+        {
+          "seed": 2057,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 24,
+          "actions": 740
+        },
+        {
+          "seed": 2058,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 138
+        },
+        {
+          "seed": 2058,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 182
+        },
+        {
+          "seed": 2059,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 131
+        },
+        {
+          "seed": 2059,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 249
+        },
+        {
+          "seed": 2060,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 142
+        },
+        {
+          "seed": 2060,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 195
+        },
+        {
+          "seed": 2061,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 6,
+          "actions": 145
+        },
+        {
+          "seed": 2061,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 301
+        },
+        {
+          "seed": 2062,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 151
+        },
+        {
+          "seed": 2062,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 345
+        },
+        {
+          "seed": 2063,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 7,
+          "actions": 130
+        },
+        {
+          "seed": 2063,
+          "candidateSeat": 1,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 431
+        }
+      ]
+    },
+    {
+      "options": {
+        "seeds": 32,
+        "firstSeed": 2000,
+        "players": 6,
+        "candidate": "expert",
+        "opponent": "hard",
+        "cards": "progressive",
+        "setup": "automatic",
+        "maxRounds": 200,
+        "maxActions": 20000
+      },
+      "games": 192,
+      "wins": 137,
+      "losses": 48,
+      "unfinished": 7,
+      "winRate": 0.7135416666666666,
+      "confidenceLower": 0.4734609688366864,
+      "confidenceUpper": 0.9536223644966468,
+      "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+      "matches": [
+        {
+          "seed": 2000,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1239
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1325
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 36,
+          "actions": 1223
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 9,
+          "actions": 536
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 9,
+          "actions": 588
+        },
+        {
+          "seed": 2000,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1096
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 12,
+          "actions": 759
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 917
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 13,
+          "actions": 841
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 15,
+          "actions": 1002
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 8,
+          "actions": 463
+        },
+        {
+          "seed": 2001,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 9,
+          "actions": 523
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 10,
+          "actions": 645
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 883
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 17,
+          "actions": 1032
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 13,
+          "actions": 930
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 14,
+          "actions": 841
+        },
+        {
+          "seed": 2002,
+          "candidateSeat": 5,
+          "winner": 3,
+          "finished": true,
+          "rounds": 81,
+          "actions": 3388
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 1065
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 821
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 15,
+          "actions": 1017
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 768
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 4,
+          "winner": 3,
+          "finished": true,
+          "rounds": 16,
+          "actions": 763
+        },
+        {
+          "seed": 2003,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1149
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 1122
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 16,
+          "actions": 996
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 969
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 18,
+          "actions": 921
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 11,
+          "actions": 686
+        },
+        {
+          "seed": 2004,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1615
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 0,
+          "winner": 4,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1112
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 14,
+          "actions": 796
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 37,
+          "actions": 1627
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 11,
+          "actions": 650
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 12,
+          "actions": 678
+        },
+        {
+          "seed": 2005,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 13,
+          "actions": 795
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 9,
+          "actions": 529
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 584
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 2,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 8255
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 11,
+          "actions": 648
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 4,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 5048
+        },
+        {
+          "seed": 2006,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 13,
+          "actions": 681
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 20,
+          "actions": 989
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 1,
+          "winner": 4,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1151
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 8,
+          "actions": 467
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 43,
+          "actions": 2267
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1881
+        },
+        {
+          "seed": 2007,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 25,
+          "actions": 1567
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1058
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 10,
+          "actions": 561
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 2,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 5196
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 14,
+          "actions": 842
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 14,
+          "actions": 842
+        },
+        {
+          "seed": 2008,
+          "candidateSeat": 5,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 6124
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 0,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 7032
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 13,
+          "actions": 869
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 9,
+          "actions": 569
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 10,
+          "actions": 598
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 4,
+          "winner": 5,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1150
+        },
+        {
+          "seed": 2009,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 8,
+          "actions": 492
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 580
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1029
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 2,
+          "winner": 3,
+          "finished": true,
+          "rounds": 20,
+          "actions": 957
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 43,
+          "actions": 2090
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1380
+        },
+        {
+          "seed": 2010,
+          "candidateSeat": 5,
+          "winner": 4,
+          "finished": true,
+          "rounds": 17,
+          "actions": 880
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 34,
+          "actions": 1674
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1252
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 10,
+          "actions": 686
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 8,
+          "actions": 424
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 947
+        },
+        {
+          "seed": 2011,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 11,
+          "actions": 684
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 625
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 15,
+          "actions": 913
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 657
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 12,
+          "actions": 662
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 13,
+          "actions": 806
+        },
+        {
+          "seed": 2012,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 10,
+          "actions": 677
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 16,
+          "actions": 1114
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 28,
+          "actions": 1510
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 2,
+          "winner": 4,
+          "finished": true,
+          "rounds": 59,
+          "actions": 2945
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 17,
+          "actions": 1116
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 537
+        },
+        {
+          "seed": 2013,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 23,
+          "actions": 1374
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 16,
+          "actions": 957
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 57,
+          "actions": 2538
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 1010
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 10,
+          "actions": 666
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 13,
+          "actions": 780
+        },
+        {
+          "seed": 2014,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1041
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 0,
+          "winner": 2,
+          "finished": true,
+          "rounds": 24,
+          "actions": 1700
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 722
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1153
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 10,
+          "actions": 520
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 620
+        },
+        {
+          "seed": 2015,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 12,
+          "actions": 653
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 43,
+          "actions": 2286
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 524
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 656
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 9,
+          "actions": 537
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 558
+        },
+        {
+          "seed": 2016,
+          "candidateSeat": 5,
+          "winner": 1,
+          "finished": true,
+          "rounds": 20,
+          "actions": 992
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 13,
+          "actions": 810
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 1,
+          "winner": 3,
+          "finished": true,
+          "rounds": 26,
+          "actions": 1489
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 14,
+          "actions": 783
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 9,
+          "actions": 594
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 15,
+          "actions": 858
+        },
+        {
+          "seed": 2017,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1171
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 865
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 635
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 13,
+          "actions": 753
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 40,
+          "actions": 2127
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 13,
+          "actions": 725
+        },
+        {
+          "seed": 2018,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 13,
+          "actions": 960
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1130
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 1,
+          "winner": 5,
+          "finished": true,
+          "rounds": 30,
+          "actions": 1368
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 14,
+          "actions": 830
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 71,
+          "actions": 3119
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 11,
+          "actions": 797
+        },
+        {
+          "seed": 2019,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 15,
+          "actions": 835
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1257
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 1,
+          "winner": 2,
+          "finished": true,
+          "rounds": 100,
+          "actions": 4637
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 16,
+          "actions": 878
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 3,
+          "winner": 4,
+          "finished": true,
+          "rounds": 26,
+          "actions": 942
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 4,
+          "winner": 2,
+          "finished": true,
+          "rounds": 134,
+          "actions": 4391
+        },
+        {
+          "seed": 2020,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 14,
+          "actions": 859
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 8,
+          "actions": 428
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 1,
+          "winner": 4,
+          "finished": true,
+          "rounds": 49,
+          "actions": 2200
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 10,
+          "actions": 563
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 3,
+          "winner": 5,
+          "finished": true,
+          "rounds": 74,
+          "actions": 2338
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 27,
+          "actions": 1260
+        },
+        {
+          "seed": 2021,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 12,
+          "actions": 822
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 17,
+          "actions": 1152
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 763
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 655
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 3,
+          "winner": 2,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1219
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 4,
+          "winner": 1,
+          "finished": true,
+          "rounds": 34,
+          "actions": 1458
+        },
+        {
+          "seed": 2022,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 9,
+          "actions": 481
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 0,
+          "winner": 1,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1593
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 17,
+          "actions": 926
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 2,
+          "winner": 0,
+          "finished": true,
+          "rounds": 156,
+          "actions": 5232
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 19,
+          "actions": 1141
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 15,
+          "actions": 995
+        },
+        {
+          "seed": 2023,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 10,
+          "actions": 508
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 808
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 8,
+          "actions": 449
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 9,
+          "actions": 488
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 16,
+          "actions": 1075
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 8,
+          "actions": 500
+        },
+        {
+          "seed": 2024,
+          "candidateSeat": 5,
+          "winner": 4,
+          "finished": true,
+          "rounds": 56,
+          "actions": 2190
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 52,
+          "actions": 3016
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 9,
+          "actions": 546
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 8,
+          "actions": 455
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 10,
+          "actions": 665
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 9,
+          "actions": 512
+        },
+        {
+          "seed": 2025,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 17,
+          "actions": 1197
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 619
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 1,
+          "winner": 2,
+          "finished": true,
+          "rounds": 112,
+          "actions": 4539
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 14,
+          "actions": 930
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 3,
+          "winner": 0,
+          "finished": true,
+          "rounds": 47,
+          "actions": 1912
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 12,
+          "actions": 742
+        },
+        {
+          "seed": 2026,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 22,
+          "actions": 1285
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 0,
+          "winner": 4,
+          "finished": true,
+          "rounds": 39,
+          "actions": 1882
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 11,
+          "actions": 634
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 2,
+          "winner": 1,
+          "finished": true,
+          "rounds": 38,
+          "actions": 1954
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 15,
+          "actions": 857
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 12,
+          "actions": 737
+        },
+        {
+          "seed": 2027,
+          "candidateSeat": 5,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 5348
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 848
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 1,
+          "winner": 2,
+          "finished": true,
+          "rounds": 35,
+          "actions": 1808
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 15,
+          "actions": 1043
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 20,
+          "actions": 1157
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 10,
+          "actions": 619
+        },
+        {
+          "seed": 2028,
+          "candidateSeat": 5,
+          "winner": 2,
+          "finished": true,
+          "rounds": 39,
+          "actions": 2087
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 0,
+          "winner": 3,
+          "finished": true,
+          "rounds": 130,
+          "actions": 4483
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 1,
+          "winner": 3,
+          "finished": true,
+          "rounds": 75,
+          "actions": 2232
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 9,
+          "actions": 538
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 7,
+          "actions": 369
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 4,
+          "winner": 0,
+          "finished": true,
+          "rounds": 122,
+          "actions": 4966
+        },
+        {
+          "seed": 2029,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1069
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 14,
+          "actions": 858
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 1,
+          "winner": 1,
+          "finished": true,
+          "rounds": 12,
+          "actions": 682
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 15,
+          "actions": 1128
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 3,
+          "winner": 3,
+          "finished": true,
+          "rounds": 10,
+          "actions": 687
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 37,
+          "actions": 2585
+        },
+        {
+          "seed": 2030,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 12,
+          "actions": 827
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 0,
+          "winner": 0,
+          "finished": true,
+          "rounds": 11,
+          "actions": 550
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 1,
+          "winner": -1,
+          "finished": false,
+          "rounds": 201,
+          "actions": 6330
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 2,
+          "winner": 2,
+          "finished": true,
+          "rounds": 11,
+          "actions": 661
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 3,
+          "winner": 4,
+          "finished": true,
+          "rounds": 18,
+          "actions": 951
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 4,
+          "winner": 4,
+          "finished": true,
+          "rounds": 21,
+          "actions": 1468
+        },
+        {
+          "seed": 2031,
+          "candidateSeat": 5,
+          "winner": 5,
+          "finished": true,
+          "rounds": 18,
+          "actions": 1123
+        }
+      ]
+    }
+  ]
+}

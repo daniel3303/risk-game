@@ -15,7 +15,7 @@ public sealed class RoomCommands(RoomRegistry registry, WorldMap map)
         {
             RequireHost(room, connection);
             RequireLobby(room);
-            if (!Enum.IsDefined(difficulty)) throw new HubException("Choose Easy, Normal, or Hard.");
+            if (!Enum.IsDefined(difficulty)) throw new HubException("Choose Easy, Normal, Hard, or Expert.");
             var id = Array.FindIndex(room.Seats, s => s == null);
             if (id < 0) throw new HubException("The table is full.");
             room.Seats[id] = new(id, $"{difficulty} AI {id + 1}") { IsBot = true, Difficulty = difficulty,

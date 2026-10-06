@@ -26,7 +26,7 @@ public sealed class SpectatorRoomTests(GameFactory factory) : IClassFixture<Game
         welcome.Snapshot.Host.Should().Be(welcome.Seat);
         Func<Task> empty = () => host.InvokeAsync("Start", cancellation);
         await empty.Should().ThrowAsync<HubException>().WithMessage("*at least two AI*");
-        for (var i = 0; i < 6; i++) await host.InvokeAsync("AddBot", (BotDifficulty)(i % 3), cancellation);
+        for (var i = 0; i < 6; i++) await host.InvokeAsync("AddBot", (BotDifficulty)(i % 4), cancellation);
         var room = factory.Services.GetRequiredService<RoomRegistry>().For(host.ConnectionId);
         room.Occupied.Should().HaveCount(6).And.OnlyContain(s => s.IsBot);
         room.Occupied.Select(s => s.Id).Should().Equal(0, 1, 2, 3, 4, 5);
