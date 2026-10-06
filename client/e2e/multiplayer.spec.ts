@@ -151,6 +151,9 @@ test('landscape phone keeps six commanders and turn controls within the screen',
       })).toBe(true);
       await control.click();
     }
+    const cards = (await page.getByRole('button', { name: 'Your cards', exact: true }).boundingBox())!;
+    const commander = (await page.locator('.medallion-portrait').boundingBox())!;
+    expect(cards.x + cards.width).toBeLessThanOrEqual(commander.x);
   };
   await checkCameraControls();
   await page.getByRole('button', { name: 'Territory list' }).click();

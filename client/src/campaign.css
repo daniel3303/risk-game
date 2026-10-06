@@ -155,7 +155,7 @@
  .player-stats svg { width: 14px; height: 14px; }
  .portrait-bot { width: 18px; height: 18px; bottom: -4px; border-width: 1px; }
  .portrait-bot svg { width: 12px; height: 12px; }
- .campaign-panel { bottom: 8px; left: calc(50% - 54px); width: 360px; max-width: calc(100% - 230px); }
+ .campaign-panel { bottom: 8px; width: 360px; max-width: calc(100% - 354px); }
  .turn-medallion { height: 70px; grid-template-columns: 64px minmax(0, 1fr) 64px; }
  .medallion-portrait { width: 60px; height: 60px; border-width: 3px; }
  .army-reserve { width: 58px; height: 58px; border-width: 3px; }
