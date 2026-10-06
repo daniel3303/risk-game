@@ -90,6 +90,32 @@ docker compose -f compose.training.yml down --rmi local
 - This single training seed is a pilot comparison; multiple independent training seeds are needed before a reliable model-size conclusion or lobby promotion.
 - The original evaluation seeds 9000–9063 are now development evidence, rather than an untouched test bank for later tuning.
 
+### Results
+
+- The 256×2 policy has 593,666 parameters; the 64×1 policy has 74,498.
+- Imitation validation accuracy: 81.5% for 256×2 and 81.1% for 64×1; excluding forced moves, 79.4% and 79.0%.
+- Training accuracy is 82.1% for both, so the larger network did not fit the Expert demonstrations better.
+- Training took 942 seconds for 256×2 and 390 seconds for 64×1 in the same CPU-only container.
+
+| Policy | Checkpoint | Opponent | Wins / games | Win rate | Unfinished |
+| --- | --- | --- | ---: | ---: | ---: |
+| 64×1, 16,384 steps (first experiment) | PPO | Expert | 27 / 128 | 21.1% | 0 |
+| 64×1, 32,768 steps | PPO | Expert | 40 / 128 | 31.3% | 0 |
+| 256×2, 32,768 steps | PPO | Expert | 38 / 128 | 29.7% | 0 |
+| 64×1, 16,384 steps (first experiment) | PPO | Hard | 81 / 128 | 63.3% | 0 |
+| 64×1, 32,768 steps | PPO | Hard | 102 / 128 | 79.7% | 0 |
+| 256×2, 32,768 steps | PPO | Hard | 91 / 128 | 71.1% | 0 |
+| 64×1 | Imitation | Expert | 28 / 128 | 21.9% | 0 |
+| 256×2 | Imitation | Expert | 26 / 128 | 20.3% | 0 |
+
+- Each conservative 95% interval is about ±17 points with 64 seed blocks.
+- Larger network: no observed benefit. On identical seed/seat pairs against Expert, 256×2 won 18 games that 64×1 lost and lost 20 that 64×1 won; against Hard, 13 and 24.
+- Longer training: observed benefit. On identical pairs, the 32,768-step 64×1 policy won 22 games that the 16,384-step policy lost and lost 9 against Expert; against Hard, 28 and 7.
+- Both runs used training seed 123; the 32,768-step 64×1 run reproduces the first run's imitation metrics exactly.
+- Every learned policy remains weaker than Expert; none was promoted to a lobby difficulty.
+- Longer PPO training with the 64×1 policy is the next experiment; confirm it with several training seeds and a fresh evaluation bank.
+- [rl-size-results.json](rl-size-results.json) retains run metadata, checkpoint hashes, and every evaluation outcome.
+
 ```sh
 docker compose -f compose.training.yml run --rm trainer train \
   --output /artifacts/size-64 --width 64 --depth 1 --steps 32768
