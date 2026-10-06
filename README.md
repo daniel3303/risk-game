@@ -85,6 +85,8 @@ Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Are
 
 The [Docker training pipeline](docs/training.md) records Expert decisions, trains a small imitation policy, and continues with masked PPO and frozen-opponent self-play. Its initial scope is two-player Fixed-card games; learned checkpoints are evaluated offline before lobby integration.
 
+The first run used 11,689 Expert demonstrations and 16,384 PPO steps. Across 512 fresh-seed evaluation matches, the PPO checkpoint won 61.7% of duels against Hard and 31.3% against Expert. The learned model remains experimental; Expert is still the strongest validated lobby opponent. [Training details and all results](docs/training.md#first-completed-experiment) are recorded.
+
 ```text
 React menus and turn controls ── commands ──► SignalR /play
 Babylon.js 3D board          ◄── private snapshots ──┤

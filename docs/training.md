@@ -59,6 +59,25 @@ docker compose -f compose.training.yml down --rmi local
 - Conservative 95% Hoeffding intervals group both seats of one seed into one block and assume independent starting seeds.
 - Winning against Expert on unseen seeds is the first promotion criterion; skilled-human strength needs separate validation.
 
+## First completed experiment
+
+- Recorded 11,689 Expert decisions in 96 training games and 2,905 decisions in 24 validation games.
+- The retained imitation checkpoint matched 81.1% of validation decisions, including forced and optional choices; this metric measures teacher imitation rather than winning strength.
+- Completed 20 imitation epochs and 16,384 PPO learner decisions in the CPU-only Docker container.
+- Evaluated both checkpoints against Hard and Expert on seed blocks 9000–9063 from both starting seats, totaling 512 matches.
+
+| Checkpoint | Opponent | Wins / games | Win rate | Unfinished |
+| --- | --- | ---: | ---: | ---: |
+| Imitation | Hard | 81 / 128 | 63.3% | 0 |
+| Imitation | Expert | 23 / 128 | 18.0% | 0 |
+| PPO | Hard | 79 / 128 | 61.7% | 0 |
+| PPO | Expert | 40 / 128 | 31.3% | 0 |
+
+- PPO improved the observed win count against Expert in this batch and slightly reduced it against Hard; these point estimates do not establish a statistically reliable improvement across opponents.
+- Both checkpoints remain weaker than Expert. Neither was promoted to a lobby difficulty, and no human-level strength claim is established.
+- [rl-results.json](rl-results.json) retains parameters, source/assembly/checkpoint hashes, validation history, conservative intervals, and every evaluation outcome.
+- Larger demonstration sets, longer training, and stronger network/search combinations are future experiments; each needs a separate untouched evaluation bank before promotion.
+
 ## Verification
 
 ```sh
