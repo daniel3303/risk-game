@@ -1,0 +1,5 @@
+torch==2.14.1
+stable-baselines3==2.9.0
+sb3-contrib==2.9.0
+gymnasium==1.4.0
+numpy==2.5.3

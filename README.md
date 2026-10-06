@@ -83,6 +83,8 @@ Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Are
 
 ## Architecture
 
+The [Docker training pipeline](docs/training.md) records Expert decisions, trains a small imitation policy, and continues with masked PPO and frozen-opponent self-play. Its initial scope is two-player Fixed-card games; learned checkpoints are evaluated offline before lobby integration.
+
 ```text
 React menus and turn controls ── commands ──► SignalR /play
 Babylon.js 3D board          ◄── private snapshots ──┤
