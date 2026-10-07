@@ -36,9 +36,31 @@ public sealed class TrajectoryRecorderTests
             var firstGame = TrajectoryRecorder.Play(map, 763000, null).Length * sizeof(float);
             var secondGame = TrajectoryRecorder.Play(map, 763001, null).Length * sizeof(float);
             File.WriteAllBytes(resumed, bytes[..(firstGame + secondGame / 2 + 3)]);
-            TrajectoryRecorder.Recorded(resumed).Should().Equal(763000);
-            TrajectoryRecorder.Record(map, 763000, 3, resumed, null, 1, TextWriter.Null);
+            var log = new StringWriter();
+            TrajectoryRecorder.Record(map, 763000, 3, resumed, null, 1, log);
+            log.ToString().Should().StartWith("Recorded 2 games (1 already saved)");
             File.ReadAllBytes(resumed).Should().Equal(bytes);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Fact]
+    public void Record_NewSeedRange_ReplaysTheDroppedLastGameOfTheOldRange()
+    {
+        var directory = Directory.CreateTempSubdirectory("risk-learning-");
+        try
+        {
+            var map = TestWorld.Map();
+            var output = Path.Combine(directory.FullName, "data.bin");
+            TrajectoryRecorder.Record(map, 763000, 2, output, null, 1, TextWriter.Null);
+            TrajectoryRecorder.Record(map, 763005, 1, output, null, 1, TextWriter.Null);
+            var expected = new[] { 763000, 763001, 763005 }.SelectMany(seed => TrajectoryRecorder.Play(map, seed, null)).ToArray();
+            TrajectoryFormat.Read([output]).SelectMany(r => r).Should().Equal(expected);
+            TrajectoryRecorder.Recorded(output, out var dropped).Should().BeEquivalentTo([763000, 763001]);
+            dropped.Should().Be(763005);
         }
         finally
         {

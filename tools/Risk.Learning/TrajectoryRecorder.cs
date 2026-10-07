@@ -12,14 +12,16 @@ public static class TrajectoryRecorder
     public static void Record(WorldMap map, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log)
     {
         var watch = Stopwatch.StartNew();
-        var done = Recorded(output);
+        var done = Recorded(output, out var dropped);
+        var seeds = Enumerable.Range(firstSeed, games).Where(seed => !done.Contains(seed)).ToList();
+        // The dropped last game is replayed even outside this range, so appending a new range to a file loses nothing.
+        if (dropped is int last && !seeds.Contains(last)) seeds.Insert(0, last);
         using var stream = new FileStream(output, FileMode.Append, FileAccess.Write);
         var writeLock = new object();
         int played = 0, rows = 0;
-        // Each game is appended as soon as it ends, so an interrupted run resumes after its last saved game.
-        Parallel.For(firstSeed, firstSeed + games, new ParallelOptions { MaxDegreeOfParallelism = threads }, seed =>
+        // Each game is appended as soon as it ends, so an interrupted run loses at most the games still in progress.
+        Parallel.ForEach(seeds, new ParallelOptions { MaxDegreeOfParallelism = threads }, seed =>
         {
-            if (done.Contains(seed)) return;
             var result = Play(map, seed, model);
             var bytes = new byte[result.Length * sizeof(float)];
             Buffer.BlockCopy(result, 0, bytes, 0, bytes.Length);
@@ -73,13 +75,15 @@ public static class TrajectoryRecorder
 
     /// <summary>
     /// Seeds already saved. Each game is written in one piece, so only the last game can be partial after an interruption;
-    /// its rows are removed and it is played again.
+    /// its rows are removed and its seed is returned as <paramref name="dropped"/> to be played again.
     /// </summary>
-    public static HashSet<int> Recorded(string output)
+    public static HashSet<int> Recorded(string output, out int? dropped)
     {
         var done = new HashSet<int>();
+        dropped = null;
         if (!File.Exists(output)) return done;
         var rows = TrajectoryFormat.Read([output]);
+        if (rows.Length > 0) dropped = (int)rows[^1][TrajectoryFormat.Seed];
         var keep = rows.Length;
         while (keep > 0 && rows[keep - 1][TrajectoryFormat.Seed] == rows[^1][TrajectoryFormat.Seed]) keep--;
         // An empty file, or one holding only a partial row, simply starts over.
