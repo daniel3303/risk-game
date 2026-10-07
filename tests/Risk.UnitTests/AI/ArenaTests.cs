@@ -22,8 +22,8 @@ public sealed class ArenaTests
     [Fact]
     public void Run_Parallel_ReproducesSequentialMatches()
     {
-        var sequential = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Expert), TestContext.Current.CancellationToken);
-        var parallel = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Expert, Parallelism: 4), TestContext.Current.CancellationToken);
+        var sequential = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Hard), TestContext.Current.CancellationToken);
+        var parallel = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Hard, Parallelism: 4), TestContext.Current.CancellationToken);
         parallel.Matches.Should().Equal(sequential.Matches);
         parallel.Wins.Should().Be(sequential.Wins);
     }
