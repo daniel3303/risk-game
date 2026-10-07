@@ -9,7 +9,7 @@
 ## Reserved name
 
 - **Ultimate always carries the strongest trained model.** The name is not tied to one network or method.
-- A new model replaces the bundled one only after it beats the current Ultimate seat-balanced on at least 2,000 unused seeds, with the 95% lower bound above 50%.
+- A new model replaces the bundled one only after it beats the current Ultimate seat-balanced on at least 2,000 unused seeds, with the lower end of the 95% Hoeffding interval (the project's standard) above 50%.
 - The replacement keeps the `ultimate` difficulty and the `ultimate-learned-planner` identifier; record its evaluation here and in [ultimate-results.json](ultimate-results.json).
 
 ## How it decides
@@ -44,7 +44,7 @@ dotnet run --project tools/Risk.Learning -c Release -- bundle --members artifact
 dotnet run --project tools/Risk.Learning -c Release -- evaluate --model src/Risk.Sim/Learning/ultimate-model.json --first-seed 806000 --seeds 500
 ```
 
-- Recording resumes after the last saved game if interrupted; training data stays under ignored `artifacts/`.
+- An interrupted recording resumes: the last saved game, which may be partial, is replayed. Training data stays under ignored `artifacts/`.
 - `record --model <bundle>` plays the next generation with a learned model, and `fit --bootstrap <bundle>` bootstraps targets from it.
 
 ## Evaluation
@@ -53,7 +53,7 @@ dotnet run --project tools/Risk.Learning -c Release -- evaluate --model src/Risk
 
 | Opponent | Seeds | Wins / games | Win rate | Hoeffding 95% | Per-seed normal 95% | First seat | Second seat | Unfinished |
 | --- | --- | ---: | ---: | --- | --- | ---: | ---: | ---: |
-| Master | 900000–903999 | 4,141 / 8,000 | 51.8% | 49.6%–53.9% | 51.0%–52.5% | 3,355 / 4,000 | 786 / 4,000 | 0 |
+| Master | 900000–903999 | 4,142 / 8,000 | 51.8% | 49.6%–53.9% | 51.0%–52.5% | 3,356 / 4,000 | 786 / 4,000 | 0 |
 | Expert | 910000–911999 | 2,379 / 4,000 | 59.5% | 56.4%–62.5% | 58.4%–60.6% | 1,803 / 2,000 | 576 / 2,000 | 0 |
 
 - Against Master the edge is 1.8 points. The project's standard, the conservative Hoeffding bound over seed blocks used for Expert and Master, does not exclude 50%; the ordinary normal interval over seed blocks does.
@@ -71,8 +71,8 @@ dotnet run --project tools/Risk.Learning -c Release -- luck --first-seed 920000 
 ## Why the gain is small
 
 - **Dice decide most duels.** Master against itself, each of 200 starting deals (seeds 920000–920199) replayed 20 times with new dice:
-  - The first player won 81.3%.
-  - In 41.5% of deals the first player won at least 90% of the replays; only 24% of deals were close (30%–70%).
+  - The first player won 81.8%.
+  - In 42% of deals the first player won at least 90% of the replays; only 24.5% of deals were close (30%–70%).
   - The dice explain 91% of the variation in results; the deal explains 9%.
 - **Master's search is saturated.** On development seeds, larger placement and fortification searches, and splitting reinforcements between two borders, all scored 48.9%–50.7% against Master.
 - **Strength gains shrink near the ceiling.** Expert → Master gained 8 points by searching more; Master → Ultimate gains about 2 points with a learned evaluation.

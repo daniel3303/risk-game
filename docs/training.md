@@ -2,7 +2,7 @@
 
 - Train a candidate-scoring policy from Expert decisions, then masked PPO against Normal, Hard, Expert, and a frozen imitation checkpoint.
 - Initial scope: Classic World Domination, two players, Fixed cards, Automatic setup, and True Random dice.
-- The learned policy is an offline experiment; Expert remains the strongest validated lobby opponent.
+- This learned policy is an offline experiment and is not offered in the lobby; [Ultimate](ultimate-ai.md) is the bundled trained model.
 - Every move uses the authoritative .NET `Risk.Sim` rules; Python handles the neural network through a persistent JSONL subprocess.
 - Observations include the public board, the acting player's cards, public card counts, phase, and capture information. Opposing card identities, deck order, credentials, and live RNG state are excluded.
 
