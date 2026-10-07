@@ -31,7 +31,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         var training = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][TrajectoryFormat.Seed] % 10 != 0).ToArray();
         var random = new Random(seed);
         var network = ValueNetwork.Create(BoardFeatures.Count, hidden, random);
-        // Adam moments persist across every pass of this fit.
+        // Adam moments and the step count persist across every pass of this fit, including the score-only calibration.
         var state = new AdamState(2 + network.Inputs * hidden + hidden * 2);
         // Calibrate the hand score alone first; it is the baseline and, without a previous model, the first bootstrap.
         Train(network, state, xs, outcome, training, 4, .01, 0, true, random, parallel);
@@ -53,15 +53,16 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         var bestLoss = double.MaxValue;
         for (var epoch = 0; epoch < epochs; epoch++)
         {
-            var step = epoch < epochs / 2 ? 1 : epoch < epochs * 3 / 4 ? .3 : .1;
+            var progress = (double)epoch / epochs;
+            var step = progress < .5 ? 1 : progress < .75 ? .3 : .1;
             Train(network, state, xs, target, training, 1, rate * step, l2, false, random, parallel);
             var loss = LogLoss(network, xs, outcome, validation, false, parallel);
             log.WriteLine($"epoch {epoch + 1}: validation log-loss {loss:F4} against outcomes, {LogLoss(network, xs, target, validation, false, parallel):F4} against targets");
-            if (loss >= bestLoss) continue;
+            if (!(loss < bestLoss)) continue;
             bestLoss = loss;
             best = new ValueNetwork { Inputs = network.Inputs, Hidden = network.Hidden, A = network.A, B = network.B, W = network.W.ToArray(), C = network.C.ToArray(), V = network.V.ToArray() };
         }
-        return best;
+        return best ?? throw new InvalidDataException("Training diverged: every validation loss was invalid.");
     }
 
     private static double Sigmoid(double z) => 1 / (1 + Math.Exp(-z));

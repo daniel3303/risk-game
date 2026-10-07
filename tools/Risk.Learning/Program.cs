@@ -38,8 +38,8 @@ try
         {
             var output = options.Text("--output");
             var model = LoadModel(options.OptionalText("--model"), options);
-            var first = options.Integer("--first-seed", 0, 0, int.MaxValue - 1);
-            var games = options.Integer("--games", 1000, 1, 1_000_000);
+            var first = options.Integer("--first-seed", 0, 0, TrajectoryFormat.SeedLimit - 1);
+            var games = options.Integer("--games", 1000, 1, TrajectoryFormat.SeedLimit - first);
             options.RejectUnknown();
             TrajectoryRecorder.Record(map, first, games, output, model, threads, Console.Out);
             break;
@@ -69,7 +69,9 @@ try
         case "evaluate":
         {
             var model = LoadModel(options.Text("--model"), options);
-            var opponent = Enum.Parse<BotDifficulty>(options.Text("--opponent", "master"), true);
+            var name = options.Text("--opponent", "master");
+            var opponent = Enum.GetValues<BotDifficulty>().FirstOrDefault(d => string.Equals(d.ToString(), name, StringComparison.OrdinalIgnoreCase), (BotDifficulty)(-1));
+            if (!Enum.IsDefined(opponent)) throw new ArgumentException($"Unknown opponent {name}.");
             var first = options.Integer("--first-seed", 0, 0, int.MaxValue - 5000);
             var seeds = options.Integer("--seeds", 500, 1, 5000);
             options.RejectUnknown();

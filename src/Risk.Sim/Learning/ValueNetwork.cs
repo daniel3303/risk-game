@@ -17,7 +17,7 @@ public sealed class ValueNetwork
     [JsonIgnore] public float[] C { get; set; } = [];
     [JsonIgnore] public float[] V { get; set; } = [];
 
-    /// <summary>W, C and V as little-endian 32-bit floats, stored as base64 in JSON.</summary>
+    /// <summary>W, C and V as little-endian 32-bit floats, stored as base64 in JSON; split by <see cref="Unpack"/> after loading.</summary>
     public byte[] Parameters
     {
         get
@@ -27,15 +27,25 @@ public sealed class ValueNetwork
             Buffer.BlockCopy(values, 0, bytes, 0, bytes.Length);
             return bytes;
         }
-        set
-        {
-            var values = new float[value.Length / sizeof(float)];
-            Buffer.BlockCopy(value, 0, values, 0, values.Length * sizeof(float));
-            if (values.Length != Inputs * Hidden + Hidden * 2) throw new InvalidDataException("The value network parameters do not match its size.");
-            W = values[..(Inputs * Hidden)];
-            C = values[(Inputs * Hidden)..(Inputs * Hidden + Hidden)];
-            V = values[(Inputs * Hidden + Hidden)..];
-        }
+        set => packed = value;
+    }
+
+    private byte[] packed;
+
+    /// <summary>Splits and validates loaded parameters; sizes are checked here so JSON property order does not matter.</summary>
+    internal void Unpack()
+    {
+        if (Hidden is < 1 or > 1024 || Inputs is < 1 or > 100_000) throw new InvalidDataException("The value network size is unsupported.");
+        var expected = (long)Inputs * Hidden + 2L * Hidden;
+        if (packed == null || packed.LongLength != expected * sizeof(float)) throw new InvalidDataException("The value network parameters do not match its size.");
+        var values = new float[expected];
+        Buffer.BlockCopy(packed, 0, values, 0, packed.Length);
+        if (!float.IsFinite(A) || A <= 0 || !float.IsFinite(B) || values.Any(v => !float.IsFinite(v)))
+            throw new InvalidDataException("The value network contains invalid numbers.");
+        W = values[..(Inputs * Hidden)];
+        C = values[(Inputs * Hidden)..(Inputs * Hidden + Hidden)];
+        V = values[(Inputs * Hidden + Hidden)..];
+        packed = null;
     }
 
     public static ValueNetwork Create(int inputs, int hidden, Random random)

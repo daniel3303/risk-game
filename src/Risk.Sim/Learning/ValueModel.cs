@@ -31,10 +31,21 @@ public sealed class ValueModel : IBoardValuation
     public static ValueModel Load(Stream stream)
     {
         using var reader = new StreamReader(stream);
-        var model = JsonConvert.DeserializeObject<ValueModel>(reader.ReadToEnd());
-        if (model?.Schema != CurrentSchema || model.Features != BoardFeatures.Version || model.Members.Count == 0
-            || model.Members.Any(m => m.Inputs != BoardFeatures.Count))
+        ValueModel model;
+        try
+        {
+            model = JsonConvert.DeserializeObject<ValueModel>(reader.ReadToEnd());
+        }
+        catch (JsonException error)
+        {
+            throw new InvalidDataException("The value model is not valid JSON.", error);
+        }
+        if (model?.Schema != CurrentSchema || model.Features != BoardFeatures.Version || model.Members == null || model.Members.Count is 0 or > 64
+            || model.Members.Any(m => m == null || m.Inputs != BoardFeatures.Count))
             throw new InvalidDataException("Unsupported value model.");
+        if (!double.IsFinite(model.Scale) || model.Scale < 0 || !double.IsFinite(model.Limit) || model.Limit < 0)
+            throw new InvalidDataException("The value model scale and limit must be finite and nonnegative.");
+        foreach (var member in model.Members) member.Unpack();
         return model;
     }
 

@@ -18,10 +18,10 @@ public static class LuckAnalysis
                 var random = new SwitchingRandom(firstSeed + i);
                 var game = new Game(map, ["A", "B"], new(CardMode.Fixed, SetupMode.Automatic), random);
                 // The deal (territories, armies and card order) is fixed by now; every later draw, such as dice, differs per replay.
-                random.Switch(HashCode.Combine(firstSeed + i, r));
+                random.Switch(unchecked((firstSeed + i) * 1000003 + r * 7919));
                 var master = new MasterStrategy();
                 var actions = 0;
-                while (game.State.Phase != Phase.Finished && actions++ < 20000)
+                while (game.State.Phase != Phase.Finished && game.State.Round <= 200 && actions++ < 20000)
                     game.Apply(game.State.CurrentPlayer, master.Choose(GameObservation.From(game)));
                 if (game.State.Winner == 0) wins++;
             }

@@ -17,6 +17,8 @@ public static class TrajectoryFormat
     public const int Mover = 90;
     public const int Outcome = 91;
     public const int Seed = 92;
+    /// <summary>Seeds are stored as floats, which hold every integer below this limit exactly.</summary>
+    public const int SeedLimit = 1 << 24;
 
     public static float[] Encode(GameObservation observation, PlannerBoard board, double score)
     {

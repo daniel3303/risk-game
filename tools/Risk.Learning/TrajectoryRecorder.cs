@@ -71,15 +71,20 @@ public static class TrajectoryRecorder
         return result;
     }
 
-    private static HashSet<int> Recorded(string output)
+    /// <summary>
+    /// Seeds already saved. Each game is written in one piece, so only the last game can be partial after an interruption;
+    /// its rows are removed and it is played again.
+    /// </summary>
+    public static HashSet<int> Recorded(string output)
     {
         var done = new HashSet<int>();
         if (!File.Exists(output)) return done;
-        var length = new FileInfo(output).Length;
-        var usable = length / (TrajectoryFormat.Width * sizeof(float)) * TrajectoryFormat.Width * sizeof(float);
-        // A partially written final row is discarded before appending.
-        if (usable != length) using (var trim = new FileStream(output, FileMode.Open)) trim.SetLength(usable);
-        foreach (var row in TrajectoryFormat.Read([output])) done.Add((int)row[TrajectoryFormat.Seed]);
+        var rows = TrajectoryFormat.Read([output]);
+        var keep = rows.Length;
+        while (keep > 0 && rows[keep - 1][TrajectoryFormat.Seed] == rows[^1][TrajectoryFormat.Seed]) keep--;
+        // An empty file, or one holding only a partial row, simply starts over.
+        using (var trim = new FileStream(output, FileMode.Open)) trim.SetLength((long)keep * TrajectoryFormat.Width * sizeof(float));
+        for (var r = 0; r < keep; r++) done.Add((int)rows[r][TrajectoryFormat.Seed]);
         return done;
     }
 }
