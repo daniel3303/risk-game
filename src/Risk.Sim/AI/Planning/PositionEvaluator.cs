@@ -45,8 +45,8 @@ public sealed class PositionEvaluator
         foreach (var opponent in players.Where(p => p.Id != Player && !p.Eliminated))
             score -= armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
                 + Income(board, opponent.Id, territories[opponent.Id]) * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
-        score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0);
-        return score - Exposure(board);
+        score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0) - Exposure(board);
+        return Tuning.Valuation == null ? score : score + Tuning.Valuation.Correction(this, board, score);
     }
 
     public int Income(PlannerBoard board, int player, int owned = -1)
