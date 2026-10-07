@@ -1,7 +1,7 @@
 using AwesomeAssertions;
+using Newtonsoft.Json;
 using Risk.Arena;
 using Risk.Arena.Models;
-using Newtonsoft.Json;
 using Risk.Sim;
 using Risk.Sim.AI;
 using Risk.Sim.AI.Planning;
