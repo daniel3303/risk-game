@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><OutputType>Exe</OutputType><IsPackable>false</IsPackable></PropertyGroup>
+  <PropertyGroup><OutputType>Exe</OutputType><IsPackable>false</IsPackable><ServerGarbageCollection>true</ServerGarbageCollection></PropertyGroup>
   <ItemGroup><ProjectReference Include="../../src/Risk.Sim/Risk.Sim.csproj" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="../../content/classic.json" LogicalName="Risk.Arena.classic.json" /></ItemGroup>
 </Project>

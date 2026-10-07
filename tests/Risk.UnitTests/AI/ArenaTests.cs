@@ -20,6 +20,15 @@ public sealed class ArenaTests
     }
 
     [Fact]
+    public void Run_Parallel_ReproducesSequentialMatches()
+    {
+        var sequential = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Expert), TestContext.Current.CancellationToken);
+        var parallel = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Expert, Parallelism: 4), TestContext.Current.CancellationToken);
+        parallel.Matches.Should().Equal(sequential.Matches);
+        parallel.Wins.Should().Be(sequential.Wins);
+    }
+
+    [Fact]
     public void Run_TruncatedGames_ReportsNoInventedWinners()
     {
         var report = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 1, MaxActions: 1), TestContext.Current.CancellationToken);
@@ -41,5 +50,7 @@ public sealed class ArenaTests
         unpaired.Should().Throw<ArgumentException>();
         Action invalid = () => ArenaOptions.Parse(["--players", "7"]);
         invalid.Should().Throw<ArgumentException>();
+        Action serial = () => ArenaOptions.Parse(["--parallel", "0"]);
+        serial.Should().Throw<ArgumentException>();
     }
 }
