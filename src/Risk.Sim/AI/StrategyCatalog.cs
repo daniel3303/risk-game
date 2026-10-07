@@ -9,6 +9,7 @@ public static class StrategyCatalog
         BotDifficulty.Hard => new MonteCarloStrategy(new SeededRandom(seed)),
         BotDifficulty.Expert => new ExpertStrategy(),
         BotDifficulty.Master => new MasterStrategy(),
+        BotDifficulty.Ultimate => new UltimateStrategy(),
         _ => throw new RuleException("Choose a valid AI difficulty."),
     };
 }

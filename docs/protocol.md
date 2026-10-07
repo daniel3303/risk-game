@@ -8,7 +8,7 @@
 - Supply `null` as the token for a new lobby seat; supply the saved token to restore a disconnected seat.
 - In an AI-only room, joining without a token creates a spectator before or after the game starts. A saved spectator token restores its identity and permissions.
 - `AddBot(difficulty)`, `RemoveBot(seat)`, and `Start()` are host-only lobby calls.
-- Difficulties are `easy`, `normal`, `hard`, `expert`, and `master`; Expert and Master publish the `expert-turn-planner` and `master-deep-planner` strategy identifiers.
+- Difficulties are `easy`, `normal`, `hard`, `expert`, `master`, and `ultimate`; Expert, Master, and Ultimate publish the `expert-turn-planner`, `master-deep-planner`, and `ultimate-learned-planner` strategy identifiers.
 - `Act({id, revision, command})` applies a gameplay command; `id` is a canonical UUID, and `revision` is the last received room revision.
 - `Leave()` releases a lobby seat or replaces a started seat with Easy AI.
 - A spectator's `Leave()` only releases that spectator; its `Act()` always returns a permission error.

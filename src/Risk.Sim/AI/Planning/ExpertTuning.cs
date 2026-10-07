@@ -31,4 +31,6 @@ public sealed record ExpertTuning
     public int DeployBorders { get; init; } = 8;
     public int FortifySources { get; init; } = 6;
     public int FortifyTargets { get; init; } = 4;
+    /// <summary>Optional learned correction added to the hand-written score of every position that is not already won.</summary>
+    public IBoardValuation Valuation { get; init; }
 }

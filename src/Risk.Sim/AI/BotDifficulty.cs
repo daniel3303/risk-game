@@ -8,4 +8,5 @@ public enum BotDifficulty
     [Display(Name = "Hard")] Hard,
     [Display(Name = "Expert")] Expert,
     [Display(Name = "Master")] Master,
+    [Display(Name = "Ultimate")] Ultimate,
 }

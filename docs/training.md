@@ -2,7 +2,7 @@
 
 - Train a candidate-scoring policy from Expert decisions, then masked PPO against Normal, Hard, Expert, and a frozen imitation checkpoint.
 - Initial scope: Classic World Domination, two players, Fixed cards, Automatic setup, and True Random dice.
-- The learned policy is an offline experiment; Expert remains the strongest validated lobby opponent.
+- This learned policy is an offline experiment and is not offered in the lobby; [Ultimate](ultimate-ai.md) is the bundled trained model.
 - Every move uses the authoritative .NET `Risk.Sim` rules; Python handles the neural network through a persistent JSONL subprocess.
 - Observations include the public board, the acting player's cards, public card counts, phase, and capture information. Opposing card identities, deck order, credentials, and live RNG state are excluded.
 
@@ -142,6 +142,7 @@ docker compose -f compose.training.yml run --rm trainer evaluate \
 - Imitation copies about 81% of Expert's choices, and the misses compound over roughly a hundred decisions per game.
 - PPO has seen only a few hundred games, far too few to discover improvements beyond Expert.
 - Expert's main weakness was search size rather than its weights; [Master](master-ai.md) widens and deepens the same planner and beats Expert in automatic-setup duels without learning.
+- [Ultimate](ultimate-ai.md) keeps Master's search and learns only its evaluation, by TD(λ) self-play; it scored 51.8% against Master and 59.5% against Expert on new seeds.
 
 ## Verification
 

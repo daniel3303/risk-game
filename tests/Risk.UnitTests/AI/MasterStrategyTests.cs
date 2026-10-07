@@ -1,4 +1,6 @@
 using AwesomeAssertions;
+using Risk.Arena;
+using Risk.Arena.Models;
 using Risk.Sim.AI;
 using Risk.Sim.Models;
 using Xunit;
@@ -41,6 +43,19 @@ public sealed class MasterStrategyTests
             game.Apply(observation.Player, command);
         }
         differences.Should().BePositive();
+    }
+
+    [Theory]
+    [InlineData(510008, 1, 13, 500, 1, 34, 1311, 1, 15, 495)]
+    [InlineData(510013, 0, 15, 529, 2, 21, 757, 0, 20, 726)]
+    public void Run_ThreePlayerSeeds_ReproduceThePublishedMasterMatches(int seed, int winner0, int rounds0, int actions0,
+        int winner1, int rounds1, int actions1, int winner2, int rounds2, int actions2)
+    {
+        var options = new ArenaOptions(Seeds: 1, FirstSeed: seed, Players: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Expert);
+        var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
+        // Recorded in docs/master-results.json; these seeds change if the evaluator's arithmetic is regrouped.
+        report.Matches.Should().Equal(new MatchResult(seed, 0, winner0, true, rounds0, actions0),
+            new MatchResult(seed, 1, winner1, true, rounds1, actions1), new MatchResult(seed, 2, winner2, true, rounds2, actions2));
     }
 
     [Fact]

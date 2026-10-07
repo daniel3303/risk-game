@@ -71,14 +71,17 @@ The uniform shuffled initial distribution and territory-card symbol assignment a
 | Hard | `monte-carlo-battles` | 96 sampled True Random battles per candidate, bounded to eight candidates |
 | Expert | `expert-turn-planner` | Analytic battle odds, connected-capture planning, elimination bounties, and continent defense |
 | Master | `master-deep-planner` | Expert's planner with wider, deeper capture search and stronger denial of rival income |
+| Ultimate | `ultimate-learned-planner` | Master's planner with a value network learned from self-play correcting its duel evaluation; always the strongest trained model |
 
-Hard uses battle-level Monte Carlo evaluation, rather than full-game Monte Carlo tree search. Large candidate armies are scaled to bound evaluation cost. No trained reinforcement-learning player is bundled.
+Hard uses battle-level Monte Carlo evaluation, rather than full-game Monte Carlo tree search. Large candidate armies are scaled to bound evaluation cost. Ultimate is the only bundled player with a trained model.
 
 Expert compares capture chains and troop allocations using exact battle odds for stacks up to 512, with a scale-aware approximation above that limit. It considers public opponent card counts without seeing their card identities. See [the implementation and evaluation limits](docs/expert-ai.md); beating the existing bots does not establish that it can beat every human.
 
 In a 688-game, seat-balanced evaluation on new seeds, Expert won 89.8% of fixed-card duels and 93.8% of progressive-card duels against Hard. Six-player win rates were 52.1% and 70.8%; six progressive matches reached the round limit and count as non-wins. [Full results and methodology](docs/expert-ai.md#reproducible-evaluation) are included.
 
 Master beat Expert in 58.2% of 4,000 seat-balanced fixed-card duels on new seeds (95% interval 55.1%–61.2%), winning 87.7% from the first seat and 28.6% from the second; Expert mirrors win about 79% and 21%. Progressive-card duels gave the same 58.2% (55.2%–61.2%); manual-setup duels (52.8%, 49.7%–55.8%) are inconclusive. Three- and six-player batches against Experts (39.2% and 19.5% versus fair shares of 33.3% and 16.7%) are inconclusive: their intervals include both gains and losses. [Tuning, evaluation, and limits](docs/master-ai.md) are recorded.
+
+Ultimate keeps Master's search and learns its evaluation from 30,000 Master self-play games with TD(λ), as TD-Gammon did. On new seeds it won 51.8% of 8,000 duels against Master and 59.5% of 4,000 against Expert. The conservative interval against Master (49.6%–53.9%) still includes 50%, so it is the strongest bot by point estimate rather than a proven winner. Dice explain about 91% of the variation in Master-versus-Master results, which leaves little room for any player to pull ahead. The name stays reserved for the strongest trained model; [training, every approach tried, and the promotion rule](docs/ultimate-ai.md) are recorded.
 
 Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Arena -c Release -- --seeds 64 --first-seed 3000 --players 2 --candidate expert --opponent hard --cards fixed`. Add `--parallel 8` to play independent matches concurrently with identical results. JSON reports include unfinished games and a conservative seed-level confidence interval.
 
@@ -88,7 +91,7 @@ Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Are
 
 The [Docker training pipeline](docs/training.md) records Expert decisions, trains a small imitation policy, and continues with masked PPO and frozen-opponent self-play. Its initial scope is two-player Fixed-card games; learned checkpoints are evaluated offline before lobby integration.
 
-The first run used 11,689 Expert demonstrations and 16,384 PPO steps. Across 512 fresh-seed evaluation matches, the PPO checkpoint won 61.7% of duels against Hard and 31.3% against Expert. The learned model remains experimental; Expert is still the strongest validated lobby opponent. [Training details and all results](docs/training.md#first-completed-experiment) are recorded.
+The first run used 11,689 Expert demonstrations and 16,384 PPO steps. Across 512 fresh-seed evaluation matches, the PPO checkpoint won 61.7% of duels against Hard and 31.3% against Expert. This policy remains experimental and is not offered in the lobby. [Training details and all results](docs/training.md#first-completed-experiment) are recorded.
 
 A follow-up pilot gave the original policy (about 74,500 parameters) and an eight-times-larger policy 32,768 PPO steps each. The larger network produced no observed benefit. On new seeds, the original-size policy won 31.3% against Expert and 79.7% against Hard, compared with 21.1% and 63.3% for the 16,384-step checkpoint on the same seeds. [Model size results](docs/training.md#model-size-experiment) are recorded.
 

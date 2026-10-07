@@ -1,5 +1,5 @@
 export type Phase = 'claim' | 'setup' | 'draft' | 'attack' | 'occupy' | 'fortify' | 'finished';
-export type Difficulty = 'easy' | 'normal' | 'hard' | 'expert' | 'master';
+export type Difficulty = 'easy' | 'normal' | 'hard' | 'expert' | 'master' | 'ultimate';
 export type CardMode = 'fixed' | 'progressive';
 export type SetupMode = 'automatic' | 'manual';
 export type CardSymbol = 'infantry' | 'cavalry' | 'artillery' | 'wild';

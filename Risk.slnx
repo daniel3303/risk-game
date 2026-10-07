@@ -9,6 +9,7 @@
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Risk.Arena/Risk.Arena.csproj" />
+    <Project Path="tools/Risk.Learning/Risk.Learning.csproj" />
     <Project Path="tools/Risk.Training/Risk.Training.csproj" />
   </Folder>
 </Solution>

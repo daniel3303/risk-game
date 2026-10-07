@@ -46,7 +46,9 @@ public sealed class PositionEvaluator
             score -= armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
                 + Income(board, opponent.Id, territories[opponent.Id]) * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
         score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0);
-        return score - Exposure(board);
+        // Exposure stays a separate subtraction so Expert and Master scores keep their exact floating-point values.
+        score -= Exposure(board);
+        return Tuning.Valuation == null ? score : score + Tuning.Valuation.Correction(this, board, score);
     }
 
     public int Income(PlannerBoard board, int player, int owned = -1)
