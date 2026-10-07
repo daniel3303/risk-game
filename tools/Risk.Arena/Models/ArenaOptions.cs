@@ -4,12 +4,12 @@ namespace Risk.Arena.Models;
 
 public sealed record ArenaOptions(int Seeds = 16, int FirstSeed = 1000, int Players = 2,
     BotDifficulty Candidate = BotDifficulty.Expert, BotDifficulty Opponent = BotDifficulty.Hard,
-    CardMode Cards = CardMode.Fixed, SetupMode Setup = SetupMode.Automatic, int MaxRounds = 200, int MaxActions = 20000)
+    CardMode Cards = CardMode.Fixed, SetupMode Setup = SetupMode.Automatic, int MaxRounds = 200, int MaxActions = 20000, int Parallelism = 1)
 {
     public void Validate()
     {
-        if (Seeds is < 1 or > 500 || Players is < 2 or > 6 || MaxRounds is < 1 or > 1000 || MaxActions is < 1 or > 100000)
-            throw new ArgumentException("Use 1–500 seeds, 2–6 players, 1–1000 rounds, and 1–100000 actions.");
+        if (Seeds is < 1 or > 5000 || Players is < 2 or > 6 || MaxRounds is < 1 or > 1000 || MaxActions is < 1 or > 100000 || Parallelism is < 1 or > 64)
+            throw new ArgumentException("Use 1–5000 seeds, 2–6 players, 1–1000 rounds, 1–100000 actions, and 1–64 parallel matches.");
         if (FirstSeed < 0 || FirstSeed > int.MaxValue - Seeds) throw new ArgumentException("Choose a nonnegative seed range within Int32.");
         if (!Enum.IsDefined(Candidate) || !Enum.IsDefined(Opponent) || !Enum.IsDefined(Cards) || !Enum.IsDefined(Setup))
             throw new ArgumentException("Choose a supported difficulty and ruleset.");
@@ -40,6 +40,7 @@ public sealed record ArenaOptions(int Seeds = 16, int FirstSeed = 1000, int Play
         "--setup" => options with { Setup = Choice<SetupMode>(value) },
         "--max-rounds" => options with { MaxRounds = int.Parse(value) },
         "--max-actions" => options with { MaxActions = int.Parse(value) },
+        "--parallel" => options with { Parallelism = int.Parse(value) },
         _ => throw new ArgumentException($"Unknown option {key}."),
     };
 

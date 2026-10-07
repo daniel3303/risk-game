@@ -4,18 +4,11 @@ namespace Risk.Sim.AI.Planning;
 
 public sealed class PositionEvaluator
 {
-    private const double TerritoryValue = 1.4;
-    private const double IncomeValue = 4;
-    private const double DuelEnemyArmyValue = .9;
-    private const double MultiplayerEnemyArmyValue = .3;
-    private const double MultiplayerEnemyIncomeValue = 1.2;
-    private const double EliminationValueBase = 8;
-    private const double InheritedCardMultiplier = 1.5;
-    private const double ContinentExposureValue = 3;
     private const double VictoryMargin = 1000;
     private const double VictoryArmyMultiplier = 10;
     private const double VictoryCardMultiplier = 100;
     public GameObservation Observation { get; }
+    public ExpertTuning Tuning { get; }
     public int Player => Observation.Player;
     public int[][] Regions { get; }
     private readonly ObservedPlayer[] players;
@@ -24,13 +17,14 @@ public sealed class PositionEvaluator
     public double CardValue { get; }
     public bool Duel => players.Count(p => !p.Eliminated) == 2;
 
-    public PositionEvaluator(GameObservation observation)
+    public PositionEvaluator(GameObservation observation, ExpertTuning tuning = null)
     {
         Observation = observation;
+        Tuning = tuning ?? ExpertTuning.Default;
         players = observation.Players ?? observation.Territories.Where(t => t.Owner >= 0).Select(t => t.Owner).Distinct().Select(id => new ObservedPlayer(id, false, 0)).ToArray();
         Regions = observation.Map.Continents.Select(c => observation.Map.Territories.Where(t => t.Continent == c.Id).Select(t => t.Id).ToArray()).ToArray();
         regionIndex = observation.Map.Territories.Select(t => Array.FindIndex(observation.Map.Continents, c => c.Id == t.Continent)).ToArray();
-        CardValue = ((observation.Options?.Cards ?? CardMode.Fixed) == CardMode.Fixed ? 8 : CardRules.ProgressiveBonus(observation.Trades)) / 3.0;
+        CardValue = ((observation.Options?.Cards ?? CardMode.Fixed) == CardMode.Fixed ? Tuning.FixedSetValue : CardRules.ProgressiveBonus(observation.Trades)) / 3.0;
         victoryValue = VictoryMargin + (observation.Territories.Sum(t => (double)t.Troops) + Math.Max(0, observation.Reinforcements)) * VictoryArmyMultiplier + CardValue * VictoryCardMultiplier;
     }
 
@@ -47,10 +41,10 @@ public sealed class PositionEvaluator
         }
         if (players.Where(p => p.Id != Player && !p.Eliminated).All(p => territories[p.Id] == 0)) return victoryValue;
         var ownIncome = Income(board, Player, territories[Player]);
-        var score = armies[Player] + territories[Player] * TerritoryValue + ownIncome * IncomeValue;
+        var score = armies[Player] + territories[Player] * Tuning.TerritoryValue + ownIncome * Tuning.IncomeValue;
         foreach (var opponent in players.Where(p => p.Id != Player && !p.Eliminated))
-            score -= armies[opponent.Id] * (Duel ? DuelEnemyArmyValue : MultiplayerEnemyArmyValue)
-                + Income(board, opponent.Id, territories[opponent.Id]) * (Duel ? IncomeValue : MultiplayerEnemyIncomeValue);
+            score -= armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
+                + Income(board, opponent.Id, territories[opponent.Id]) * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
         score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0);
         return score - Exposure(board);
     }
@@ -98,7 +92,7 @@ public sealed class PositionEvaluator
 
     private double EliminationValue(PlannerBoard board, int[] territories) => players
         .Where(p => p.Id != Player && !p.Eliminated && territories[p.Id] == 0 && Observation.Territories.Any(t => t.Owner == p.Id))
-        .Sum(p => EliminationValueBase + p.CardCount * CardValue * InheritedCardMultiplier);
+        .Sum(p => Tuning.EliminationValueBase + p.CardCount * CardValue * Tuning.InheritedCardMultiplier);
 
     private double Exposure(PlannerBoard board)
     {
@@ -107,7 +101,7 @@ public sealed class PositionEvaluator
         {
             var threat = Regions[r].SelectMany(id => Observation.Map.Territories[id].Neighbors.Where(n => board.Owners[n] >= 0 && board.Owners[n] != Player)
                 .Select(n => BattleOdds.Estimate(ForecastAttackers(board, n), board.Troops[id]).WinChance)).DefaultIfEmpty(0).Max();
-            risk += threat * Observation.Map.Continents[r].Bonus * ContinentExposureValue;
+            risk += threat * Observation.Map.Continents[r].Bonus * Tuning.ContinentExposureValue;
         }
         return risk;
     }

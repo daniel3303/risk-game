@@ -9,14 +9,12 @@ public static class ArenaRunner
     public static ArenaReport Run(WorldMap map, ArenaOptions options, CancellationToken cancellation = default)
     {
         options.Validate();
-        var matches = new List<MatchResult>();
-        for (var seed = options.FirstSeed; seed < options.FirstSeed + options.Seeds; seed++)
-            for (var seat = 0; seat < options.Players; seat++)
-            {
-                cancellation.ThrowIfCancellationRequested();
-                matches.Add(Play(map, options, seed, seat, cancellation));
-            }
-        return ArenaReport.Build(options, matches.ToArray());
+        var jobs = Enumerable.Range(options.FirstSeed, options.Seeds).SelectMany(seed => Enumerable.Range(0, options.Players).Select(seat => (Seed: seed, Seat: seat))).ToArray();
+        var matches = new MatchResult[jobs.Length];
+        // Each match owns its dice and strategy random sources, so parallel order cannot change any result.
+        Parallel.For(0, jobs.Length, new ParallelOptions { MaxDegreeOfParallelism = options.Parallelism, CancellationToken = cancellation },
+            i => matches[i] = Play(map, options, jobs[i].Seed, jobs[i].Seat, cancellation));
+        return ArenaReport.Build(options, matches);
     }
 
     private static MatchResult Play(WorldMap map, ArenaOptions options, int seed, int candidateSeat, CancellationToken cancellation)

@@ -3,29 +3,29 @@ namespace Risk.Sim.AI.Planning;
 
 public sealed class AttackPlanner(PositionEvaluator evaluator)
 {
-    private const int BeamWidth = 8;
-    private const int Branches = 10;
-    private const int MaxDepth = 6;
-    public const int SearchBudget = 512;
+    private ExpertTuning Tuning => evaluator.Tuning;
+    public int SearchBudget => Tuning.SearchBudget;
 
-    public PlanNode Search(PlannerBoard board, int budget = SearchBudget)
+    public PlanNode Search(PlannerBoard board) => Search(board, SearchBudget);
+
+    public PlanNode Search(PlannerBoard board, int budget)
     {
         var root = new PlanNode(board, evaluator.Evaluate(board), 0, 1, null);
         var best = root;
         var frontier = new[] { root };
         var expanded = 0;
-        for (var depth = 0; depth < MaxDepth && frontier.Length > 0 && expanded < budget; depth++)
+        for (var depth = 0; depth < Tuning.MaxDepth && frontier.Length > 0 && expanded < budget; depth++)
         {
             var next = new List<PlanNode>();
             foreach (var node in frontier)
-                foreach (var action in Candidates(node.Board).Take(Branches))
+                foreach (var action in Candidates(node.Board).Take(Tuning.Branches))
                     foreach (var child in Expand(node, action))
                     {
                         if (expanded++ >= budget) return best;
                         next.Add(child);
                         if (child.Gain > best.Gain + 1e-8) best = child;
                     }
-            frontier = next.OrderByDescending(n => n.Gain).Take(BeamWidth).ToArray();
+            frontier = next.OrderByDescending(n => n.Gain).Take(Tuning.BeamWidth).ToArray();
         }
         return best;
     }
@@ -41,7 +41,7 @@ public sealed class AttackPlanner(PositionEvaluator evaluator)
         var available = node.Board.Troops[action.From] - 1;
         var defenders = node.Board.Troops[action.To];
         var odds = BattleOdds.Estimate(available, defenders);
-        var threshold = evaluator.Duel || !node.Board.Conquered ? .6 : .78;
+        var threshold = !node.Board.Conquered ? Tuning.AttackThreshold : evaluator.Duel ? Tuning.DuelContinuationThreshold : Tuning.ContinuationThreshold;
         if (odds.WinChance < threshold) yield break;
         var success = node.Board.Copy();
         success.Owners[action.To] = evaluator.Player;

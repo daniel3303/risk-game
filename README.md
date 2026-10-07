@@ -70,6 +70,7 @@ The uniform shuffled initial distribution and territory-card symbol assignment a
 | Normal | `heuristic-normal` | Frontier concentration and continent priorities |
 | Hard | `monte-carlo-battles` | 96 sampled True Random battles per candidate, bounded to eight candidates |
 | Expert | `expert-turn-planner` | Analytic battle odds, connected-capture planning, elimination bounties, and continent defense |
+| Master | `master-deep-planner` | Expert's planner with wider, deeper capture search and stronger denial of rival income |
 
 Hard uses battle-level Monte Carlo evaluation, rather than full-game Monte Carlo tree search. Large candidate armies are scaled to bound evaluation cost. No trained reinforcement-learning player is bundled.
 
@@ -77,7 +78,9 @@ Expert compares capture chains and troop allocations using exact battle odds for
 
 In a 688-game, seat-balanced evaluation on new seeds, Expert won 89.8% of fixed-card duels and 93.8% of progressive-card duels against Hard. Six-player win rates were 52.1% and 70.8%; six progressive matches reached the round limit and count as non-wins. [Full results and methodology](docs/expert-ai.md#reproducible-evaluation) are included.
 
-Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Arena -c Release -- --seeds 64 --first-seed 3000 --players 2 --candidate expert --opponent hard --cards fixed`. JSON reports include unfinished games and a conservative seed-level confidence interval.
+Master beat Expert in 58.2% of 4,000 seat-balanced fixed-card duels on new seeds (95% interval 55.1%–61.2%), winning 87.7% from the first seat and 28.6% from the second; Expert mirrors win about 79% and 21%. Progressive-card duels gave the same 58.2% (55.2%–61.2%); manual-setup duels (52.8%, 49.7%–55.8%) are inconclusive. Three- and six-player batches against Experts (39.2% and 19.5% versus fair shares of 33.3% and 16.7%) are inconclusive: their intervals include both gains and losses. [Tuning, evaluation, and limits](docs/master-ai.md) are recorded.
+
+Run reproducible seat-balanced matches with `dotnet run --project tools/Risk.Arena -c Release -- --seeds 64 --first-seed 3000 --players 2 --candidate expert --opponent hard --cards fixed`. Add `--parallel 8` to play independent matches concurrently with identical results. JSON reports include unfinished games and a conservative seed-level confidence interval.
 
 `IPlayerStrategy` accepts a copied `GameObservation` and returns a `GameCommand`. Observations contain the public board and the acting player's cards, never opponents' hands or the live game RNG. Every proposed action passes through `Game.Apply`, exactly like human commands. `StrategyCatalog` maps lobby difficulty to an implementation; add future policy/model adapters there. Bots use their own RNG, so evaluating possibilities cannot advance or predict authoritative dice. The server schedules bot work after state changes and runs up to four workers, with a short delay for readable gameplay.
 

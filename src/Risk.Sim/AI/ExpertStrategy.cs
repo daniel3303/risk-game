@@ -3,13 +3,13 @@ using Risk.Sim.Models;
 using Risk.Sim.Rules;
 namespace Risk.Sim.AI;
 
-public sealed class ExpertStrategy : IPlayerStrategy
+public sealed class ExpertStrategy(ExpertTuning tuning = null) : IPlayerStrategy
 {
     public string Id => "expert-turn-planner";
 
     public GameCommand Choose(GameObservation observation)
     {
-        var evaluator = new PositionEvaluator(observation);
+        var evaluator = new PositionEvaluator(observation, tuning);
         var board = PlannerBoard.From(observation);
         var planner = new AttackPlanner(evaluator);
         return observation.Phase switch
@@ -68,13 +68,13 @@ public sealed class ExpertStrategy : IPlayerStrategy
     private static GameCommand Deploy(PositionEvaluator evaluator, AttackPlanner planner, PlannerBoard board, int count)
     {
         var owned = board.Owners.Select((owner, id) => id).Where(id => board.Owners[id] == evaluator.Player).ToArray();
-        var borders = owned.Where(id => evaluator.Border(board, id)).OrderByDescending(id => DeployPriority(evaluator, board, id)).Take(8).ToArray();
+        var borders = owned.Where(id => evaluator.Border(board, id)).OrderByDescending(id => DeployPriority(evaluator, board, id)).Take(evaluator.Tuning.DeployBorders).ToArray();
         var best = owned[0];
         var value = double.NegativeInfinity;
         foreach (var id in borders)
         {
             var placed = board.Copy(); placed.Troops[id] += count;
-            var plan = planner.Search(placed, AttackPlanner.SearchBudget / Math.Max(1, borders.Length));
+            var plan = planner.Search(placed, planner.SearchBudget / Math.Max(1, borders.Length));
             var score = evaluator.Evaluate(placed) + plan.Gain;
             if (score <= value) continue;
             value = score; best = id;
@@ -94,7 +94,7 @@ public sealed class ExpertStrategy : IPlayerStrategy
         board.Troops[capture.To] = capture.Maximum;
         board.Conquered = true;
         var best = planner.Occupations(board, capture.From, capture.To, capture.Minimum)
-            .OrderByDescending(b => evaluator.Evaluate(b) + planner.Search(b, AttackPlanner.SearchBudget / 2).Gain).First();
+            .OrderByDescending(b => evaluator.Evaluate(b) + planner.Search(b, planner.SearchBudget / 2).Gain).First();
         return new() { Kind = CommandKind.Occupy, Count = best.Troops[capture.To] };
     }
 
@@ -104,8 +104,8 @@ public sealed class ExpertStrategy : IPlayerStrategy
         var owned = board.Owners.Select((owner, id) => id).Where(id => board.Owners[id] == evaluator.Player).ToArray();
         var value = evaluator.Evaluate(board) + planner.Search(board, 64).Gain;
         var best = new GameCommand { Kind = CommandKind.EndTurn };
-        foreach (var from in owned.Where(id => board.Troops[id] > 1).OrderByDescending(id => board.Troops[id]).Take(6))
-            foreach (var to in owned.Where(id => id != from && evaluator.Border(board, id) && StrategicMoves.Connected(evaluator.Observation, from, id)).OrderByDescending(id => DeployPriority(evaluator, board, id)).Take(4))
+        foreach (var from in owned.Where(id => board.Troops[id] > 1).OrderByDescending(id => board.Troops[id]).Take(evaluator.Tuning.FortifySources))
+            foreach (var to in owned.Where(id => id != from && evaluator.Border(board, id) && StrategicMoves.Connected(evaluator.Observation, from, id)).OrderByDescending(id => DeployPriority(evaluator, board, id)).Take(evaluator.Tuning.FortifyTargets))
             {
                 var count = board.Troops[from] - (evaluator.Border(board, from) ? Math.Min(board.Troops[from], evaluator.Guard(board, from)) : 1);
                 if (count < 1) continue;

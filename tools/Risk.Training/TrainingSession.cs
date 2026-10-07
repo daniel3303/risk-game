@@ -97,5 +97,5 @@ public sealed class TrainingSession(WorldMap map)
     }
     private void RequireGame() { if (game == null) throw new ArgumentException("Reset before requesting a decision."); }
     private static BotDifficulty Difficulty(string value) => Enum.GetNames<BotDifficulty>().Any(name => string.Equals(name, value, StringComparison.OrdinalIgnoreCase))
-        ? Enum.Parse<BotDifficulty>(value, true) : throw new ArgumentException("Use easy, normal, hard, expert, or external.");
+        ? Enum.Parse<BotDifficulty>(value, true) : throw new ArgumentException("Use easy, normal, hard, expert, master, or external.");
 }
