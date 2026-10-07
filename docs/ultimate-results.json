@@ -34,7 +34,7 @@
   "policySourceHashMethod": "SHA-256 over src/Risk.Sim/AI/**/*.cs, src/Risk.Sim/Learning/**/*.cs and the embedded model, sorted by repository-relative path; each file contributes its path, a NUL byte, and its bytes",
   "humanOpponentsEvaluated": false,
   "developmentSeeds": "700000-889999 (data, screening, and diagnostics)",
-  "evaluationSeeds": "900000-903999 (against Master), 910000-911999 (against Expert), 920000-920199 (luck analysis); each evaluated once after freezing the model",
+  "evaluationSeeds": "900000-903999 (against Master), 910000-911999 (against Expert), 920000-920199 (luck analysis); played after freezing the model, and repeated once after a scoring fix that changed 10 matches; these results are the repeated run",
   "totalGames": 12000,
   "luck": {
     "deals": 200,

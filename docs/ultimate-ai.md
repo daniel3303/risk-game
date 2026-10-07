@@ -49,7 +49,8 @@ dotnet run --project tools/Risk.Learning -c Release -- evaluate --model src/Risk
 
 ## Evaluation
 
-- The model was frozen before these seeds were played; each seed was evaluated once, from both seats, through the Arena (`--candidate ultimate`).
+- The model was frozen before these seeds were played; each seed was played from both seats through the Arena (`--candidate ultimate`).
+- The run was repeated once, unchanged in model and seeds, after a review fix restored Master's exact score arithmetic; 10 of 12,000 matches changed. The tables show the repeated run.
 
 | Opponent | Seeds | Wins / games | Win rate | Hoeffding 95% | Per-seed normal 95% | First seat | Second seat | Unfinished |
 | --- | --- | ---: | ---: | --- | --- | ---: | ---: | ---: |
