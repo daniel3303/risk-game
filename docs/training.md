@@ -126,6 +126,23 @@ docker compose -f compose.training.yml run --rm trainer evaluate \
   --first-seed 11000 --seeds 64 --output /artifacts/size-256/rl-vs-expert-11000.json
 ```
 
+## Why the learned policies lose to Expert
+
+- Two-player Classic strongly favors the first player: Expert mirrors win about 79% from the first seat and 21% from the second.
+- A 50% seat-balanced score against Expert therefore requires matching Expert from both seats.
+- On seeds 11000–11063, every learned checkpoint was weaker than Expert from both seats:
+
+| Checkpoint | First seat | Second seat |
+| --- | ---: | ---: |
+| 64×1 imitation | 24 / 64 (37.5%) | 4 / 64 (6.3%) |
+| 64×1, 16,384 PPO steps | 22 / 64 (34.4%) | 5 / 64 (7.8%) |
+| 64×1, 32,768 PPO steps | 36 / 64 (56.3%) | 4 / 64 (6.3%) |
+| 256×2, 32,768 PPO steps | 31 / 64 (48.4%) | 7 / 64 (10.9%) |
+
+- Imitation copies about 81% of Expert's choices, and the misses compound over roughly a hundred decisions per game.
+- PPO has seen only a few hundred games, far too few to discover improvements beyond Expert.
+- Expert's main weakness was search size rather than its weights; [Master](master-ai.md) widens and deepens the same planner and beats Expert without learning.
+
 ## Verification
 
 ```sh
