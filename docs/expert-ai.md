@@ -5,7 +5,7 @@
 - Every action passes through the same `Game.Apply` validation used for human moves.
 - Expert is a deterministic planning policy; it is not a trained reinforcement-learning model or full-game Monte Carlo tree search.
 - Results against bundled bots measure this implementation's strength, not performance against expert humans.
-- [Master](master-ai.md) runs this planner with a wider, deeper search and beats Expert in seat-balanced duels.
+- [Master](master-ai.md) runs this planner with a wider, deeper search and beats Expert in seat-balanced automatic-setup duels.
 
 ## Decisions
 

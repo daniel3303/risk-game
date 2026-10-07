@@ -141,7 +141,7 @@ docker compose -f compose.training.yml run --rm trainer evaluate \
 
 - Imitation copies about 81% of Expert's choices, and the misses compound over roughly a hundred decisions per game.
 - PPO has seen only a few hundred games, far too few to discover improvements beyond Expert.
-- Expert's main weakness was search size rather than its weights; [Master](master-ai.md) widens and deepens the same planner and beats Expert without learning.
+- Expert's main weakness was search size rather than its weights; [Master](master-ai.md) widens and deepens the same planner and beats Expert in automatic-setup duels without learning.
 
 ## Verification
 

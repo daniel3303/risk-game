@@ -20,7 +20,7 @@
 | Attacks expanded per position | 10 | 20 | Considers more targets from each planned position |
 | Maximum chain depth | 6 | 10 | Plans longer capture chains |
 | Search budget | 512 | 4,096 | Evaluates more planned positions per decision |
-| Deployment candidates | 8 | 24 | Compares deploying on every border territory |
+| Deployment candidates | 8 | 24 | Compares deploying on up to 24 border territories |
 
 - All other weights and thresholds match Expert; `ExpertTuning.Default` reproduces Expert's published matches exactly.
 - Decisions take a median of 0.1 ms; the slowest observed duel decision took 379 ms on a loaded development machine.
@@ -28,6 +28,8 @@
 ## How it was selected
 
 - Development seeds 100000–100499 screened single-setting changes; seeds 100500–101499 confirmed each accepted change.
+- Seeds 400000–400999 checked an intermediate preset once; 410000–410099, 420000–420199, and 430000–430099 were early Arena and multiplayer checks.
+- Selection figures below come from development runs whose raw reports were not retained; only the final evaluation is recorded.
 - Search size mattered most: more branches, beam width, deployment candidates, and depth each raised the confirmation win rate.
 - Other single-weight changes stayed within about one point of their baseline or lowered the win rate; doubling own income weight fell to 45.7%.
 - Rejected approaches:
@@ -39,17 +41,21 @@
 
 - The preset was frozen before these seeds were played; each seed was evaluated once.
 
-| Players | Seeds | Wins / games | Win rate | 95% interval | Fair share | Unfinished |
-| ---: | --- | ---: | ---: | --- | ---: | ---: |
-| 2 | 500000–501999 | 2,326 / 4,000 | 58.2% | 55.1%–61.2% | 50.0% | 0 |
-| 3 | 510000–510199 | 235 / 600 | 39.2% | 29.6%–48.8% | 33.3% | 0 |
-| 6 | 520000–520099 | 117 / 600 | 19.5% | 5.9%–33.1% | 16.7% | 0 |
+| Players | Rules | Seeds | Wins / games | Win rate | 95% interval | Fair share | Unfinished |
+| ---: | --- | --- | ---: | ---: | --- | ---: | ---: |
+| 2 | Fixed cards, automatic setup | 500000–501999 | 2,326 / 4,000 | 58.2% | 55.1%–61.2% | 50.0% | 0 |
+| 2 | Progressive cards, automatic setup | 530000–531999 | 2,328 / 4,000 | 58.2% | 55.2%–61.2% | 50.0% | 0 |
+| 2 | Fixed cards, manual setup | 540000–541999 | 2,110 / 4,000 | 52.8% | 49.7%–55.8% | 50.0% | 0 |
+| 3 | Fixed cards, automatic setup | 510000–510199 | 235 / 600 | 39.2% | 29.6%–48.8% | 33.3% | 0 |
+| 6 | Fixed cards, automatic setup | 520000–520099 | 117 / 600 | 19.5% | 5.9%–33.1% | 16.7% | 0 |
 
-- In duels, Master won 1,754 of 2,000 games from the first seat (87.7%) and 572 of 2,000 from the second seat (28.6%).
+- In fixed-card automatic-setup duels, Master won 1,754 of 2,000 games from the first seat (87.7%) and 572 of 2,000 from the second seat (28.6%).
 - Expert mirrors on development seeds won 78.7% from the first seat and 21.3% from the second, so Master gains from both seats.
-- Opponents are all Expert; fixed cards and automatic setup were used in every batch.
+- In progressive-card duels, Master won 1,733 first-seat and 595 second-seat games of 2,000 each.
+- Manual setup favors the first player even more: Master won 1,952 first-seat and 158 second-seat games; that batch's interval includes 50%, so it does not establish an advantage.
+- Every opponent is Expert.
 - Intervals use the conservative Hoeffding bound over seed blocks described in [Expert AI](expert-ai.md#reproducible-evaluation).
-- Multiplayer intervals are wide; those batches show no loss against Expert rather than a proven gain.
+- Multiplayer batches are inconclusive: their intervals include results below and above the fair share.
 - Every match is recorded in [master-results.json](master-results.json).
 
 ```sh
@@ -62,6 +68,6 @@ dotnet run --project tools/Risk.Arena -c Release -- \
 
 ## Limits
 
-- Master was tuned against Expert in two-player fixed-card games; it is not evidence of strength against skilled humans.
-- Progressive cards and manual setup were not part of the selection or final evaluation.
+- Master was tuned against Expert in two-player fixed-card automatic-setup games; it is not evidence of strength against skilled humans.
+- Progressive cards and manual setup were not used for selection; each was evaluated once after freezing the preset.
 - Master still plans one turn at a time and does not search opposing turns or hidden-card beliefs.

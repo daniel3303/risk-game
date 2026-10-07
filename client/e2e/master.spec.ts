@@ -8,7 +8,7 @@ test('spectator watches Master play Expert with server-authoritative turns', asy
   await page.getByLabel('Your role').selectOption('spectator');
   await page.getByRole('button', { name: 'Create AI room' }).click();
   await page.getByLabel('AI difficulty').selectOption('master');
-  await expect(page.getByText('Searches deeper capture chains and denies rival income. Beats Expert in duels.')).toBeVisible();
+  await expect(page.getByText('Searches deeper capture chains and denies rival income. Beats Expert in automatic-setup duels.')).toBeVisible();
   await page.getByRole('button', { name: 'Add AI player' }).click();
   await expect(page.getByText('Master AI 1', { exact: true })).toBeVisible();
   await expect(page.getByText('master · Deep planner', { exact: true })).toBeVisible();
