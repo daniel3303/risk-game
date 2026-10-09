@@ -89,5 +89,5 @@ public sealed class ValueNetwork
         return sum;
     }
 
-    public double Logit(float[] x, float[] hidden) => A * x[BoardFeatures.ScoreIndex] + B + Term(x, hidden);
+    public double Logit(float[] x, float[] hidden, int scoreIndex) => A * x[scoreIndex] + B + Term(x, hidden);
 }

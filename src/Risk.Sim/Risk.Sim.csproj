@@ -1,4 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup><PackageReference Include="Newtonsoft.Json" /></ItemGroup>
-  <ItemGroup><EmbeddedResource Include="Learning/ultimate-model.json" LogicalName="Risk.Sim.Learning.ultimate-model.json" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="Learning/*.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" /></ItemGroup>
 </Project>

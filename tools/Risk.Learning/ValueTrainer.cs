@@ -16,36 +16,40 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
     private const int Slices = 16;
     private const double Beta1 = .9, Beta2 = .999, Epsilon = 1e-8;
 
-    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap)
+    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap, TrajectoryFormat format = null)
     {
+        format ??= TrajectoryFormat.Duel;
+        var encoding = format.Encoding;
+        if (bootstrap != null && bootstrap.Encoding != encoding) throw new ArgumentException("The bootstrap model uses a different board encoding.");
         var parallel = new ParallelOptions { MaxDegreeOfParallelism = threads };
         var xs = new float[rows.Length][];
         Parallel.For(0, rows.Length, parallel, r =>
         {
-            var (evaluator, board) = TrajectoryFormat.Rebuild(map, rows[r]);
-            xs[r] = new float[BoardFeatures.Count];
-            BoardFeatures.Extract(evaluator, board, evaluator.Evaluate(board), xs[r]);
+            var (evaluator, board) = format.Rebuild(map, rows[r]);
+            xs[r] = new float[encoding.Count];
+            encoding.Extract(evaluator, board, evaluator.HandScore(board), xs[r]);
         });
-        var outcome = rows.Select(r => r[TrajectoryFormat.Outcome]).ToArray();
-        var validation = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][TrajectoryFormat.Seed] % 10 == 0).ToArray();
-        var training = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][TrajectoryFormat.Seed] % 10 != 0).ToArray();
+        var outcome = rows.Select(r => r[format.Outcome]).ToArray();
+        var validation = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][format.Seed] % 10 == 0).ToArray();
+        var training = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][format.Seed] % 10 != 0).ToArray();
         var random = new Random(seed);
-        var network = ValueNetwork.Create(BoardFeatures.Count, hidden, random);
+        var network = ValueNetwork.Create(encoding.Count, hidden, random);
+        var scoreIndex = encoding.ScoreIndex;
         // Adam moments and the step count persist across every pass of this fit, including the score-only calibration.
         var state = new AdamState(2 + network.Inputs * hidden + hidden * 2);
         // Calibrate the hand score alone first; it is the baseline and, without a previous model, the first bootstrap.
-        Train(network, state, xs, outcome, training, 4, .01, 0, true, random, parallel);
-        log.WriteLine($"{training.Length} training and {validation.Length} validation afterstates; score-only validation log-loss {LogLoss(network, xs, outcome, validation, true, parallel):F4}");
+        Train(network, state, xs, outcome, training, 4, .01, 0, true, random, parallel, scoreIndex);
+        log.WriteLine($"{training.Length} training and {validation.Length} validation afterstates; score-only validation log-loss {LogLoss(network, xs, outcome, validation, true, parallel, scoreIndex):F4}");
         var values = new double[rows.Length];
         Parallel.For(0, rows.Length, parallel, r =>
         {
-            if (bootstrap == null) values[r] = Sigmoid(network.A * xs[r][BoardFeatures.ScoreIndex] + network.B);
-            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(xs[r], new float[m.Hidden])));
+            if (bootstrap == null) values[r] = Sigmoid(network.A * xs[r][scoreIndex] + network.B);
+            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(xs[r], new float[m.Hidden], scoreIndex)));
         });
         var target = new float[rows.Length];
-        foreach (var sequence in Enumerable.Range(0, rows.Length).GroupBy(r => ((int)rows[r][TrajectoryFormat.Seed], (int)rows[r][TrajectoryFormat.Mover])))
+        foreach (var sequence in Enumerable.Range(0, rows.Length).GroupBy(r => ((int)rows[r][format.Seed], (int)rows[r][format.Mover])))
         {
-            var ordered = sequence.OrderBy(r => rows[r][TrajectoryFormat.Turn]).ToArray();
+            var ordered = sequence.OrderBy(r => rows[r][format.Turn]).ToArray();
             var returns = ValueTargets.LambdaReturns(ordered.Select(r => values[r]).ToArray(), outcome[ordered[^1]], lambda);
             for (var i = 0; i < ordered.Length; i++) target[ordered[i]] = (float)returns[i];
         }
@@ -55,9 +59,9 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         {
             var progress = (double)epoch / epochs;
             var step = progress < .5 ? 1 : progress < .75 ? .3 : .1;
-            Train(network, state, xs, target, training, 1, rate * step, l2, false, random, parallel);
-            var loss = LogLoss(network, xs, outcome, validation, false, parallel);
-            log.WriteLine($"epoch {epoch + 1}: validation log-loss {loss:F4} against outcomes, {LogLoss(network, xs, target, validation, false, parallel):F4} against targets");
+            Train(network, state, xs, target, training, 1, rate * step, l2, false, random, parallel, scoreIndex);
+            var loss = LogLoss(network, xs, outcome, validation, false, parallel, scoreIndex);
+            log.WriteLine($"epoch {epoch + 1}: validation log-loss {loss:F4} against outcomes, {LogLoss(network, xs, target, validation, false, parallel, scoreIndex):F4} against targets");
             if (!(loss < bestLoss)) continue;
             bestLoss = loss;
             best = new ValueNetwork { Inputs = network.Inputs, Hidden = network.Hidden, A = network.A, B = network.B, W = network.W.ToArray(), C = network.C.ToArray(), V = network.V.ToArray() };
@@ -67,7 +71,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
 
     private static double Sigmoid(double z) => 1 / (1 + Math.Exp(-z));
 
-    private static double LogLoss(ValueNetwork network, float[][] xs, float[] labels, int[] rows, bool scoreOnly, ParallelOptions parallel)
+    private static double LogLoss(ValueNetwork network, float[][] xs, float[] labels, int[] rows, bool scoreOnly, ParallelOptions parallel, int scoreIndex)
     {
         var losses = new double[rows.Length];
         Parallel.ForEach(Partitioner.Create(0, rows.Length, 4096), parallel, range =>
@@ -76,7 +80,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
             for (var i = range.Item1; i < range.Item2; i++)
             {
                 var r = rows[i];
-                var logit = scoreOnly ? network.A * xs[r][BoardFeatures.ScoreIndex] + network.B : network.Logit(xs[r], hidden);
+                var logit = scoreOnly ? network.A * xs[r][scoreIndex] + network.B : network.Logit(xs[r], hidden, scoreIndex);
                 var p = Math.Clamp(Sigmoid(logit), 1e-6, 1 - 1e-6);
                 losses[i] = -(labels[r] * Math.Log(p) + (1 - labels[r]) * Math.Log(1 - p));
             }
@@ -85,7 +89,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         return losses.Sum() / rows.Length;
     }
 
-    private void Train(ValueNetwork net, AdamState state, float[][] xs, float[] labels, int[] rows, int passes, double learningRate, double decay, bool scoreOnly, Random random, ParallelOptions parallel)
+    private void Train(ValueNetwork net, AdamState state, float[][] xs, float[] labels, int[] rows, int passes, double learningRate, double decay, bool scoreOnly, Random random, ParallelOptions parallel, int scoreIndex)
     {
         int n = net.Inputs, hn = net.Hidden;
         var (m, s) = (state.M, state.S);
@@ -108,8 +112,8 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
                         var r = order[k];
                         var x = xs[r];
                         var term = scoreOnly ? 0 : net.Term(x, h);
-                        var d = Sigmoid(net.A * x[BoardFeatures.ScoreIndex] + net.B + term) - labels[r];
-                        g[0] += d * x[BoardFeatures.ScoreIndex];
+                        var d = Sigmoid(net.A * x[scoreIndex] + net.B + term) - labels[r];
+                        g[0] += d * x[scoreIndex];
                         g[1] += d;
                         if (scoreOnly) continue;
                         int c = 2 + n * hn, v = c + hn;

@@ -8,6 +8,7 @@ using Risk.Sim.Models;
 if (args.Contains("--help"))
 {
     Console.WriteLine("Risk Arena: --seeds 16 --first-seed 1000 --players 2 --candidate expert --opponent hard --cards fixed --setup automatic --max-rounds 200 --max-actions 20000 --parallel 1");
+    Console.WriteLine($"Policies: {string.Join(", ", Risk.Sim.AI.PolicyCatalog.Names)}.");
     return 0;
 }
 using var cancellation = new CancellationTokenSource();

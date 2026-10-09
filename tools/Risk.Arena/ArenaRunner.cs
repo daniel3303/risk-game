@@ -19,10 +19,10 @@ public static class ArenaRunner
 
     private static MatchResult Play(WorldMap map, ArenaOptions options, int seed, int candidateSeat, CancellationToken cancellation)
     {
-        var difficulties = Enumerable.Range(0, options.Players).Select(seat => seat == candidateSeat ? options.Candidate : options.Opponent).ToArray();
-        var names = difficulties.Select((difficulty, seat) => $"{difficulty} {seat + 1}").ToArray();
+        var policies = Enumerable.Range(0, options.Players).Select(seat => seat == candidateSeat ? options.Candidate : options.Opponent).ToArray();
+        var names = policies.Select((policy, seat) => $"{char.ToUpperInvariant(policy[0])}{policy[1..]} {seat + 1}").ToArray();
         var game = new Game(map, names, new(options.Cards, options.Setup), new SeededRandom(seed));
-        var strategies = difficulties.Select((difficulty, seat) => StrategyCatalog.Create(difficulty, unchecked(seed * 1000003 + seat * 7919))).ToArray();
+        var strategies = policies.Select((policy, seat) => PolicyCatalog.Create(policy, unchecked(seed * 1000003 + seat * 7919))).ToArray();
         var actions = 0;
         while (game.State.Phase != Phase.Finished && game.State.Round <= options.MaxRounds && actions < options.MaxActions)
         {

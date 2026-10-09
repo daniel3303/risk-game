@@ -8,7 +8,7 @@ test('spectator watches Ultimate play Master with server-authoritative turns', a
   await page.getByLabel('Your role').selectOption('spectator');
   await page.getByRole('button', { name: 'Create AI room' }).click();
   await page.getByLabel('AI difficulty').selectOption('ultimate');
-  await expect(page.getByText('Master with a value network learned from self-play, used whenever two players remain. The strongest trained model.')).toBeVisible();
+  await expect(page.getByText('Master with a value network learned from self-play in duels, and frontier defence plus threat weighting against several rivals. The strongest trained model.')).toBeVisible();
   await page.getByRole('button', { name: 'Add AI player' }).click();
   await expect(page.getByText('Ultimate AI 1', { exact: true })).toBeVisible();
   await expect(page.getByText('ultimate · Learned planner', { exact: true })).toBeVisible();

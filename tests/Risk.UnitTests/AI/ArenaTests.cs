@@ -10,7 +10,7 @@ public sealed class ArenaTests
     [Fact]
     public void Run_IdenticalPolicies_RotatesAllStartingSeatsWithoutFavoringTheCandidate()
     {
-        var options = new ArenaOptions(Seeds: 2, Players: 2, Candidate: BotDifficulty.Easy, Opponent: BotDifficulty.Easy);
+        var options = new ArenaOptions(Seeds: 2, Players: 2, Candidate: "easy", Opponent: "easy");
         var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
         report.Games.Should().Be(4);
         report.Wins.Should().Be(2);
@@ -22,8 +22,8 @@ public sealed class ArenaTests
     [Fact]
     public void Run_Parallel_ReproducesSequentialMatches()
     {
-        var sequential = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Hard), TestContext.Current.CancellationToken);
-        var parallel = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: BotDifficulty.Master, Opponent: BotDifficulty.Hard, Parallelism: 4), TestContext.Current.CancellationToken);
+        var sequential = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: "master", Opponent: "hard"), TestContext.Current.CancellationToken);
+        var parallel = ArenaRunner.Run(TestWorld.Map(), new ArenaOptions(Seeds: 3, Candidate: "master", Opponent: "hard", Parallelism: 4), TestContext.Current.CancellationToken);
         parallel.Matches.Should().Equal(sequential.Matches);
         parallel.Wins.Should().Be(sequential.Wins);
     }

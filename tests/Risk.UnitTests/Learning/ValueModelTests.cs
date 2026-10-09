@@ -14,7 +14,7 @@ public sealed class ValueModelTests
     public void Ultimate_EmbeddedModel_LoadsAndKeepsCorrectionsWithinItsLimit()
     {
         var model = ValueModel.Ultimate;
-        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardFeatures.Count);
+        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardEncoding.Duel.Count);
         var game = TestWorld.Game(2, new(), 52);
         var master = new MasterStrategy();
         var corrections = new List<double>();
@@ -53,10 +53,10 @@ public sealed class ValueModelTests
     [Fact]
     public void Serialize_RoundTrip_PreservesEveryNetworkOutput()
     {
-        var model = new ValueModel { Scale = .5, Members = [ValueNetwork.Create(BoardFeatures.Count, 8, new Random(4))] };
+        var model = new ValueModel { Scale = .5, Members = [ValueNetwork.Create(BoardEncoding.Duel.Count, 8, new Random(4))] };
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(model.Serialize()));
         var copy = ValueModel.Load(stream);
-        var x = Enumerable.Range(0, BoardFeatures.Count).Select(i => (float)(i % 7) / 7).ToArray();
+        var x = Enumerable.Range(0, BoardEncoding.Duel.Count).Select(i => (float)(i % 7) / 7).ToArray();
         copy.Scale.Should().Be(.5);
         copy.Members[0].Term(x, new float[8]).Should().Be(model.Members[0].Term(x, new float[8]));
     }
@@ -74,7 +74,7 @@ public sealed class ValueModelTests
     [InlineData("malformed")]
     public void Load_InvalidModel_IsRejected(string defect)
     {
-        var network = ValueNetwork.Create(BoardFeatures.Count, 2, new Random(1));
+        var network = ValueNetwork.Create(BoardEncoding.Duel.Count, 2, new Random(1));
         var model = JObject.Parse(new ValueModel { Members = [network] }.Serialize());
         var member = (JObject)model["Members"][0];
         switch (defect)
@@ -98,7 +98,7 @@ public sealed class ValueModelTests
     [Fact]
     public void Load_ParametersBeforeSizes_StillSplitsTheWeights()
     {
-        var network = ValueNetwork.Create(BoardFeatures.Count, 3, new Random(2));
+        var network = ValueNetwork.Create(BoardEncoding.Duel.Count, 3, new Random(2));
         var model = JObject.Parse(new ValueModel { Members = [network] }.Serialize());
         var member = (JObject)model["Members"][0];
         var reordered = new JObject { ["Parameters"] = member["Parameters"], ["Inputs"] = member["Inputs"], ["Hidden"] = member["Hidden"], ["A"] = member["A"], ["B"] = member["B"] };
@@ -112,15 +112,15 @@ public sealed class ValueModelTests
     [Fact]
     public void Term_VectorisedSum_MatchesAPlainLoop()
     {
-        var network = ValueNetwork.Create(BoardFeatures.Count, 64, new Random(6));
+        var network = ValueNetwork.Create(BoardEncoding.Duel.Count, 64, new Random(6));
         for (var j = 0; j < 64; j++) network.C[j] = (j % 5 - 2) * .01f;
         var random = new Random(7);
-        var x = Enumerable.Range(0, BoardFeatures.Count).Select(_ => random.NextDouble() < .3 ? (float)random.NextDouble() : 0f).ToArray();
+        var x = Enumerable.Range(0, BoardEncoding.Duel.Count).Select(_ => random.NextDouble() < .3 ? (float)random.NextDouble() : 0f).ToArray();
         var expected = 0.0;
         for (var j = 0; j < 64; j++)
         {
             var unit = network.C[j];
-            for (var i = 0; i < BoardFeatures.Count; i++) if (x[i] != 0) unit += network.W[i * 64 + j] * x[i];
+            for (var i = 0; i < BoardEncoding.Duel.Count; i++) if (x[i] != 0) unit += network.W[i * 64 + j] * x[i];
             expected += (double)Math.Max(0, unit) * network.V[j];
         }
         network.Term(x, new float[64]).Should().Be(expected);
@@ -133,12 +133,12 @@ public sealed class ValueModelTests
         var observation = GameObservation.From(game);
         var evaluator = new PositionEvaluator(observation, ExpertTuning.Master);
         var board = PlannerBoard.From(observation);
-        var x = new float[BoardFeatures.Count];
-        BoardFeatures.Extract(evaluator, board, 25, x);
+        var x = new float[BoardEncoding.Duel.Count];
+        BoardEncoding.Duel.Extract(evaluator, board, 25, x);
         var owned = Enumerable.Range(0, 42).Count(id => board.Owners[id] == observation.Player);
         Enumerable.Range(0, 42).Sum(id => x[id * 14]).Should().Be(owned);
         Enumerable.Range(0, 42).Sum(id => x[id * 14 + 7]).Should().Be(42 - owned);
-        x[BoardFeatures.ScoreIndex].Should().Be(.5f);
+        x[BoardEncoding.Duel.ScoreIndex].Should().Be(.5f);
         // Each territory's threat is the best outright capture chance of an adjacent enemy stack.
         var target = Enumerable.Range(0, 42).First(id => board.Owners[id] == observation.Player);
         var expected = observation.Map.Territories[target].Neighbors.Where(n => board.Owners[n] != observation.Player && board.Troops[n] > 1)

@@ -11,6 +11,9 @@ public sealed record ExpertTuning
         DuelEnemyIncomeValue = 8, BeamWidth = 16, Branches = 20, MaxDepth = 10, SearchBudget = 4096, DeployBorders = 24,
     };
 
+    /// <summary>Master's search plus frontier defence and threat weighting in games with more than two players; see docs/ultimate-ai.md.</summary>
+    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5 };
+
     public double TerritoryValue { get; init; } = 1.4;
     public double IncomeValue { get; init; } = 4;
     public double DuelEnemyArmyValue { get; init; } = .9;
@@ -33,4 +36,16 @@ public sealed record ExpertTuning
     public int FortifyTargets { get; init; } = 4;
     /// <summary>Optional learned correction added to the hand-written score of every position that is not already won.</summary>
     public IBoardValuation Valuation { get; init; }
+    /// <summary>
+    /// Weight, in games with more than two players, of the expected loss from weakly held borders: each own border territory's
+    /// capture chance by the strongest adjacent enemy stack times what falls with it, plus the card the capturer draws. Zero disables the term.
+    /// </summary>
+    public double FrontierRiskValue { get; init; }
+    /// <summary>The same weight while exactly two players remain. Whenever frontier risk is scored, the planner also considers occupations that leave the source a garrison able to resist the strongest adjacent enemy stack.</summary>
+    public double DuelFrontierRiskValue { get; init; }
+    /// <summary>
+    /// In games with more than two players, rival armies and income are weighted by that rival's strength relative to the
+    /// average rival, raised to this exponent; zero weights every rival alike.
+    /// </summary>
+    public double ThreatWeighting { get; init; }
 }

@@ -6,29 +6,41 @@ using Risk.Sim.Learning;
 using Risk.Sim.Models;
 namespace Risk.Learning;
 
-/// <summary>Plays Master's planner with a candidate value model against a catalogue opponent, every seed from both seats.</summary>
+/// <summary>
+/// Plays a candidate value model against a catalogue opponent, every seed from every seat. A duel model corrects Master's planner;
+/// a multiplayer model joins the bundled duel model behind Ultimate's planner. In defend mode the opponent takes the rotating
+/// seat against candidates everywhere else, and the reported rate is the opponent's.
+/// </summary>
 public static class ModelEvaluator
 {
-    public static EvaluationSummary Run(WorldMap map, ValueModel model, BotDifficulty opponent, int firstSeed, int seeds, int threads)
+    public static EvaluationSummary Run(WorldMap map, ValueModel model, string opponent, int firstSeed, int seeds, int threads) =>
+        Run(map, model, opponent, firstSeed, seeds, 2, false, threads);
+
+    public static EvaluationSummary Run(WorldMap map, ValueModel model, string opponent, int firstSeed, int seeds, int players, bool defend, int threads)
     {
-        int first = 0, second = 0, unfinished = 0;
-        Parallel.For(0, seeds * 2, new ParallelOptions { MaxDegreeOfParallelism = threads }, job =>
+        if (model.Encoding != BoardEncoding.For(TrajectoryFormat.For(players).Encoding.Version))
+            throw new ArgumentException($"A {model.Features} model cannot be evaluated in {players}-player games.");
+        var wins = new int[players];
+        var unfinished = 0;
+        Parallel.For(0, seeds * players, new ParallelOptions { MaxDegreeOfParallelism = threads }, job =>
         {
-            var seed = firstSeed + job / 2;
-            var seat = job % 2;
-            var game = new Game(map, ["A", "B"], new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
-            var strategies = new IPlayerStrategy[2];
-            strategies[seat] = new ExpertStrategy(ExpertTuning.Master with { Valuation = model });
-            strategies[1 - seat] = StrategyCatalog.Create(opponent, unchecked(seed * 1000003 + (1 - seat) * 7919));
+            var seed = firstSeed + job / players;
+            var seat = job % players;
+            var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
+            var strategies = Enumerable.Range(0, players).Select(i => (i == seat) != defend ? Candidate(model) : PolicyCatalog.Create(opponent, unchecked(seed * 1000003 + i * 7919))).ToArray();
             var actions = 0;
             while (game.State.Phase != Phase.Finished && game.State.Round <= 200 && actions++ < 20000)
                 game.Apply(game.State.CurrentPlayer, strategies[game.State.CurrentPlayer].Choose(GameObservation.From(game)));
             if (game.State.Phase != Phase.Finished) Interlocked.Increment(ref unfinished);
-            else if (game.State.Winner == seat) Interlocked.Increment(ref seat == 0 ? ref first : ref second);
+            else if (game.State.Winner == seat) Interlocked.Increment(ref wins[seat]);
         });
-        var rate = (first + second) / (2.0 * seeds);
+        var rate = wins.Sum() / (double)(seeds * players);
         // Same conservative Hoeffding bound over seed blocks as the Arena.
         var margin = Math.Sqrt(Math.Log(40) / (2.0 * seeds));
-        return new(opponent.ToString().ToLowerInvariant(), firstSeed, seeds, first, second, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin));
+        return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin));
     }
+
+    public static IPlayerStrategy Candidate(ValueModel model) => model.Encoding == BoardEncoding.Duel
+        ? new ExpertStrategy(ExpertTuning.Master with { Valuation = model })
+        : new ExpertStrategy(ExpertTuning.Ultimate with { Valuation = new UltimateValuation(ValueModel.Ultimate, model) });
 }
