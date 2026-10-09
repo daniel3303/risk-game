@@ -2,25 +2,24 @@ using Risk.Sim.AI.Planning;
 namespace Risk.Sim.Learning;
 
 /// <summary>Classic-map duel board encoding from the planning player's perspective; the rival moves next.</summary>
-public static class BoardFeatures
+public sealed class DuelBoardFeatures : BoardEncoding
 {
-    public const string Version = "duel-board-v1";
     public const int Territories = 42;
     public const int Continents = 6;
     private const int Side = 7;
     private const int PerTerritory = Side * 2;
     private const int Globals = 21 + Continents * 2;
-    public const int Count = Territories * PerTerritory + Globals;
-    public const int ScoreIndex = Territories * PerTerritory;
-    public const double ScoreScale = 50;
     private static readonly int[] Thresholds = [2, 3, 5, 9];
 
-    public static bool Supports(PositionEvaluator evaluator) =>
+    public override string Version => "duel-board-v1";
+    public override int Count => Territories * PerTerritory + Globals;
+    public override int ScoreIndex => Territories * PerTerritory;
+
+    public override bool Supports(PositionEvaluator evaluator) =>
         evaluator.Duel && evaluator.Observation.Players != null
         && evaluator.Observation.Map.Territories.Length == Territories && evaluator.Regions.Length == Continents;
 
-    /// <summary>Writes the features of <paramref name="board"/>; <paramref name="score"/> is the hand-written evaluation of the same board.</summary>
-    public static void Extract(PositionEvaluator evaluator, PlannerBoard board, double score, float[] x)
+    public override void Extract(PositionEvaluator evaluator, PlannerBoard board, double score, float[] x)
     {
         Array.Clear(x);
         var player = evaluator.Player;

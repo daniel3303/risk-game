@@ -134,7 +134,7 @@ public sealed class ExpertStrategyTests
     [Fact]
     public void Choose_DefaultTuning_ReproducesThePublishedExpertMatches()
     {
-        var options = new ArenaOptions(Seeds: 2, FirstSeed: 3000, Candidate: BotDifficulty.Expert, Opponent: BotDifficulty.Hard);
+        var options = new ArenaOptions(Seeds: 2, FirstSeed: 3000, Candidate: "expert", Opponent: "hard");
         var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
         // Recorded in docs/ai-results.json; tuning plumbing must not change Expert's moves.
         report.Matches.Should().Equal(new MatchResult(3000, 0, 0, true, 6, 148), new MatchResult(3000, 1, 1, true, 7, 168),

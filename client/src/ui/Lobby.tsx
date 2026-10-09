@@ -6,7 +6,7 @@ import type { Difficulty, Snapshot } from '../game/types';
 import { WorldBoard } from './WorldBoard';
 import { CommanderPortrait } from './CommanderPortrait';
 
-const descriptions = { easy: 'A cautious recruit. Protects armies and looks for simple wins.', normal: 'A tactician. Builds a strong frontier and pursues continents.', hard: 'A strategist. Samples battle outcomes before committing troops.', expert: 'Plans connected conquests, hunts eliminations, and protects continent income.', master: 'Searches deeper capture chains and denies rival income. Beats Expert in automatic-setup duels.', ultimate: 'Master with a value network learned from self-play, used whenever two players remain. The strongest trained model.' };
+const descriptions = { easy: 'A cautious recruit. Protects armies and looks for simple wins.', normal: 'A tactician. Builds a strong frontier and pursues continents.', hard: 'A strategist. Samples battle outcomes before committing troops.', expert: 'Plans connected conquests, hunts eliminations, and protects continent income.', master: 'Searches deeper capture chains and denies rival income. Beats Expert in automatic-setup duels.', ultimate: 'Master with value networks learned from self-play in duels and three-player games, plus frontier defence and threat weighting. The strongest trained model.' };
 const implementations = { easy: 'Heuristic', normal: 'Heuristic', hard: 'Monte Carlo', expert: 'Turn planner', master: 'Deep planner', ultimate: 'Learned planner' };
 
 export function Lobby({ room, seat, disabled }: { room: Snapshot; seat: number; disabled: boolean }) {

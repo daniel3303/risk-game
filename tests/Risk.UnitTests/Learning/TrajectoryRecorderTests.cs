@@ -10,14 +10,14 @@ public sealed class TrajectoryRecorderTests
     {
         var rows = TrajectoryRecorder.Play(TestWorld.Map(), 760000, null);
         rows.Should().NotBeEmpty();
-        (rows.Length % TrajectoryFormat.Width).Should().Be(0);
+        (rows.Length % TrajectoryFormat.Duel.Width).Should().Be(0);
         var records = Split(rows);
-        records.Should().OnlyContain(r => r[TrajectoryFormat.Seed] == 760000);
-        records.Select(r => r[TrajectoryFormat.Outcome]).Distinct().Order().Should().Equal(0f, 1f);
-        foreach (var player in records.GroupBy(r => r[TrajectoryFormat.Mover]))
+        records.Should().OnlyContain(r => r[TrajectoryFormat.Duel.Seed] == 760000);
+        records.Select(r => r[TrajectoryFormat.Duel.Outcome]).Distinct().Order().Should().Equal(0f, 1f);
+        foreach (var player in records.GroupBy(r => r[TrajectoryFormat.Duel.Mover]))
         {
-            player.Select(r => (int)r[TrajectoryFormat.Turn]).Should().Equal(Enumerable.Range(0, player.Count()));
-            player.Select(r => r[TrajectoryFormat.Outcome]).Distinct().Should().ContainSingle();
+            player.Select(r => (int)r[TrajectoryFormat.Duel.Turn]).Should().Equal(Enumerable.Range(0, player.Count()));
+            player.Select(r => r[TrajectoryFormat.Duel.Outcome]).Distinct().Should().ContainSingle();
         }
     }
 
@@ -58,7 +58,7 @@ public sealed class TrajectoryRecorderTests
             TrajectoryRecorder.Record(map, 763000, 2, output, null, 1, TextWriter.Null);
             TrajectoryRecorder.Record(map, 763005, 1, output, null, 1, TextWriter.Null);
             var expected = new[] { 763000, 763001, 763005 }.SelectMany(seed => TrajectoryRecorder.Play(map, seed, null)).ToArray();
-            TrajectoryFormat.Read([output]).SelectMany(r => r).Should().Equal(expected);
+            TrajectoryFormat.Duel.Read([output]).SelectMany(r => r).Should().Equal(expected);
             TrajectoryRecorder.Recorded(output, out var dropped).Should().BeEquivalentTo([763000, 763001]);
             dropped.Should().Be(763005);
         }
@@ -68,6 +68,6 @@ public sealed class TrajectoryRecorderTests
         }
     }
 
-    private static float[][] Split(float[] rows) => Enumerable.Range(0, rows.Length / TrajectoryFormat.Width)
-        .Select(r => rows.AsSpan(r * TrajectoryFormat.Width, TrajectoryFormat.Width).ToArray()).ToArray();
+    private static float[][] Split(float[] rows) => Enumerable.Range(0, rows.Length / TrajectoryFormat.Duel.Width)
+        .Select(r => rows.AsSpan(r * TrajectoryFormat.Duel.Width, TrajectoryFormat.Duel.Width).ToArray()).ToArray();
 }

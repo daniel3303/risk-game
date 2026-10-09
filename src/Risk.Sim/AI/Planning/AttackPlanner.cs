@@ -3,6 +3,8 @@ namespace Risk.Sim.AI.Planning;
 
 public sealed class AttackPlanner(PositionEvaluator evaluator)
 {
+    private const int SafeGuardLimit = 12;
+    private const double SafeGuardOdds = .5;
     private ExpertTuning Tuning => evaluator.Tuning;
     public int SearchBudget => Tuning.SearchBudget;
 
@@ -66,10 +68,28 @@ public sealed class AttackPlanner(PositionEvaluator evaluator)
     {
         yield return board;
         var guard = Math.Min(evaluator.Guard(board, from), board.Troops[from] + board.Troops[to] - minimum);
-        if (guard <= board.Troops[from]) yield break;
+        if (guard > board.Troops[from]) yield return Guarded(board, from, to, guard);
+        if (evaluator.FrontierWeight <= 0) yield break;
+        var safe = Math.Min(SafeGuard(board, from), board.Troops[from] + board.Troops[to] - minimum);
+        if (safe > Math.Max(guard, board.Troops[from])) yield return Guarded(board, from, to, safe);
+    }
+
+    private static PlannerBoard Guarded(PlannerBoard board, int from, int to, int guard)
+    {
         var guarded = board.Copy();
         guarded.Troops[to] -= guard - guarded.Troops[from];
         guarded.Troops[from] = guard;
-        yield return guarded;
+        return guarded;
+    }
+
+    /// <summary>The smallest garrison, up to the limit, that the strongest adjacent enemy stack captures less often than the safe odds.</summary>
+    private int SafeGuard(PlannerBoard board, int id)
+    {
+        var attackers = evaluator.Observation.Map.Territories[id].Neighbors
+            .Where(n => board.Owners[n] >= 0 && board.Owners[n] != evaluator.Player).Select(n => evaluator.ForecastAttackers(board, n)).DefaultIfEmpty(0).Max();
+        if (attackers == 0) return 1;
+        for (var guard = 2; guard < SafeGuardLimit; guard++)
+            if (BattleOdds.Estimate(attackers, guard).WinChance < SafeGuardOdds) return guard;
+        return SafeGuardLimit;
     }
 }

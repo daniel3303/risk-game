@@ -7,6 +7,9 @@ public sealed class PositionEvaluator
     private const double VictoryMargin = 1000;
     private const double VictoryArmyMultiplier = 10;
     private const double VictoryCardMultiplier = 100;
+    private const double ThreatIncomeWeight = 3;
+    private const double ThreatWeightMinimum = .25;
+    private const double ThreatWeightMaximum = 3;
     public GameObservation Observation { get; }
     public ExpertTuning Tuning { get; }
     public int Player => Observation.Player;
@@ -14,8 +17,11 @@ public sealed class PositionEvaluator
     private readonly ObservedPlayer[] players;
     private readonly int[] regionIndex;
     private readonly double victoryValue;
+    // Per-player facts fixed for the decision, indexed by player id; evaluation runs thousands of times per decision.
+    private readonly bool[] eliminated;
+    private readonly int[] tradeForecast;
     public double CardValue { get; }
-    public bool Duel => players.Count(p => !p.Eliminated) == 2;
+    public bool Duel { get; }
 
     public PositionEvaluator(GameObservation observation, ExpertTuning tuning = null)
     {
@@ -26,10 +32,35 @@ public sealed class PositionEvaluator
         regionIndex = observation.Map.Territories.Select(t => Array.FindIndex(observation.Map.Continents, c => c.Id == t.Continent)).ToArray();
         CardValue = ((observation.Options?.Cards ?? CardMode.Fixed) == CardMode.Fixed ? Tuning.FixedSetValue : CardRules.ProgressiveBonus(observation.Trades)) / 3.0;
         victoryValue = VictoryMargin + (observation.Territories.Sum(t => (double)t.Troops) + Math.Max(0, observation.Reinforcements)) * VictoryArmyMultiplier + CardValue * VictoryCardMultiplier;
+        Duel = players.Count(p => !p.Eliminated) == 2;
+        var count = Math.Max(Player + 1, players.Select(p => p.Id + 1).DefaultIfEmpty(0).Max());
+        eliminated = new bool[count];
+        tradeForecast = new int[count];
+        foreach (var player in players)
+        {
+            eliminated[player.Id] = player.Eliminated;
+            var chance = player.CardCount switch { >= 5 => 1.0, 4 => .75, 3 => .35, _ => 0.0 };
+            tradeForecast[player.Id] = (int)Math.Round(chance * CardValue * 3);
+        }
     }
 
     public double Evaluate(PlannerBoard board)
     {
+        var score = Score(board, out var incomes);
+        if (incomes == null) return score;
+        // The learned correction reads the hand-written score it was trained on, before any frontier risk.
+        if (Tuning.Valuation != null) score += Tuning.Valuation.Correction(this, board, score);
+        if (FrontierWeight > 0) score -= FrontierWeight * FrontierRisk(board, incomes);
+        return score;
+    }
+
+    /// <summary>The hand-written score alone, without the learned correction or frontier risk; value models calibrate against it.</summary>
+    public double HandScore(PlannerBoard board) => Score(board, out _);
+
+    /// <summary>The hand-written score; <paramref name="incomes"/> is null when the board is already won.</summary>
+    private double Score(PlannerBoard board, out int[] incomes)
+    {
+        incomes = null;
         var count = Math.Max(Player + 1, players.Select(p => p.Id + 1).DefaultIfEmpty(0).Max());
         var territories = new int[count];
         var armies = new double[count];
@@ -40,20 +71,71 @@ public sealed class PositionEvaluator
             armies[board.Owners[id]] += board.Troops[id];
         }
         if (players.Where(p => p.Id != Player && !p.Eliminated).All(p => territories[p.Id] == 0)) return victoryValue;
-        var ownIncome = Income(board, Player, territories[Player]);
-        var score = armies[Player] + territories[Player] * Tuning.TerritoryValue + ownIncome * Tuning.IncomeValue;
-        foreach (var opponent in players.Where(p => p.Id != Player && !p.Eliminated))
-            score -= armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
-                + Income(board, opponent.Id, territories[opponent.Id]) * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
+        incomes = new int[count];
+        incomes[Player] = Income(board, Player, territories[Player]);
+        var score = armies[Player] + territories[Player] * Tuning.TerritoryValue + incomes[Player] * Tuning.IncomeValue;
+        var rivals = players.Where(p => p.Id != Player && !p.Eliminated).ToArray();
+        foreach (var rival in rivals) incomes[rival.Id] = Income(board, rival.Id, territories[rival.Id]);
+        var weights = ThreatWeights(rivals, armies, incomes);
+        foreach (var opponent in rivals)
+        {
+            var loss = armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
+                + incomes[opponent.Id] * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
+            score -= weights == null ? loss : loss * weights[opponent.Id];
+        }
         score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0);
         // Exposure stays a separate subtraction so Expert and Master scores keep their exact floating-point values.
         score -= Exposure(board);
-        return Tuning.Valuation == null ? score : score + Tuning.Valuation.Correction(this, board, score);
+        return score;
+    }
+
+    /// <summary>The frontier-risk weight for the current number of players; zero when the term is off.</summary>
+    public double FrontierWeight => Duel ? Tuning.DuelFrontierRiskValue : Tuning.FrontierRiskValue;
+
+    /// <summary>Rival weights relative to the average rival by armies, income and cards; null when disabled or in a duel.</summary>
+    private double[] ThreatWeights(ObservedPlayer[] rivals, double[] armies, int[] incomes)
+    {
+        if (Tuning.ThreatWeighting <= 0 || Duel) return null;
+        var strength = new double[incomes.Length];
+        foreach (var rival in rivals) strength[rival.Id] = armies[rival.Id] + incomes[rival.Id] * ThreatIncomeWeight + rival.CardCount * CardValue;
+        var mean = rivals.Average(r => strength[r.Id]);
+        if (mean <= 0) return null;
+        var weights = new double[incomes.Length];
+        foreach (var rival in rivals) weights[rival.Id] = Math.Clamp(Math.Pow(strength[rival.Id] / mean, Tuning.ThreatWeighting), ThreatWeightMinimum, ThreatWeightMaximum);
+        return weights;
+    }
+
+    /// <summary>
+    /// Expected loss from borders the rivals can take next turn: for each own border territory, the strongest adjacent enemy
+    /// stack's capture chance times the territory, its income share and its defenders; the best such chance also costs the
+    /// card the capturer would draw.
+    /// </summary>
+    private double FrontierRisk(PlannerBoard board, int[] incomes)
+    {
+        var risk = 0.0;
+        var worst = 0.0;
+        for (var id = 0; id < board.Owners.Length; id++)
+        {
+            if (board.Owners[id] != Player) continue;
+            var chance = 0.0;
+            foreach (var n in Observation.Map.Territories[id].Neighbors)
+            {
+                var owner = board.Owners[n];
+                // Surrendered armies stay on the board but never attack.
+                if (owner < 0 || owner == Player || board.Troops[n] < 2 || Eliminated(owner)) continue;
+                var attackers = board.Troops[n] - 1 + incomes[owner] / 2 + TradeForecast(owner);
+                chance = Math.Max(chance, BattleOdds.Estimate(attackers, board.Troops[id]).WinChance);
+            }
+            if (chance == 0) continue;
+            risk += chance * (Tuning.TerritoryValue + Tuning.IncomeValue / 3 + board.Troops[id]);
+            worst = Math.Max(worst, chance);
+        }
+        return risk + worst * CardValue;
     }
 
     public int Income(PlannerBoard board, int player, int owned = -1)
     {
-        if (players.FirstOrDefault(p => p.Id == player)?.Eliminated == true) return 0;
+        if (Eliminated(player)) return 0;
         if (owned < 0) owned = board.Owners.Count(owner => owner == player);
         if (owned == 0) return 0;
         return Math.Max(3, owned / 3) + Enumerable.Range(0, Regions.Length)
@@ -85,12 +167,12 @@ public sealed class PositionEvaluator
     public int ForecastAttackers(PlannerBoard board, int id)
     {
         var owner = board.Owners[id];
-        var opponent = players.FirstOrDefault(p => p.Id == owner);
-        if (opponent?.Eliminated == true) return 0;
-        var chance = opponent?.CardCount switch { >= 5 => 1.0, 4 => .75, 3 => .35, _ => 0.0 };
-        var trade = (int)Math.Round(chance * CardValue * 3);
-        return Math.Max(0, board.Troops[id] - 1 + Income(board, owner) / 2 + trade);
+        if (Eliminated(owner)) return 0;
+        return Math.Max(0, board.Troops[id] - 1 + Income(board, owner) / 2 + TradeForecast(owner));
     }
+
+    private bool Eliminated(int player) => player >= 0 && player < eliminated.Length && eliminated[player];
+    private int TradeForecast(int player) => player >= 0 && player < tradeForecast.Length ? tradeForecast[player] : 0;
 
     private double EliminationValue(PlannerBoard board, int[] territories) => players
         .Where(p => p.Id != Player && !p.Eliminated && territories[p.Id] == 0 && Observation.Territories.Any(t => t.Owner == p.Id))

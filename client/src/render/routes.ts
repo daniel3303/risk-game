@@ -5,9 +5,9 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import type { Scene } from '@babylonjs/core/scene';
 import { map } from '../game/map';
+import { seaRoutes } from './seaRoutes';
 import { seaHeight } from './terrain';
 
-const connections = [[0,29],[2,13],[13,14],[13,16],[14,16],[16,17],[16,18],[19,21],[19,35],[18,20],[11,20],[24,25],[22,25],[31,32],[29,32],[37,38],[38,39],[38,40],[39,40],[39,41]];
 const routeHeight = seaHeight + .12;
 const cross = (a: number[], b: number[]) => a[0] * b[1] - a[1] * b[0];
 
@@ -49,7 +49,7 @@ export function createSeaRoutes(scene: Scene) {
   white.disableLighting = true; white.emissiveColor = Color3.FromHexString('#e3f7fa');
   const black = new StandardMaterial('sea-route-black', scene);
   black.disableLighting = true; black.emissiveColor = Color3.FromHexString('#071116');
-  for (const [from, to] of connections) {
+  for (const [from, to] of seaRoutes) {
     const a = map.territories[from], b = map.territories[to];
     const centerA = new Vector3(a.x, routeHeight, a.z), centerB = new Vector3(b.x, routeHeight, b.z);
     const wrapped = Math.abs(a.x - b.x) > 30;

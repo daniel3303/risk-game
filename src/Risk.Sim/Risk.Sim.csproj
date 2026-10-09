@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup><PackageReference Include="Newtonsoft.Json" /></ItemGroup>
-  <ItemGroup><EmbeddedResource Include="Learning/ultimate-model.json" LogicalName="Risk.Sim.Learning.ultimate-model.json" /></ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Learning/ultimate-model.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" />
+    <!-- Optional: without it Ultimate plays the hand-written multiplayer terms alone. -->
+    <EmbeddedResource Include="Learning/ultimate-multiplayer-model.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" Condition="Exists('Learning/ultimate-multiplayer-model.json')" />
+  </ItemGroup>
 </Project>
