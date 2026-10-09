@@ -25,8 +25,9 @@ public static class Improvement
         if ((options.Current?.Serialize() ?? "") != (ValueModel.UltimateMultiplayer?.Serialize() ?? ""))
             throw new InvalidOperationException("--model must be the multiplayer model bundled in this build; promote it, rebuild, then run the next generation.");
         Directory.CreateDirectory(options.Output);
-        var data = Path.Combine(options.Output, "data.bin");
         var format = TrajectoryFormat.For(options.Players);
+        // Rows of another format have another width, so a resumed run must never read them.
+        var data = Path.Combine(options.Output, $"data-{format.Encoding.Version}.bin");
         log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "current preset" : "current model")}.");
         TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log);
         var rows = format.Read([data]);
