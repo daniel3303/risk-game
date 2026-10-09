@@ -28,6 +28,9 @@ public abstract class TrajectoryFormat
     /// <summary>Rebuilds the mover's evaluator and board; hidden card identities are irrelevant to the features.</summary>
     public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row);
 
+    /// <summary>Whether a game's rows are held out for validation.</summary>
+    public virtual bool IsValidation(int seed) => seed % 10 == 0;
+
     public float[][] Read(IEnumerable<string> paths) => paths.SelectMany(path =>
     {
         var bytes = File.ReadAllBytes(path);
@@ -86,6 +89,9 @@ public sealed class DuelTrajectoryFormat : TrajectoryFormat
 /// </summary>
 public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
 {
+    /// <summary>League seats rotate with the seed modulo four, so validation holds out whole blocks of four seeds to cover every opponent.</summary>
+    public override bool IsValidation(int seed) => seed / 4 % 10 == 0;
+
     private const int Players = 6;
     private const int Cards = 84;
     private const int Eliminated = Cards + Players;

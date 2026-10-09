@@ -30,8 +30,8 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
             encoding.Extract(evaluator, board, evaluator.HandScore(board), xs[r]);
         });
         var outcome = rows.Select(r => r[format.Outcome]).ToArray();
-        var validation = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][format.Seed] % 10 == 0).ToArray();
-        var training = Enumerable.Range(0, rows.Length).Where(r => (int)rows[r][format.Seed] % 10 != 0).ToArray();
+        var validation = Enumerable.Range(0, rows.Length).Where(r => format.IsValidation((int)rows[r][format.Seed])).ToArray();
+        var training = Enumerable.Range(0, rows.Length).Where(r => !format.IsValidation((int)rows[r][format.Seed])).ToArray();
         var random = new Random(seed);
         var network = ValueNetwork.Create(encoding.Count, hidden, random);
         var scoreIndex = encoding.ScoreIndex;

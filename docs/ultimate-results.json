@@ -12124,13 +12124,15 @@
     "training": {
       "data": "Three-player league self-play, fixed cards, automatic setup, seeds 1000000-1019999 (20,000 games, 829,279 afterstates); seeds divisible by four seat the current Ultimate everywhere, the rest give one rotating seat to the turtle probe, Master or Expert; only Ultimate seats are recorded, while three players remain",
       "learner": "Ultimate with the hand-written multiplayer terms and no multiplayer model",
+      "sourceCommit": "8314694",
+      "sourceNote": "Recorded, fitted and gated from source byte-identical to this commit (src/Risk.Sim and tools/Risk.Learning); its gate compared the probe's point rates, which this generation also passes",
       "targets": "TD(lambda=0.7) bootstrapped from the calibrated hand score",
       "fit": {
         "epochs": 8,
         "rate": 0.001,
         "l2": 1e-05,
         "seed": 3,
-        "heldOut": "seeds divisible by ten"
+        "heldOut": "seeds divisible by ten (later generations: seed / 4 divisible by ten)"
       },
       "heldOutLogLoss": {
         "calibratedHandScore": 0.5782,

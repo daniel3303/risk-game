@@ -120,7 +120,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 - Selection used development seeds 960000–966999: 100 seeds per setting against the turtle (two candidates and one probe, the probe in every seat) and 100 against two Masters, then 150 more of each for the four leading pairs. Frontier risk alone took the probe from 33% to 13%–16%; threat weighting alone to 17%; together 10%–13%. Over both banks the chosen pair scored 53% against two Masters where the alternatives scored 43%–49%, with the probe at 10%–12% for all of them.
 - Raising the attack thresholds against several rivals (0.75 to open, 0.85 to continue) or doubling rival income's weight cut the probe to 9%–13% but cost 2–5 points against two Masters, so neither shipped.
 - A frontier weight of 2 or more cost the duel about 15 points on development seeds, which is why the weight is split by player count.
-- Decisions stayed under 0.1 s single-threaded in three-player games; the frontier term costs about three times Master's average decision time.
+- With the hand-written terms alone, decisions stayed under 0.1 s single-threaded in three-player games; the frontier term costs about three times Master's average decision time.
 - With the multiplayer model, three-player decisions on seeds 965000–965007 averaged 2.5 ms single-threaded (0.8 ms without it), the slowest 0.17 s.
 
 ### Multiplayer evaluation
@@ -161,12 +161,15 @@ dotnet run --project tools/Risk.Arena -c Release -- \
   - finishing a player: the weakest rival's territories, armies and cards, and the worst and mean chance of capturing its territories outright from adjacent own stacks;
   - totals: incomes, territories, armies and cards for me and the strongest rival, the sum over rivals, the number of rivals, trades, and the hand score.
 - Training is the duel recipe applied to league self-play: every fourth game seats the current Ultimate everywhere, the others give one rotating seat to the turtle probe, Master or Expert; only Ultimate's afterstates are recorded while more than two players remain, labelled with its outcome and fitted by TD(λ = 0.7) bootstrapped from the previous model (or the calibrated hand score for the first generation).
-- One generation is one command, and running it again with the promoted model as the learner is how the bot keeps improving:
+- One generation is one command; after a promotion, rebuild and run the next one with a new output directory and the next unused seeds, which is how the bot keeps improving:
 
 ```sh
-dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --first-seed 1000000 --games 20000 \
-  --output artifacts/learning/gen1 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
+dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --first-seed 1021300 --games 20000 \
+  --output artifacts/learning/gen2 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
 ```
+
+- A generation uses its first seed to its first seed + games + 1,300 (recording, then the gate's 1,000 strength and 300 probe seeds), so the one after that starts there.
+- `improve` refuses an output directory that already holds a finished generation, and its data file is named by encoding and learner, so an interrupted run resumes only games played by the same model.
 
 - `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. The next generation's learner and bootstrap are the bundled model, so rebuild after promotion; `--model`, if given, must name that same model, and a mismatch is refused because the gate measures strength against the bundled Ultimate.
 - Seeds from 1,000,000 upward are reserved for these generations; each generation's evaluation seeds follow its recording seeds, so they are never played before the candidate is frozen.
@@ -178,8 +181,9 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 | ---: | --- | ---: | --- | --- | --- | --- |
 | 1 | 20,000 (1000000–1019999) | 829,279 | 0.5782 → 0.5538 | 72.8% of 3,000, 68.5%–77.1% (1020000–1020999) | 6.9% / 11.2% of 900 (1021000–1021299) | yes |
 
-- Generation 1 ran from a build with no multiplayer model, so its learner and bootstrap were the hand-written terms alone; its command is the one above.
-- Validation is every tenth seed; the log-loss is against final outcomes, so lower means the model predicts who wins better than the hand score does.
+- Generation 1 ran from commit `8314694`, a build with no multiplayer model, so its learner and bootstrap were the hand-written terms alone; its command is recorded in [ultimate-results.json](ultimate-results.json).
+- Its validation rows were every tenth seed, which by the league's rotation held out only all-Ultimate and Master games; later generations hold out every tenth block of four seeds, so each league opponent is represented.
+- The log-loss is against final outcomes, so lower means the model predicts who wins better than the hand score does.
 - The next generation starts at seed 1021300 from a build with generation 1 bundled.
 
 - The next step for larger gains is scoring the rivals' best reply to each planned board, which neither Master nor Ultimate searches.

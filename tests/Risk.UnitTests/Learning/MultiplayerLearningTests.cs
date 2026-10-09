@@ -155,6 +155,32 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Run_FinishedGeneration_IsNotOverwritten()
+    {
+        var output = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(output);
+        try
+        {
+            File.WriteAllText(Path.Combine(output, "improve.json"), "{}");
+            var options = new Improvement.Options(3, 0, 1, output, ValueModel.UltimateMultiplayer, 4, 1, .5, 60, 1, 1, null, 1);
+            var run = () => Improvement.Run(TestWorld.Map(), options, TextWriter.Null);
+            run.Should().Throw<InvalidOperationException>();
+            Directory.GetFiles(output).Should().ContainSingle();
+        }
+        finally { Directory.Delete(output, true); }
+    }
+
+    [Fact]
+    public void IsValidation_MultiplayerSeeds_HoldsOutATenthOfEveryLeagueSeat()
+    {
+        var seeds = Enumerable.Range(1000000, 4000).Where(TrajectoryFormat.Multiplayer.IsValidation).ToArray();
+        seeds.Should().HaveCount(400);
+        seeds.GroupBy(s => s % 4).Select(g => g.Count()).Should().Equal(100, 100, 100, 100);
+        TrajectoryFormat.Duel.IsValidation(1000010).Should().BeTrue();
+        TrajectoryFormat.Duel.IsValidation(1000004).Should().BeFalse();
+    }
+
+    [Fact]
     public void Run_ModelEncodingMismatch_IsRejected()
     {
         var run = () => ModelEvaluator.Run(TestWorld.Map(), ValueModel.Ultimate, "master", 0, 1, 3, false, 1);
