@@ -21,6 +21,9 @@ public static class Improvement
 
     public static Report Run(WorldMap map, Options options, TextWriter log)
     {
+        // Strength is measured against the bundled Ultimate, so the model it carries must be the one the probe baseline uses.
+        if ((options.Current?.Serialize() ?? "") != (ValueModel.UltimateMultiplayer?.Serialize() ?? ""))
+            throw new InvalidOperationException("--model must be the multiplayer model bundled in this build; promote it, rebuild, then run the next generation.");
         Directory.CreateDirectory(options.Output);
         var data = Path.Combine(options.Output, "data.bin");
         var format = TrajectoryFormat.For(options.Players);
