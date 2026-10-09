@@ -144,6 +144,17 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Run_LearnerOtherThanTheBundledModel_IsRefusedBeforeRecording()
+    {
+        var output = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
+        var stale = new ValueModel { Features = BoardEncoding.Multiplayer.Version, Members = [new ValueNetwork { Inputs = BoardEncoding.Multiplayer.Count, Hidden = 1, A = 1, W = new float[BoardEncoding.Multiplayer.Count], C = [0f], V = [0f] }] };
+        var options = new Improvement.Options(3, 0, 1, output, stale, 4, 1, .5, 60, 1, 1, null, 1);
+        var run = () => Improvement.Run(TestWorld.Map(), options, TextWriter.Null);
+        run.Should().Throw<InvalidOperationException>();
+        Directory.Exists(output).Should().BeFalse();
+    }
+
+    [Fact]
     public void Run_ModelEncodingMismatch_IsRejected()
     {
         var run = () => ModelEvaluator.Run(TestWorld.Map(), ValueModel.Ultimate, "master", 0, 1, 3, false, 1);

@@ -159,14 +159,14 @@ public sealed class UltimateStrategyTests
     }
 
     [Theory]
-    [InlineData(971000, 0, 13, 428, 2, 27, 961, 0, 10, 288)]
-    [InlineData(971001, 2, 12, 409, 1, 12, 421, 1, 16, 543)]
+    [InlineData(981000, 0, 17, 612, 0, 28, 944, 2, 14, 518)]
+    [InlineData(981001, 1, 10, 349, 1, 26, 928, 1, 18, 637)]
     public void Run_ThreePlayerSeeds_ReproduceThePublishedUltimateMatches(int seed, int winner0, int rounds0, int actions0,
         int winner1, int rounds1, int actions1, int winner2, int rounds2, int actions2)
     {
         var options = new ArenaOptions(Seeds: 1, FirstSeed: seed, Players: 3, Candidate: "ultimate", Opponent: "master");
         var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
-        // Recorded in docs/ultimate-results.json; these seeds change if the multiplayer terms or their weights change.
+        // The first matches of the published three-player evaluation; they change if the multiplayer terms, weights or model change.
         report.Matches.Should().Equal(new MatchResult(seed, 0, winner0, true, rounds0, actions0),
             new MatchResult(seed, 1, winner1, true, rounds1, actions1), new MatchResult(seed, 2, winner2, true, rounds2, actions2));
     }

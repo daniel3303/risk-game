@@ -5,7 +5,7 @@
 - It uses exactly Master's information: the public board, public card counts, rules, trade counter, and its own hand.
 - Every action passes through the same `Game.Apply` validation used for human moves.
 - The correction applies whenever exactly two players remain, including the end of larger games.
-- With more rivals, Ultimate adds [frontier defence and threat weighting](#several-rivals) to Master's evaluation; its duel play is exactly the evaluated model's.
+- With more rivals, Ultimate adds [frontier defence and threat weighting](#several-rivals) and a [second network learned from three-player self-play](#learning-with-several-rivals) to Master's evaluation; its duel play is exactly the evaluated model's.
 
 ## Reserved name
 
@@ -121,29 +121,32 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 - Raising the attack thresholds against several rivals (0.75 to open, 0.85 to continue) or doubling rival income's weight cut the probe to 9%–13% but cost 2–5 points against two Masters, so neither shipped.
 - A frontier weight of 2 or more cost the duel about 15 points on development seeds, which is why the weight is split by player count.
 - Decisions stayed under 0.1 s single-threaded in three-player games; the frontier term costs about three times Master's average decision time.
+- With the multiplayer model, three-player decisions on seeds 965000–965007 averaged 2.5 ms single-threaded (0.8 ms without it), the slowest 0.17 s.
 
 ### Multiplayer evaluation
 
-- The preset was frozen before these seeds were played; the probe or the candidate took every seat in turn.
+- The bundled multiplayer model (generation 1, below) was frozen before seeds 980000–985149 were played; the probe or the candidate took every seat in turn.
+- The hand-terms column is the same preset without that model, evaluated once on seeds 970000–975149 before it was trained; the Master rows involve no Ultimate and keep their earlier seeds.
 
-| Players | Match | Seeds | Wins / games | Rate | Hoeffding 95% | Fair share |
-| ---: | --- | --- | ---: | ---: | --- | ---: |
-| 3 | turtle against two Masters | 970000–970299 | 291 / 900 | 32.3% | 24.5%–40.2% | 33.3% |
-| 3 | turtle against two Ultimate | 970000–970299 | 101 / 900 | 11.2% | 3.4%–19.1% | 33.3% |
-| 3 | Ultimate against two Masters | 971000–971299 | 454 / 900 | 50.4% | 42.6%–58.3% | 33.3% |
-| 3 | Ultimate against two Experts | 974000–974149 | 266 / 450 | 59.1% | 48.0%–70.2% | 33.3% |
-| 4 | turtle against three Masters | 972000–972149 | 214 / 600 | 35.7% | 24.6%–46.8% | 25.0% |
-| 4 | turtle against three Ultimate | 972000–972149 | 129 / 600 | 21.5% | 10.4%–32.6% | 25.0% |
-| 4 | Ultimate against three Masters | 975000–975149 | 252 / 600 | 42.0% | 30.9%–53.1% | 25.0% |
-| 6 | turtle against five Ultimate | 973000–973099 | 122 / 600 | 20.3% | 6.8%–33.9% | 16.7% |
+| Players | Match | Seeds | Wins / games | Rate | Hoeffding 95% | Hand terms only | Fair share |
+| ---: | --- | --- | ---: | ---: | --- | ---: | ---: |
+| 3 | turtle against two Masters | 970000–970299 | 291 / 900 | 32.3% | 24.5%–40.2% | — | 33.3% |
+| 3 | turtle against two Ultimates | 980000–980299 | 58 / 900 | 6.4% | 0.0%–14.3% | 11.2% | 33.3% |
+| 3 | Ultimate against two Masters | 981000–981299 | 763 / 900 | 84.8% | 76.9%–92.6% | 50.4% | 33.3% |
+| 3 | Ultimate against two Experts | 984000–984149 | 379 / 450 | 84.2% | 73.1%–95.3% | 59.1% | 33.3% |
+| 4 | turtle against three Masters | 972000–972149 | 214 / 600 | 35.7% | 24.6%–46.8% | — | 25.0% |
+| 4 | turtle against three Ultimates | 982000–982149 | 87 / 600 | 14.5% | 3.4%–25.6% | 21.5% | 25.0% |
+| 4 | Ultimate against three Masters | 985000–985149 | 534 / 600 | 89.0% | 77.9%–100.0% | 42.0% | 25.0% |
+| 6 | turtle against five Ultimates | 983000–983099 | 73 / 600 | 12.2% | 0.0%–25.7% | 20.3% | 16.7% |
 
-- The previous Ultimate decided exactly as Master until the first elimination, so the Master rows are close to its baseline; the exact previous preset (`ExpertTuning.Master with { Valuation = ValueModel.Ultimate }`, seated with the Arena's seeding and limits), replayed on the same seeds outside the Arena, gave the probe 31.7% (285 of 900) in three-player and 36.2% (217 of 600) in four-player games. The probe fell from its fair share to a third of it in three-player games, and Ultimate now takes half of three-player games against two Masters.
-- Six-player games were not tuned; the probe still scores above its fair share there, inside a wide interval.
-- Every match is recorded in [ultimate-results.json](ultimate-results.json) under `multiplayer`; the duel evaluation above is unchanged, and 100 of its recorded matches replayed identically with this source.
+- The previous Ultimate decided exactly as Master until the first elimination, so the Master rows are close to its baseline; the exact previous preset (`ExpertTuning.Master with { Valuation = ValueModel.Ultimate }`, seated with the Arena's seeding and limits), replayed on the same seeds outside the Arena, gave the probe 31.7% (285 of 900) in three-player and 36.2% (217 of 600) in four-player games.
+- In three-player games the probe fell from its fair share to under a fifth of it, and Ultimate went from a third of the games against two Masters to five in six.
+- The multiplayer model saw only three-player games in training; four- and six-player games were evaluated once each, and the probe fell below its fair share in both.
+- Each report's totals are recorded in [ultimate-results.json](ultimate-results.json) under `multiplayer`; the duel evaluation above is unchanged, and 100 of its recorded matches replayed identically with this source.
 
 ```sh
 dotnet run --project tools/Risk.Arena -c Release -- \
-  --seeds 300 --first-seed 970000 --players 3 \
+  --seeds 300 --first-seed 980000 --players 3 \
   --candidate turtle --opponent ultimate --cards fixed --setup automatic --parallel 8
 ```
 
@@ -165,18 +168,24 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
   --output artifacts/learning/gen1 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
 ```
 
-- `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. Later generations pass `--model` (or rely on the bundled model) so self-play and the bootstrap use the newest weights.
+- `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. The next generation's learner and bootstrap are the bundled model, so rebuild after promotion; `--model`, if given, must name that same model, and a mismatch is refused because the gate measures strength against the bundled Ultimate.
 - Seeds from 1,000,000 upward are reserved for these generations; each generation's evaluation seeds follow its recording seeds, so they are never played before the candidate is frozen.
 - What it cannot do: learn from the few games played against one person, invent plans the search never proposes, or escape the dice; gains per generation are expected to shrink, as the duel generations did.
 
 ### Generations
 
-- No generation has been promoted yet: Ultimate plays the hand-written terms alone until a model passes the gate; each generation's result is recorded here.
+| Generation | Recorded games (seeds) | Afterstates | Held-out log-loss, hand score → model | Against two current Ultimates (seeds) | Turtle against candidate / current (seeds) | Promoted |
+| ---: | --- | ---: | --- | --- | --- | --- |
+| 1 | 20,000 (1000000–1019999) | 829,279 | 0.5782 → 0.5538 | 72.8% of 3,000, 68.5%–77.1% (1020000–1020999) | 6.9% / 11.2% of 900 (1021000–1021299) | yes |
+
+- Generation 1 ran from a build with no multiplayer model, so its learner and bootstrap were the hand-written terms alone; its command is the one above.
+- Validation is every tenth seed; the log-loss is against final outcomes, so lower means the model predicts who wins better than the hand score does.
+- The next generation starts at seed 1021300 from a build with generation 1 bundled.
 
 - The next step for larger gains is scoring the rivals' best reply to each planned board, which neither Master nor Ultimate searches.
 
 ## Limits
 
-- The learned model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup.
+- The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules and evaluated once in four- and six-player games.
 - Frontier defence and threat weighting were selected and evaluated in three-player Fixed-card automatic-setup games against the turtle probe and Master; four- to six-player games were evaluated once each, progressive cards and manual setup not at all.
 - Results measure strength against the bundled bots and one scripted human style, not against skilled humans.

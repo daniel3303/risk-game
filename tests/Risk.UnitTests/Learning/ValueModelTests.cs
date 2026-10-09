@@ -31,6 +31,32 @@ public sealed class ValueModelTests
     }
 
     [Fact]
+    public void UltimateMultiplayer_EmbeddedModel_CorrectsOnlyWhileMoreThanTwoPlayersRemain()
+    {
+        var model = ValueModel.UltimateMultiplayer;
+        model.Should().NotBeNull();
+        model.Encoding.Should().BeSameAs(BoardEncoding.Multiplayer);
+        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardEncoding.Multiplayer.Count);
+        UltimateValuation.Bundled.Multiplayer.Should().BeSameAs(model);
+        var game = TestWorld.Game(3, new(), 55);
+        var ultimate = new UltimateStrategy();
+        var corrections = new List<double>();
+        for (var actions = 0; game.State.Phase != Phase.Finished && actions < 300; actions++)
+        {
+            var observation = GameObservation.From(game);
+            var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+            var board = PlannerBoard.From(observation);
+            if (observation.Phase == Phase.Attack) corrections.Add(model.Correction(evaluator, board, evaluator.HandScore(board)));
+            game.Apply(observation.Player, ultimate.Choose(observation));
+        }
+        corrections.Should().NotBeEmpty().And.OnlyContain(c => double.IsFinite(c) && Math.Abs(c) <= model.Limit);
+        corrections.Should().Contain(c => c != 0);
+        var duel = GameObservation.From(TestWorld.Game(2, new(), 55));
+        var duelEvaluator = new PositionEvaluator(duel, ExpertTuning.Ultimate);
+        model.Correction(duelEvaluator, PlannerBoard.From(duel), 0).Should().Be(0);
+    }
+
+    [Fact]
     public void Correction_ThreePlayerGame_LeavesTheHandScoreUnchanged()
     {
         var game = TestWorld.Game(3, new(), 53);
