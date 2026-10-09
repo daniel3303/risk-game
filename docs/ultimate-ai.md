@@ -165,7 +165,7 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
   --output artifacts/learning/gen1 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
 ```
 
-- `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must do no better against it than against the current preset on the same seeds. Only then is it copied to the promotion path; rebuild to play it. Later generations pass `--model` (or rely on the bundled model) so self-play and the bootstrap use the newest weights.
+- `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. Later generations pass `--model` (or rely on the bundled model) so self-play and the bootstrap use the newest weights.
 - Seeds from 1,000,000 upward are reserved for these generations; each generation's evaluation seeds follow its recording seeds, so they are never played before the candidate is frozen.
 - What it cannot do: learn from the few games played against one person, invent plans the search never proposes, or escape the dice; gains per generation are expected to shrink, as the duel generations did.
 

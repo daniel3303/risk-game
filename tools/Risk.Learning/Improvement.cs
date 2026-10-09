@@ -9,7 +9,7 @@ namespace Risk.Learning;
 /// One self-improvement generation for games with more than two players: record league self-play with the current model, fit the
 /// next value network bootstrapped from it, then test the candidate against the current Ultimate and against the turtle probe.
 /// The candidate is promoted only when it beats the current Ultimate with its conservative lower bound above the fair share and
-/// the probe does no better against it than against the current preset on the same seeds.
+/// the probe is not demonstrably stronger against it than against the current preset on the same seeds.
 /// </summary>
 public static class Improvement
 {
@@ -38,7 +38,8 @@ public static class Improvement
         var against = ModelEvaluator.Run(map, candidate, "ultimate", evaluationSeed, options.EvaluationSeeds, options.Players, false, options.Threads);
         var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
         var probeCurrent = ModelEvaluator.Run(map, options.Current ?? Empty(format), "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
-        var promoted = against.ConfidenceLower > against.FairShare && probeCandidate.WinRate <= probeCurrent.WinRate;
+        // The probe check rejects only a demonstrable regression: with 900 games its rate moves several points on noise alone.
+        var promoted = against.ConfidenceLower > against.FairShare && probeCandidate.ConfidenceLower <= probeCurrent.WinRate;
         string promotedTo = null;
         if (promoted && options.PromoteTo != null)
         {
