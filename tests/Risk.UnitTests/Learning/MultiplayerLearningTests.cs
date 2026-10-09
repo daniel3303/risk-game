@@ -170,14 +170,31 @@ public sealed class MultiplayerLearningTests
         finally { Directory.Delete(output, true); }
     }
 
-    [Fact]
-    public void IsValidation_MultiplayerSeeds_HoldsOutATenthOfEveryLeagueSeat()
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    public void IsValidation_MultiplayerSeeds_HoldsOutATenthOfEveryLeagueOpponentInEverySeat(int players)
     {
-        var seeds = Enumerable.Range(1000000, 4000).Where(TrajectoryFormat.Multiplayer.IsValidation).ToArray();
-        seeds.Should().HaveCount(400);
-        seeds.GroupBy(s => s % 4).Select(g => g.Count()).Should().Equal(100, 100, 100, 100);
-        TrajectoryFormat.Duel.IsValidation(1000010).Should().BeTrue();
-        TrajectoryFormat.Duel.IsValidation(1000004).Should().BeFalse();
+        var format = (MultiplayerTrajectoryFormat)TrajectoryFormat.Multiplayer;
+        float[] Row(int seed) { var row = new float[format.Width]; row[format.Seed] = seed; row[format.PlayerCount] = players; return row; }
+        var seeds = Enumerable.Range(1021300, 40 * 4 * players * 10).ToArray();
+        var held = seeds.Where(s => format.IsValidation(Row(s))).ToArray();
+        held.Should().HaveCount(seeds.Length / 10);
+        // Each held-out game's league opponent and seat, exactly as the recorder assigns them.
+        var cells = held.Select(s => TrajectoryRecorder.League(players, s)).Where(l => l.Policy != null).GroupBy(l => l).Select(g => g.Count()).ToArray();
+        cells.Should().HaveCount(3 * players).And.OnlyContain(c => c == cells[0]);
+    }
+
+    [Fact]
+    public void IsValidation_DuelSeeds_KeepEveryTenthSeed()
+    {
+        var row = new float[TrajectoryFormat.Duel.Width];
+        row[TrajectoryFormat.Duel.Seed] = 1000010;
+        TrajectoryFormat.Duel.IsValidation(row).Should().BeTrue();
+        row[TrajectoryFormat.Duel.Seed] = 1000004;
+        TrajectoryFormat.Duel.IsValidation(row).Should().BeFalse();
     }
 
     [Fact]

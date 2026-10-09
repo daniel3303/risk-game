@@ -30,8 +30,8 @@ public static class Improvement
             throw new InvalidOperationException($"{options.Output} already holds a finished generation; give the next one a new --output and unused seeds.");
         Directory.CreateDirectory(options.Output);
         var format = TrajectoryFormat.For(options.Players);
-        // A resumed run must never read rows of another width or games played by another learner.
-        var data = Path.Combine(options.Output, $"data-{format.Encoding.Version}-{Learner(options.Current)}.bin");
+        // A resumed run must never read rows of another width, games played by another learner, or seeds the gate will use.
+        var data = Path.Combine(options.Output, $"data-{format.Encoding.Version}-{Learner(options.Current)}-{options.FirstSeed}-{options.Games}.bin");
         log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "current preset" : "current model")}.");
         TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log);
         var rows = format.Read([data]);
@@ -60,10 +60,10 @@ public static class Improvement
         return report;
     }
 
-    /// <summary>A model whose correction is always zero, so the current preset can be evaluated through the same path as a candidate.</summary>
     private static string Learner(ValueModel model) =>
         model == null ? "hand" : Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(model.Serialize())))[..12];
 
+    /// <summary>A model whose correction is always zero, so the current preset can be evaluated through the same path as a candidate.</summary>
     private static ValueModel Empty(TrajectoryFormat format) => new()
     {
         Features = format.Encoding.Version, Scale = 0,

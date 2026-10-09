@@ -28,8 +28,8 @@ public abstract class TrajectoryFormat
     /// <summary>Rebuilds the mover's evaluator and board; hidden card identities are irrelevant to the features.</summary>
     public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row);
 
-    /// <summary>Whether a game's rows are held out for validation.</summary>
-    public virtual bool IsValidation(int seed) => seed % 10 == 0;
+    /// <summary>Whether the game this row comes from is held out for validation.</summary>
+    public virtual bool IsValidation(float[] row) => (int)row[Seed] % 10 == 0;
 
     public float[][] Read(IEnumerable<string> paths) => paths.SelectMany(path =>
     {
@@ -89,13 +89,18 @@ public sealed class DuelTrajectoryFormat : TrajectoryFormat
 /// </summary>
 public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
 {
-    /// <summary>League seats rotate with the seed modulo four, so validation holds out whole blocks of four seeds to cover every opponent.</summary>
-    public override bool IsValidation(int seed) => seed / 4 % 10 == 0;
-
     private const int Players = 6;
     private const int Cards = 84;
     private const int Eliminated = Cards + Players;
     private const int Count = Eliminated + Players;
+    /// <summary>Index of the game's player count.</summary>
+    public int PlayerCount => Count;
+
+    /// <summary>
+    /// The league opponent follows the seed modulo four and its seat the seed over four modulo the player count, so validation
+    /// holds out whole blocks of four seeds per player to cover every opponent in every seat.
+    /// </summary>
+    public override bool IsValidation(float[] row) => (int)row[Seed] / (4 * (int)row[Count]) % 10 == 0;
     public override int Width => 104;
     public override int Mover => Count + 1;
     public override int Score => Count + 4;

@@ -169,7 +169,7 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 ```
 
 - A generation uses its first seed to its first seed + games + 1,300 (recording, then the gate's 1,000 strength and 300 probe seeds), so the one after that starts there.
-- `improve` refuses an output directory that already holds a finished generation, and its data file is named by encoding and learner, so an interrupted run resumes only games played by the same model.
+- `improve` refuses an output directory that already holds a finished generation, and its data file is named by encoding, learner and seed range, so an interrupted run resumes only the same games played by the same model.
 
 - `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. The next generation's learner and bootstrap are the bundled model, so rebuild after promotion; `--model`, if given, must name that same model, and a mismatch is refused because the gate measures strength against the bundled Ultimate.
 - Seeds from 1,000,000 upward are reserved for these generations; each generation's evaluation seeds follow its recording seeds, so they are never played before the candidate is frozen.
@@ -182,7 +182,7 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 | 1 | 20,000 (1000000–1019999) | 829,279 | 0.5782 → 0.5538 | 72.8% of 3,000, 68.5%–77.1% (1020000–1020999) | 6.9% / 11.2% of 900 (1021000–1021299) | yes |
 
 - Generation 1 ran from commit `8314694`, a build with no multiplayer model, so its learner and bootstrap were the hand-written terms alone; its command is recorded in [ultimate-results.json](ultimate-results.json).
-- Its validation rows were every tenth seed, which by the league's rotation held out only all-Ultimate and Master games; later generations hold out every tenth block of four seeds, so each league opponent is represented.
+- Its validation rows were every tenth seed, which by the league's rotation held out only all-Ultimate and Master games; later generations hold out every tenth block of four seeds per player, so each league opponent is represented in every seat.
 - The log-loss is against final outcomes, so lower means the model predicts who wins better than the hand score does.
 - The next generation starts at seed 1021300 from a build with generation 1 bundled.
 

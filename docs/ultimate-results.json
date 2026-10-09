@@ -12132,7 +12132,7 @@
         "rate": 0.001,
         "l2": 1e-05,
         "seed": 3,
-        "heldOut": "seeds divisible by ten (later generations: seed / 4 divisible by ten)"
+        "heldOut": "seeds divisible by ten (later generations: seed / (4 x players) divisible by ten)"
       },
       "heldOutLogLoss": {
         "calibratedHandScore": 0.5782,
