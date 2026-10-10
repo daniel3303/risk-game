@@ -71,6 +71,69 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Extract_ForecastEncoding_KeepsTheBasicFeaturesAndAddsTurnOrderAndForecasts()
+    {
+        var game = TestWorld.Game(3);
+        TestWorld.Board(game);
+        // Player 1 moves next after player 0; its stack of nine borders player 0's eight armies on territory 0.
+        game.State.Territories[0].Troops = 8;
+        game.State.Territories[1].Troops = 9;
+        var observation = GameObservation.From(game);
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var forecast = BoardEncoding.MultiplayerForecast;
+        forecast.Count.Should().Be(BoardEncoding.Multiplayer.Count + 42 * 3 + 8);
+        BoardEncoding.For("multi-board-v2").Should().BeSameAs(forecast);
+        var basic = new float[BoardEncoding.Multiplayer.Count];
+        var x = new float[forecast.Count];
+        BoardEncoding.Multiplayer.Extract(evaluator, board, 10, basic);
+        forecast.Extract(evaluator, board, 10, x);
+        x.Take(basic.Length).Should().Equal(basic);
+        x.Should().OnlyContain(v => float.IsFinite(v));
+        var extra = BoardEncoding.Multiplayer.Count;
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 1).Should().OnlyContain(id => x[extra + id * 3] == 1);
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] != 1).Should().OnlyContain(id => x[extra + id * 3] == 0);
+        // Territory 0's forecast threat adds the rivals' reinforcements, so it exceeds the current-troops threat.
+        x[extra + 0 * 3 + 1].Should().BeGreaterThan(x[0 * 12 + 8]);
+        x[extra + 1 * 3 + 1].Should().Be(0);
+    }
+
+    [Fact]
+    public void Extract_ForecastEncoding_NextMoverSkipsEliminatedPlayers()
+    {
+        var game = TestWorld.Game(4, new(CardMode.Fixed, SetupMode.Automatic), 61);
+        game.State.Players[1].Eliminated = true;
+        var observation = GameObservation.From(game) with { Player = 0 };
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var x = new float[BoardEncoding.MultiplayerForecast.Count];
+        BoardEncoding.MultiplayerForecast.Extract(evaluator, board, 0, x);
+        var extra = BoardEncoding.Multiplayer.Count;
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 2).Should().NotBeEmpty().And.OnlyContain(id => x[extra + id * 3] == 1);
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 1 || board.Owners[id] == 3).Should().NotBeEmpty().And.OnlyContain(id => x[extra + id * 3] == 0);
+    }
+
+    [Fact]
+    public void Fit_ForecastEncodingFromABasicBootstrap_ProducesAForecastNetwork()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        // Opening afterstates of a training game and a validation game (seed 1000080 is in a held-out block of twelve).
+        var records = new[] { 1000001, 1000080 }.Select(seed =>
+        {
+            var observation = GameObservation.From(TestWorld.Game(3, new(CardMode.Fixed, SetupMode.Automatic), seed));
+            var board = PlannerBoard.From(observation);
+            var row = format.Encode(observation, board, new PositionEvaluator(observation, ExpertTuning.Ultimate).HandScore(board));
+            row[format.Seed] = seed; row[format.Outcome] = seed % 2; row[format.Turn] = 0;
+            return row;
+        }).ToArray();
+        records.Count(format.IsValidation).Should().Be(1);
+        var network = new ValueTrainer(2, 1, .001, 1e-5, .7, 3, 1, TextWriter.Null).Fit(TestWorld.Map(), records, ValueModel.UltimateMultiplayer, format, BoardEncoding.MultiplayerForecast);
+        network.Inputs.Should().Be(BoardEncoding.MultiplayerForecast.Count);
+        var fit = () => new ValueTrainer(2, 1, .001, 1e-5, .7, 3, 1, TextWriter.Null).Fit(TestWorld.Map(), records, null, format, BoardEncoding.Duel);
+        fit.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
     public void Correction_UltimateValuation_RoutesByPlayerCount()
     {
         var zero = new ValueModel { Features = BoardEncoding.Multiplayer.Version, Members = [new ValueNetwork { Inputs = BoardEncoding.Multiplayer.Count, Hidden = 2, A = 1, W = new float[BoardEncoding.Multiplayer.Count * 2], C = new float[2], V = new float[2] }] };
@@ -143,15 +206,68 @@ public sealed class MultiplayerLearningTests
         }
     }
 
+    [Theory]
+    [InlineData("artifacts/learning/gen3", "artifacts/learning/gen4")]
+    [InlineData("artifacts/learning/gen9/", "artifacts/learning/gen10")]
+    [InlineData("artifacts/learning/run", "artifacts/learning/run-2")]
+    [InlineData("artifacts/learning/run-2", "artifacts/learning/run-3")]
+    [InlineData("artifacts/2026", "artifacts/2026-2")]
+    public void NextOutput_GenerationDirectory_CountsUp(string output, string next) =>
+        Improvement.NextOutput(output).Should().Be(next);
+
     [Fact]
-    public void Run_LearnerOtherThanTheBundledModel_IsRefusedBeforeRecording()
+    public void SeedBlockNormal_KnownBlocks_GivesTheNormalIntervalOfTheirMean()
     {
-        var output = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
-        var stale = new ValueModel { Features = BoardEncoding.Multiplayer.Version, Members = [new ValueNetwork { Inputs = BoardEncoding.Multiplayer.Count, Hidden = 1, A = 1, W = new float[BoardEncoding.Multiplayer.Count], C = [0f], V = [0f] }] };
-        var options = new Improvement.Options(3, 0, 1, output, stale, 4, 1, .5, 60, 1, 1, null, 1);
-        var run = () => Improvement.Run(TestWorld.Map(), options, TextWriter.Null);
-        run.Should().Throw<InvalidOperationException>();
-        Directory.Exists(output).Should().BeFalse();
+        // Blocks of 1/3 and 2/3: mean 0.5, sample deviation 0.19245, so the margin is 1.96 × 0.19245 / 2.
+        var (lower, upper) = Risk.Learning.Models.EvaluationSummary.SeedBlockNormal([1, 2, 1, 2], 3);
+        lower.Should().BeApproximately(.5 - .188602, 1e-5);
+        upper.Should().BeApproximately(.5 + .188602, 1e-5);
+        Risk.Learning.Models.EvaluationSummary.SeedBlockNormal([3, 3], 3).Should().Be((1.0, 1.0));
+    }
+
+    [Fact]
+    public void NextSeed_Generation_StartsAfterItsRecordedStrengthAndProbeSeeds()
+    {
+        var options = new Improvement.Options(3, 1021300, 20000, "gen2", null, 64, 8, .5, 60, 1000, 300, null, 1);
+        Improvement.NextSeed(options).Should().Be(1042600);
+    }
+
+    [Fact]
+    public void Generations_OneGameWithAWindow_FitsBothRecordingsAndGatesAgainstTheCurrentModel()
+    {
+        var root = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
+        try
+        {
+            var map = TestWorld.Map();
+            var format = TrajectoryFormat.Multiplayer;
+            var earlier = Path.Combine(root, "earlier.bin");
+            Directory.CreateDirectory(root);
+            // An earlier generation's recording: one opening afterstate from each of two games.
+            var rows = new[] { 5000, 5001 }.SelectMany(seed =>
+            {
+                var observation = GameObservation.From(TestWorld.Game(3, new(), seed));
+                var board = PlannerBoard.From(observation);
+                var row = format.Encode(observation, board, new PositionEvaluator(observation, ExpertTuning.Ultimate).HandScore(board));
+                row[format.Seed] = seed; row[format.Outcome] = seed % 2; row[format.Turn] = 0;
+                return row;
+            }).ToArray();
+            var bytes = new byte[rows.Length * sizeof(float)];
+            Buffer.BlockCopy(rows, 0, bytes, 0, bytes.Length);
+            File.WriteAllBytes(earlier, bytes);
+            var options = new Improvement.Options(3, 6000, 1, Path.Combine(root, "gen1"), null, 2, 1, .5, 60, 1, 1, null, 3, ExtraData: [earlier]);
+            var reports = Improvement.Generations(map, options, 2, 2, TextWriter.Null);
+            // One seed cannot clear the conservative bound, so the run stops after its first, rejected generation.
+            var report = reports.Should().ContainSingle().Subject;
+            report.Promoted.Should().BeFalse();
+            report.Data.Should().HaveCount(2).And.Contain(earlier);
+            report.Afterstates.Should().Be(TrajectoryFormat.Multiplayer.Read(report.Data).Length);
+            report.AgainstCurrent.Opponent.Should().Be("current");
+            report.AgainstCurrent.FirstSeed.Should().Be(6001);
+            report.ProbeAgainstCandidate.FirstSeed.Should().Be(6002);
+            File.Exists(Path.Combine(root, "gen1", "improve.json")).Should().BeTrue();
+            Directory.Exists(Path.Combine(root, "gen2")).Should().BeFalse();
+        }
+        finally { Directory.Delete(root, true); }
     }
 
     [Fact]
