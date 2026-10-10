@@ -9,7 +9,9 @@ namespace Risk.Sim.Learning;
 public sealed class ForecastBoardFeatures : BoardEncoding
 {
     private const int Territories = MultiplayerBoardFeatures.Territories;
-    private const int PerTerritory = 3;
+    public const int PerTerritory = 3;
+    /// <summary>Offset, within a territory's block, of the forecast chance that a rival takes an own territory.</summary>
+    public const int ThreatOffset = 1;
     private const int Globals = 8;
     private static BoardEncoding Basic => Multiplayer;
 
@@ -40,7 +42,7 @@ public sealed class ForecastBoardFeatures : BoardEncoding
                 if (other < 0 || other == owner || (owner != player && other != player)) continue;
                 chance = Math.Max(chance, BattleOdds.Estimate(evaluator.ForecastAttackers(board, n), board.Troops[id]).WinChance);
             }
-            if (owner == player) { x[at + 1] = (float)chance; threat += chance; worst = Math.Max(worst, chance); }
+            if (owner == player) { x[at + ThreatOffset] = (float)chance; threat += chance; worst = Math.Max(worst, chance); }
             else { x[at + 2] = (float)chance; opportunity += chance; }
         }
         var g = at;
@@ -57,14 +59,17 @@ public sealed class ForecastBoardFeatures : BoardEncoding
     }
 
     /// <summary>The first player after the mover, in seat order, who is still in the game; -1 when none is.</summary>
-    private static int NextMover(AI.GameObservation observation, int player)
+    private static int NextMover(AI.GameObservation observation, int player) => RivalsInSeatOrder(observation, player).DefaultIfEmpty(-1).First();
+
+    /// <summary>The players still in the game, in seat order after the mover.</summary>
+    internal static IEnumerable<int> RivalsInSeatOrder(AI.GameObservation observation, int player)
     {
         var count = observation.Players.Length;
+        var seat = Array.FindIndex(observation.Players, p => p.Id == player);
         for (var step = 1; step < count; step++)
         {
-            var candidate = observation.Players[(Array.FindIndex(observation.Players, p => p.Id == player) + step) % count];
-            if (!candidate.Eliminated) return candidate.Id;
+            var candidate = observation.Players[(seat + step) % count];
+            if (!candidate.Eliminated) yield return candidate.Id;
         }
-        return -1;
     }
 }

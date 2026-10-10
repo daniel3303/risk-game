@@ -111,7 +111,8 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
     public override int Outcome => Count + 6;
     public override int Seed => Count + 7;
     public override BoardEncoding Encoding => BoardEncoding.Multiplayer;
-    public override bool Accepts(BoardEncoding encoding) => encoding == BoardEncoding.Multiplayer || encoding == BoardEncoding.MultiplayerForecast;
+    public override bool Accepts(BoardEncoding encoding) =>
+        encoding == BoardEncoding.Multiplayer || encoding == BoardEncoding.MultiplayerForecast || encoding == BoardEncoding.MultiplayerIntent;
 
     public override float[] Encode(GameObservation observation, PlannerBoard board, double score)
     {

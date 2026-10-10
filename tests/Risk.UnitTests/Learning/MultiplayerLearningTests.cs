@@ -114,6 +114,94 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Extract_IntentEncoding_MarksBlockersBreakTargetsAndRivalContinentProgress()
+    {
+        var game = TestWorld.Game(3);
+        TestWorld.Board(game);
+        // Player 2 holds all of North America but Alaska (player 0's) and every continent but the two Americas; player 1, who
+        // moves next, holds only Venezuela.
+        game.State.Territories[1].Owner = 2;
+        game.State.Territories[9].Owner = 1;
+        var observation = GameObservation.From(game);
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var intent = BoardEncoding.MultiplayerIntent;
+        intent.Count.Should().Be(BoardEncoding.MultiplayerForecast.Count + 42 * 2 + 6 * 5 + 4);
+        BoardEncoding.For("multi-board-v3").Should().BeSameAs(intent);
+        var forecast = new float[BoardEncoding.MultiplayerForecast.Count];
+        var x = new float[intent.Count];
+        BoardEncoding.MultiplayerForecast.Extract(evaluator, board, 10, forecast);
+        intent.Extract(evaluator, board, 10, x);
+        x.Take(forecast.Length).Should().Equal(forecast);
+        x.Should().OnlyContain(v => float.IsFinite(v));
+        var extra = BoardEncoding.MultiplayerForecast.Count;
+        var continents = observation.Map.Continents;
+        var continentOf = Enumerable.Range(0, 42).Select(id => Array.FindIndex(evaluator.Regions, region => region.Contains(id))).ToArray();
+        // Alaska is the last territory keeping player 2 from North America; the four continents player 2 holds whole are break targets.
+        x[extra].Should().BeApproximately(5 / 7f, 1e-6f);
+        Enumerable.Range(1, 41).Should().OnlyContain(id => x[extra + id * 2] == 0);
+        Enumerable.Range(0, 42).Where(id => continentOf[id] >= 2).Should().OnlyContain(id => Math.Abs(x[extra + id * 2 + 1] - continents[continentOf[id]].Bonus / 7f) < 1e-6f);
+        Enumerable.Range(0, 42).Where(id => continentOf[id] < 2).Should().OnlyContain(id => x[extra + id * 2 + 1] == 0);
+        var at = extra + 42 * 2;
+        // Slot 0 is player 1 and slot 1 is player 2: share held, then chance of holding the continent after the next turn.
+        x[at + 0 * 5 + 2].Should().BeApproximately(8 / 9f, 1e-6f);
+        x[at + 0 * 5 + 3].Should().BeGreaterThan(.9f);
+        x[at + 1 * 5].Should().BeApproximately(1 / 4f, 1e-6f);
+        x[at + 1 * 5 + 1].Should().Be(0, "Argentina borders no territory of player 1");
+        x[at + 1 * 5 + 2].Should().BeApproximately(3 / 4f, 1e-6f);
+        Enumerable.Range(2, 4).Should().OnlyContain(r => x[at + r * 5 + 2] == 1 && x[at + r * 5 + 3] == 1);
+        Enumerable.Range(0, 6).Should().OnlyContain(r => x[at + r * 5 + 4] == 0, "player 0 holds no whole continent");
+        var globals = at + 6 * 5;
+        x[globals].Should().Be(0);
+        x[globals + 1].Should().Be(0);
+        x[globals + 2].Should().BeGreaterThan(17 / 10f);
+        x[globals + 3].Should().BeGreaterThan(.9f);
+    }
+
+    [Fact]
+    public void Extract_IntentEncoding_RatesARivalsCompletionByItsAdjacentStackAndTheThreatToAnOwnContinent()
+    {
+        var game = TestWorld.Game(3);
+        TestWorld.Board(game);
+        // Player 1 holds New Guinea and both Australias; player 2 holds Indonesia with three. Player 0 holds South America whole.
+        foreach (var id in new[] { 39, 40, 41 }) game.State.Territories[id].Owner = 1;
+        game.State.Territories[38].Troops = 3;
+        foreach (var id in new[] { 9, 10, 11, 12 }) game.State.Territories[id].Owner = 0;
+        double Completion(int newGuinea)
+        {
+            game.State.Territories[39].Troops = newGuinea;
+            var observation = GameObservation.From(game);
+            var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+            var board = PlannerBoard.From(observation);
+            var x = new float[BoardEncoding.MultiplayerIntent.Count];
+            BoardEncoding.MultiplayerIntent.Extract(evaluator, board, 0, x);
+            var at = BoardEncoding.MultiplayerForecast.Count + 42 * 2;
+            x[at + 5 * 5 + 1].Should().BeApproximately((float)BattleOdds.Estimate(evaluator.ForecastAttackers(board, 39), 3).WinChance, 1e-6f);
+            var threat = new[] { 9, 10, 11, 12 }.Max(id => x[BoardEncoding.Multiplayer.Count + id * 3 + 1]);
+            threat.Should().BeGreaterThan(0);
+            x[at + 1 * 5 + 4].Should().Be(threat);
+            return x[at + 5 * 5 + 1];
+        }
+        Completion(12).Should().BeGreaterThan(Completion(1));
+    }
+
+    [Fact]
+    public void Extract_IntentEncoding_SkipsEliminatedPlayersAndPoolsTheLaterRivals()
+    {
+        var game = TestWorld.Game(5, new(CardMode.Fixed, SetupMode.Automatic), 61);
+        game.State.Players[1].Eliminated = true;
+        var observation = GameObservation.From(game) with { Player = 0 };
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var x = new float[BoardEncoding.MultiplayerIntent.Count];
+        BoardEncoding.MultiplayerIntent.Extract(evaluator, board, 0, x);
+        var at = BoardEncoding.MultiplayerForecast.Count + 42 * 2;
+        float Share(int player, int r) => evaluator.Regions[r].Count(id => board.Owners[id] == player) / (float)evaluator.Regions[r].Length;
+        Enumerable.Range(0, 6).Select(r => x[at + r * 5]).Should().Equal(Enumerable.Range(0, 6).Select(r => Share(2, r)));
+        Enumerable.Range(0, 6).Select(r => x[at + r * 5 + 2]).Should().Equal(Enumerable.Range(0, 6).Select(r => Math.Max(Share(3, r), Share(4, r))));
+    }
+
+    [Fact]
     public void Fit_ForecastEncodingFromABasicBootstrap_ProducesAForecastNetwork()
     {
         var format = TrajectoryFormat.Multiplayer;
