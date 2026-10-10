@@ -23,7 +23,10 @@ public abstract class TrajectoryFormat
     public abstract int Mover { get; }
     public abstract int Outcome { get; }
     public abstract int Seed { get; }
+    /// <summary>The default encoding of models fitted on these rows.</summary>
     public abstract BoardEncoding Encoding { get; }
+    /// <summary>Whether models of <paramref name="encoding"/> can be fitted on these rows and played in their games.</summary>
+    public virtual bool Accepts(BoardEncoding encoding) => encoding == Encoding;
     public abstract float[] Encode(GameObservation observation, PlannerBoard board, double score);
     /// <summary>Rebuilds the mover's evaluator and board; hidden card identities are irrelevant to the features.</summary>
     public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row);
@@ -108,6 +111,7 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
     public override int Outcome => Count + 6;
     public override int Seed => Count + 7;
     public override BoardEncoding Encoding => BoardEncoding.Multiplayer;
+    public override bool Accepts(BoardEncoding encoding) => encoding == BoardEncoding.Multiplayer || encoding == BoardEncoding.MultiplayerForecast;
 
     public override float[] Encode(GameObservation observation, PlannerBoard board, double score)
     {

@@ -71,6 +71,69 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Extract_ForecastEncoding_KeepsTheBasicFeaturesAndAddsTurnOrderAndForecasts()
+    {
+        var game = TestWorld.Game(3);
+        TestWorld.Board(game);
+        // Player 1 moves next after player 0; its stack of nine borders player 0's eight armies on territory 0.
+        game.State.Territories[0].Troops = 8;
+        game.State.Territories[1].Troops = 9;
+        var observation = GameObservation.From(game);
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var forecast = BoardEncoding.MultiplayerForecast;
+        forecast.Count.Should().Be(BoardEncoding.Multiplayer.Count + 42 * 3 + 8);
+        BoardEncoding.For("multi-board-v2").Should().BeSameAs(forecast);
+        var basic = new float[BoardEncoding.Multiplayer.Count];
+        var x = new float[forecast.Count];
+        BoardEncoding.Multiplayer.Extract(evaluator, board, 10, basic);
+        forecast.Extract(evaluator, board, 10, x);
+        x.Take(basic.Length).Should().Equal(basic);
+        x.Should().OnlyContain(v => float.IsFinite(v));
+        var extra = BoardEncoding.Multiplayer.Count;
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 1).Should().OnlyContain(id => x[extra + id * 3] == 1);
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] != 1).Should().OnlyContain(id => x[extra + id * 3] == 0);
+        // Territory 0's forecast threat adds the rivals' reinforcements, so it exceeds the current-troops threat.
+        x[extra + 0 * 3 + 1].Should().BeGreaterThan(x[0 * 12 + 8]);
+        x[extra + 1 * 3 + 1].Should().Be(0);
+    }
+
+    [Fact]
+    public void Extract_ForecastEncoding_NextMoverSkipsEliminatedPlayers()
+    {
+        var game = TestWorld.Game(4, new(CardMode.Fixed, SetupMode.Automatic), 61);
+        game.State.Players[1].Eliminated = true;
+        var observation = GameObservation.From(game) with { Player = 0 };
+        var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+        var board = PlannerBoard.From(observation);
+        var x = new float[BoardEncoding.MultiplayerForecast.Count];
+        BoardEncoding.MultiplayerForecast.Extract(evaluator, board, 0, x);
+        var extra = BoardEncoding.Multiplayer.Count;
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 2).Should().NotBeEmpty().And.OnlyContain(id => x[extra + id * 3] == 1);
+        Enumerable.Range(0, 42).Where(id => board.Owners[id] == 1 || board.Owners[id] == 3).Should().NotBeEmpty().And.OnlyContain(id => x[extra + id * 3] == 0);
+    }
+
+    [Fact]
+    public void Fit_ForecastEncodingFromABasicBootstrap_ProducesAForecastNetwork()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        // Opening afterstates of a training game and a validation game (seed 1000080 is in a held-out block of twelve).
+        var records = new[] { 1000001, 1000080 }.Select(seed =>
+        {
+            var observation = GameObservation.From(TestWorld.Game(3, new(CardMode.Fixed, SetupMode.Automatic), seed));
+            var board = PlannerBoard.From(observation);
+            var row = format.Encode(observation, board, new PositionEvaluator(observation, ExpertTuning.Ultimate).HandScore(board));
+            row[format.Seed] = seed; row[format.Outcome] = seed % 2; row[format.Turn] = 0;
+            return row;
+        }).ToArray();
+        records.Count(format.IsValidation).Should().Be(1);
+        var network = new ValueTrainer(2, 1, .001, 1e-5, .7, 3, 1, TextWriter.Null).Fit(TestWorld.Map(), records, ValueModel.UltimateMultiplayer, format, BoardEncoding.MultiplayerForecast);
+        network.Inputs.Should().Be(BoardEncoding.MultiplayerForecast.Count);
+        var fit = () => new ValueTrainer(2, 1, .001, 1e-5, .7, 3, 1, TextWriter.Null).Fit(TestWorld.Map(), records, null, format, BoardEncoding.Duel);
+        fit.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
     public void Correction_UltimateValuation_RoutesByPlayerCount()
     {
         var zero = new ValueModel { Features = BoardEncoding.Multiplayer.Version, Members = [new ValueNetwork { Inputs = BoardEncoding.Multiplayer.Count, Hidden = 2, A = 1, W = new float[BoardEncoding.Multiplayer.Count * 2], C = new float[2], V = new float[2] }] };
@@ -151,6 +214,16 @@ public sealed class MultiplayerLearningTests
     [InlineData("artifacts/2026", "artifacts/2026-2")]
     public void NextOutput_GenerationDirectory_CountsUp(string output, string next) =>
         Improvement.NextOutput(output).Should().Be(next);
+
+    [Fact]
+    public void SeedBlockNormal_KnownBlocks_GivesTheNormalIntervalOfTheirMean()
+    {
+        // Blocks of 1/3 and 2/3: mean 0.5, sample deviation 0.19245, so the margin is 1.96 × 0.19245 / 2.
+        var (lower, upper) = Risk.Learning.Models.EvaluationSummary.SeedBlockNormal([1, 2, 1, 2], 3);
+        lower.Should().BeApproximately(.5 - .188602, 1e-5);
+        upper.Should().BeApproximately(.5 + .188602, 1e-5);
+        Risk.Learning.Models.EvaluationSummary.SeedBlockNormal([3, 3], 3).Should().Be((1.0, 1.0));
+    }
 
     [Fact]
     public void NextSeed_Generation_StartsAfterItsRecordedStrengthAndProbeSeeds()

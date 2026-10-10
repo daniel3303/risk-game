@@ -16,11 +16,13 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
     private const int Slices = 16;
     private const double Beta1 = .9, Beta2 = .999, Epsilon = 1e-8;
 
-    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap, TrajectoryFormat format = null)
+    /// <param name="encoding">The fitted network's encoding, by default the format's; the bootstrap model may use another one the format accepts.</param>
+    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap, TrajectoryFormat format = null, BoardEncoding encoding = null)
     {
         format ??= TrajectoryFormat.Duel;
-        var encoding = format.Encoding;
-        if (bootstrap != null && bootstrap.Encoding != encoding) throw new ArgumentException("The bootstrap model uses a different board encoding.");
+        encoding ??= format.Encoding;
+        if (!format.Accepts(encoding)) throw new ArgumentException($"{encoding.Version} models cannot be fitted on these rows.");
+        if (bootstrap != null && !format.Accepts(bootstrap.Encoding)) throw new ArgumentException("The bootstrap model uses a board encoding these rows do not support.");
         var parallel = new ParallelOptions { MaxDegreeOfParallelism = threads };
         var xs = new float[rows.Length][];
         Parallel.For(0, rows.Length, parallel, r =>
@@ -44,7 +46,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         Parallel.For(0, rows.Length, parallel, r =>
         {
             if (bootstrap == null) values[r] = Sigmoid(network.A * xs[r][scoreIndex] + network.B);
-            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(xs[r], new float[m.Hidden], scoreIndex)));
+            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(BootstrapFeatures(map, rows[r], xs[r], bootstrap, encoding, format), new float[m.Hidden], bootstrap.Encoding.ScoreIndex)));
         });
         var target = new float[rows.Length];
         foreach (var sequence in Enumerable.Range(0, rows.Length).GroupBy(r => ((int)rows[r][format.Seed], (int)rows[r][format.Mover])))
@@ -70,6 +72,16 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
     }
 
     private static double Sigmoid(double z) => 1 / (1 + Math.Exp(-z));
+
+    /// <summary>The row's features in the bootstrap model's encoding: the fitted ones when the encodings match, otherwise extracted again.</summary>
+    private static float[] BootstrapFeatures(WorldMap map, float[] row, float[] fitted, ValueModel bootstrap, BoardEncoding encoding, TrajectoryFormat format)
+    {
+        if (bootstrap.Encoding == encoding) return fitted;
+        var (evaluator, board) = format.Rebuild(map, row);
+        var x = new float[bootstrap.Encoding.Count];
+        bootstrap.Encoding.Extract(evaluator, board, evaluator.HandScore(board), x);
+        return x;
+    }
 
     private static double LogLoss(ValueNetwork network, float[][] xs, float[] labels, int[] rows, bool scoreOnly, ParallelOptions parallel, int scoreIndex)
     {

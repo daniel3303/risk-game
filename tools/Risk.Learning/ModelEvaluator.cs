@@ -22,15 +22,17 @@ public static class ModelEvaluator
     /// <summary>Plays the candidate against copies of <paramref name="opponent"/>, reported under <paramref name="label"/>.</summary>
     public static EvaluationSummary Run(WorldMap map, ValueModel model, ValueModel opponent, string label, int firstSeed, int seeds, int players, int threads)
     {
-        if (opponent.Encoding != model.Encoding) throw new ArgumentException("The candidate and its opponent must share one board encoding.");
+        if (!TrajectoryFormat.For(players).Accepts(opponent.Encoding))
+            throw new ArgumentException($"A {opponent.Features} model cannot play {players}-player games.");
         return Play(map, model, label, (_, _) => Candidate(opponent), firstSeed, seeds, players, false, threads);
     }
 
     private static EvaluationSummary Play(WorldMap map, ValueModel model, string opponent, Func<int, int, IPlayerStrategy> create, int firstSeed, int seeds, int players, bool defend, int threads)
     {
-        if (model.Encoding != BoardEncoding.For(TrajectoryFormat.For(players).Encoding.Version))
+        if (!TrajectoryFormat.For(players).Accepts(model.Encoding))
             throw new ArgumentException($"A {model.Features} model cannot be evaluated in {players}-player games.");
         var wins = new int[players];
+        var blocks = new int[seeds];
         var unfinished = 0;
         Parallel.For(0, seeds * players, new ParallelOptions { MaxDegreeOfParallelism = threads }, job =>
         {
@@ -42,12 +44,13 @@ public static class ModelEvaluator
             while (game.State.Phase != Phase.Finished && game.State.Round <= 200 && actions++ < 20000)
                 game.Apply(game.State.CurrentPlayer, strategies[game.State.CurrentPlayer].Choose(GameObservation.From(game)));
             if (game.State.Phase != Phase.Finished) Interlocked.Increment(ref unfinished);
-            else if (game.State.Winner == seat) Interlocked.Increment(ref wins[seat]);
+            else if (game.State.Winner == seat) { Interlocked.Increment(ref wins[seat]); Interlocked.Increment(ref blocks[job / players]); }
         });
         var rate = wins.Sum() / (double)(seeds * players);
         // Same conservative Hoeffding bound over seed blocks as the Arena.
         var margin = Math.Sqrt(Math.Log(40) / (2.0 * seeds));
-        return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin));
+        var (lower, upper) = EvaluationSummary.SeedBlockNormal(blocks, players);
+        return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin), lower, upper);
     }
 
     public static IPlayerStrategy Candidate(ValueModel model) => model.Encoding == BoardEncoding.Duel
