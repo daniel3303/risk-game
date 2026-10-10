@@ -161,17 +161,18 @@ dotnet run --project tools/Risk.Arena -c Release -- \
   - finishing a player: the weakest rival's territories, armies and cards, and the worst and mean chance of capturing its territories outright from adjacent own stacks;
   - totals: incomes, territories, armies and cards for me and the strongest rival, the sum over rivals, the number of rivals, trades, and the hand score.
 - Training is the duel recipe applied to league self-play: every fourth game seats the current Ultimate everywhere, the others give one rotating seat to the turtle probe, Master or Expert; only Ultimate's afterstates are recorded while more than two players remain, labelled with its outcome and fitted by TD(λ = 0.7) bootstrapped from the previous model (or the calibrated hand score for the first generation).
-- One generation is one command; after a promotion, rebuild and run the next one with a new output directory and the next unused seeds, which is how the bot keeps improving:
+- One command runs the loop; each promoted candidate becomes the next generation's learner and bootstrap, so the bot keeps improving until a candidate fails the gate:
 
 ```sh
-dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --first-seed 1021300 --games 20000 \
-  --output artifacts/learning/gen2 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
+dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --first-seed FIRST --games 20000 \
+  --output artifacts/learning/genN --generations 4 --window 2 --lambda 0.9 \
+  --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json
 ```
 
-- A generation uses its first seed to its first seed + games + 1,300 (recording, then the gate's 1,000 strength and 300 probe seeds), so the one after that starts there.
+- `--model` names the learner (default: the bundled model); each generation goes to the next directory (gen3, gen4, …) and starts at the seeds after the previous one: first seed + games + 1,300 (recording, then the gate's 1,000 strength and 300 probe seeds).
+- `--window W` fits each generation on its own games plus the previous W − 1 generations' recordings, as AlphaZero trains on a window of recent games; `--extra-data` supplies earlier recordings to the first generation.
+- The gate plays the candidate against copies of the current model: it must win seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current model on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current model). A promoted candidate is copied to the promotion path; rebuild to play it.
 - `improve` refuses an output directory that already holds a finished generation, and its data file is named by encoding, learner and seed range, so an interrupted run resumes only the same games played by the same model.
-
-- `improve` records, fits, bundles, then evaluates the candidate: it must beat the current Ultimate seat-balanced on unused seeds with the conservative lower bound above the fair share, and the turtle probe must not be demonstrably stronger against it than against the current preset on the same seeds (the probe's conservative lower bound against the candidate stays at or below its rate against the current preset). Only then is it copied to the promotion path; rebuild to play it. The next generation's learner and bootstrap are the bundled model, so rebuild after promotion; `--model`, if given, must name that same model, and a mismatch is refused because the gate measures strength against the bundled Ultimate.
 - Seeds from 1,000,000 upward are reserved for these generations; each generation's evaluation seeds follow its recording seeds, so they are never played before the candidate is frozen.
 - What it cannot do: learn from the few games played against one person, invent plans the search never proposes, or escape the dice; gains per generation are expected to shrink, as the duel generations did.
 
@@ -180,13 +181,26 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 | Generation | Recorded games (seeds) | Afterstates | Held-out log-loss, hand score → model | Against two current Ultimates (seeds) | Turtle against candidate / current (seeds) | Promoted |
 | ---: | --- | ---: | --- | --- | --- | --- |
 | 1 | 20,000 (1000000–1019999) | 829,279 | 0.5782 → 0.5538 | 72.8% of 3,000, 68.5%–77.1% (1020000–1020999) | 6.9% / 11.2% of 900 (1021000–1021299) | yes |
+| 2 | 20,000 (1021300–1041299) | 913,537 | 0.5886 → 0.5606 | 50.1% of 3,000, 45.8%–54.4% (1041300–1042299) | 5.0% / 6.9% of 900 (1042300–1042599) | yes |
 
 - Generation 1 ran from commit `8314694`, a build with no multiplayer model, so its learner and bootstrap were the hand-written terms alone; its command is recorded in [ultimate-results.json](ultimate-results.json).
 - Its validation rows were every tenth seed, which by the league's rotation held out only all-Ultimate and Master games; later generations hold out every tenth block of four seeds per player, so each league opponent is represented in every seat.
 - The log-loss is against final outcomes, so lower means the model predicts who wins better than the hand score does.
-- The next generation starts at seed 1021300 from a build with generation 1 bundled.
+- Generation 2 ran from commit `1675a27` with generation 1 as learner and bootstrap, and is the learner of the chained run that follows; later generations start at seed 1042600.
 
-- The next step for larger gains is scoring the rivals' best reply to each planned board, which neither Master nor Ultimate searches.
+### Search on top of the learned value
+
+- Two search changes were screened against two generation-1 Ultimates on development seeds 1100000–1100099 (300 games each, fair share 33.3%), and against the turtle on 1101000–1101099:
+
+| Change | Result | Adopted |
+| --- | --- | --- |
+| None (control; identical play) | 33.3% | — |
+| Best-reply lookahead ([Schadd and Winands 2011](https://dke.maastrichtuniversity.nl/m.winands/documents/BestReplySearch.pdf)): the four best attack plans and fortifications re-scored after the most damaging rival's forecast reinforcements and capture chain, weight 1 | 29.0% | no |
+| The same lookahead at weight 0.5 | 33.7% | no |
+| Split deployment: part of the reinforcements offered to the four most threatened borders | 29.7%; turtle 9.0% against it, 7.3% against the control | no |
+
+- Neither change helped: the value network was fitted on positions its own search reaches, so a wider or deeper search without retraining mostly finds the network's blind spots. AlphaZero avoids this by training the network on the searching policy's own games, so such changes have to enter through a generation rather than be bolted on.
+- Related work: TD(λ) with a graph network and game-tree search for Risk ([Carr 2020](https://arxiv.org/abs/2009.06355)); expert iteration with graph networks for Risk ([Gnecco Heredia and Cazenave](https://www.lamsade.dauphine.fr/~cazenave/papers/RiskConferencePaper.pdf)); AlphaZero-style search for Risk ([Blomqvist 2020](https://forums.triplea-game.org/assets/uploads/files/1637032761173-fulltext01.pdf)). The latter two report that the attack phases remain the hard part for tree search.
 
 ## Limits
 

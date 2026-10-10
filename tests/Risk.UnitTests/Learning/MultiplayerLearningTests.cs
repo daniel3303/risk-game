@@ -143,15 +143,58 @@ public sealed class MultiplayerLearningTests
         }
     }
 
+    [Theory]
+    [InlineData("artifacts/learning/gen3", "artifacts/learning/gen4")]
+    [InlineData("artifacts/learning/gen9/", "artifacts/learning/gen10")]
+    [InlineData("artifacts/learning/run", "artifacts/learning/run-2")]
+    [InlineData("artifacts/learning/run-2", "artifacts/learning/run-3")]
+    [InlineData("artifacts/2026", "artifacts/2026-2")]
+    public void NextOutput_GenerationDirectory_CountsUp(string output, string next) =>
+        Improvement.NextOutput(output).Should().Be(next);
+
     [Fact]
-    public void Run_LearnerOtherThanTheBundledModel_IsRefusedBeforeRecording()
+    public void NextSeed_Generation_StartsAfterItsRecordedStrengthAndProbeSeeds()
     {
-        var output = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
-        var stale = new ValueModel { Features = BoardEncoding.Multiplayer.Version, Members = [new ValueNetwork { Inputs = BoardEncoding.Multiplayer.Count, Hidden = 1, A = 1, W = new float[BoardEncoding.Multiplayer.Count], C = [0f], V = [0f] }] };
-        var options = new Improvement.Options(3, 0, 1, output, stale, 4, 1, .5, 60, 1, 1, null, 1);
-        var run = () => Improvement.Run(TestWorld.Map(), options, TextWriter.Null);
-        run.Should().Throw<InvalidOperationException>();
-        Directory.Exists(output).Should().BeFalse();
+        var options = new Improvement.Options(3, 1021300, 20000, "gen2", null, 64, 8, .5, 60, 1000, 300, null, 1);
+        Improvement.NextSeed(options).Should().Be(1042600);
+    }
+
+    [Fact]
+    public void Generations_OneGameWithAWindow_FitsBothRecordingsAndGatesAgainstTheCurrentModel()
+    {
+        var root = Path.Combine(Path.GetTempPath(), $"risk-improve-{Guid.NewGuid():N}");
+        try
+        {
+            var map = TestWorld.Map();
+            var format = TrajectoryFormat.Multiplayer;
+            var earlier = Path.Combine(root, "earlier.bin");
+            Directory.CreateDirectory(root);
+            // An earlier generation's recording: one opening afterstate from each of two games.
+            var rows = new[] { 5000, 5001 }.SelectMany(seed =>
+            {
+                var observation = GameObservation.From(TestWorld.Game(3, new(), seed));
+                var board = PlannerBoard.From(observation);
+                var row = format.Encode(observation, board, new PositionEvaluator(observation, ExpertTuning.Ultimate).HandScore(board));
+                row[format.Seed] = seed; row[format.Outcome] = seed % 2; row[format.Turn] = 0;
+                return row;
+            }).ToArray();
+            var bytes = new byte[rows.Length * sizeof(float)];
+            Buffer.BlockCopy(rows, 0, bytes, 0, bytes.Length);
+            File.WriteAllBytes(earlier, bytes);
+            var options = new Improvement.Options(3, 6000, 1, Path.Combine(root, "gen1"), null, 2, 1, .5, 60, 1, 1, null, 3, ExtraData: [earlier]);
+            var reports = Improvement.Generations(map, options, 2, 2, TextWriter.Null);
+            // One seed cannot clear the conservative bound, so the run stops after its first, rejected generation.
+            var report = reports.Should().ContainSingle().Subject;
+            report.Promoted.Should().BeFalse();
+            report.Data.Should().HaveCount(2).And.Contain(earlier);
+            report.Afterstates.Should().Be(TrajectoryFormat.Multiplayer.Read(report.Data).Length);
+            report.AgainstCurrent.Opponent.Should().Be("current");
+            report.AgainstCurrent.FirstSeed.Should().Be(6001);
+            report.ProbeAgainstCandidate.FirstSeed.Should().Be(6002);
+            File.Exists(Path.Combine(root, "gen1", "improve.json")).Should().BeTrue();
+            Directory.Exists(Path.Combine(root, "gen2")).Should().BeFalse();
+        }
+        finally { Directory.Delete(root, true); }
     }
 
     [Fact]

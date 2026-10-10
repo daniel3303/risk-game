@@ -14,8 +14,9 @@ const string Usage = """
       fit      --data a.bin,b.bin --output net.json [--players 2] [--bootstrap model.json] [--hidden 64] [--epochs 8] [--rate 0.001] [--l2 0.00001] [--lambda 0.7] [--seed 3] [--threads 8]
       bundle   --members a.json,b.json --output model.json [--scale 0.5] [--limit 60]
       evaluate --model model.json --first-seed 900000 --seeds 2000 [--players 2] [--opponent master|turtle|…] [--defend false] [--scale s] [--threads 8]
-      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--scale 0.5] [--limit 60]
+      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale 0.5] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
+               [--generations 1] [--window 1] [--extra-data previous.bin]
       luck     --first-seed 870000 [--deals 200] [--replays 20] [--threads 8]
     """;
 // Logs and parsed numbers use invariant formatting regardless of the machine's locale.
@@ -93,10 +94,13 @@ try
             var games = options.Integer("--games", 20000, 1, TrajectoryFormat.SeedLimit - first);
             var improvement = new Improvement.Options(players, first, games, options.Text("--output"), current,
                 options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", .5, 0, 10), options.Number("--limit", 60, 0, 1000),
-                options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads);
+                options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
+                Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','));
+            var generations = options.Integer("--generations", 1, 1, 100);
+            var window = options.Integer("--window", 1, 1, 10);
             options.RejectUnknown();
-            var report = Improvement.Run(map, improvement, Console.Out);
-            Console.WriteLine(JsonConvert.SerializeObject(report, json));
+            var reports = Improvement.Generations(map, improvement, generations, window, Console.Out);
+            Console.WriteLine(JsonConvert.SerializeObject(reports, json));
             break;
         }
         case "luck":

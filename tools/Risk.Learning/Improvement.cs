@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
@@ -8,54 +9,86 @@ using Risk.Sim.Models;
 namespace Risk.Learning;
 
 /// <summary>
-/// One self-improvement generation for games with more than two players: record league self-play with the current model, fit the
-/// next value network bootstrapped from it, then test the candidate against the current Ultimate and against the turtle probe.
-/// The candidate is promoted only when it beats the current Ultimate with its conservative lower bound above the fair share and
-/// the probe is not demonstrably stronger against it than against the current preset on the same seeds.
+/// Self-improvement generations for games with more than two players. Each records league self-play with the current model, fits
+/// the next value network bootstrapped from it, then tests the candidate against copies of the current model and against the
+/// turtle probe. The candidate is promoted only when it beats the current model with its conservative lower bound above the fair
+/// share and the probe is not demonstrably stronger against it than against the current model on the same seeds; a promoted
+/// candidate becomes the next generation's learner, and a rejected one ends the run.
 /// </summary>
 public static class Improvement
 {
+    /// <param name="ExtraData">Earlier generations' recordings fitted together with this one's, as AlphaZero trains on a window of recent games.</param>
     public sealed record Options(int Players, int FirstSeed, int Games, string Output, ValueModel Current, int Hidden, int Epochs, double Scale, double Limit,
-        int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3);
+        int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3, double Lambda = .7, string[] ExtraData = null);
 
-    public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, EvaluationSummary AgainstUltimate,
+    public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
         EvaluationSummary ProbeAgainstCandidate, EvaluationSummary ProbeAgainstCurrent, bool Promoted, string PromotedTo);
+
+    /// <summary>Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one, fitting each on the last <paramref name="window"/> recordings.</summary>
+    public static IReadOnlyList<Report> Generations(WorldMap map, Options options, int generations, int window, TextWriter log)
+    {
+        var reports = new List<Report>();
+        var recent = new List<string>(options.ExtraData ?? []);
+        for (var generation = 0; generation < generations; generation++)
+        {
+            var report = Run(map, options with { ExtraData = recent.TakeLast(window - 1).ToArray() }, log);
+            reports.Add(report);
+            if (!report.Promoted) break;
+            recent.Add(report.Data[0]);
+            using var promoted = File.OpenRead(report.Model);
+            options = options with { FirstSeed = NextSeed(options), Output = NextOutput(options.Output), Current = ValueModel.Load(promoted) };
+        }
+        return reports;
+    }
+
+    /// <summary>A generation plays its recorded games, then its strength seeds, then its probe seeds; the next one starts after them.</summary>
+    public static int NextSeed(Options options) => options.FirstSeed + options.Games + options.EvaluationSeeds + options.ProbeSeeds;
+
+    /// <summary>The next generation's directory: a trailing number counts up (gen3, gen4), otherwise -2 is appended.</summary>
+    public static string NextOutput(string output)
+    {
+        var trimmed = output.TrimEnd('/', '\\');
+        var start = trimmed.Length;
+        while (start > 0 && char.IsAsciiDigit(trimmed[start - 1])) start--;
+        if (start == trimmed.Length || start == 0 || trimmed[start - 1] is '/' or '\\') return trimmed + "-2";
+        return trimmed[..start] + (int.Parse(trimmed[start..], CultureInfo.InvariantCulture) + 1);
+    }
 
     public static Report Run(WorldMap map, Options options, TextWriter log)
     {
-        // Strength is measured against the bundled Ultimate, so the model it carries must be the one the probe baseline uses.
-        if ((options.Current?.Serialize() ?? "") != (ValueModel.UltimateMultiplayer?.Serialize() ?? ""))
-            throw new InvalidOperationException("--model must be the multiplayer model bundled in this build; promote it, rebuild, then run the next generation.");
         if (File.Exists(Path.Combine(options.Output, "improve.json")))
             throw new InvalidOperationException($"{options.Output} already holds a finished generation; give the next one a new --output and unused seeds.");
         Directory.CreateDirectory(options.Output);
         var format = TrajectoryFormat.For(options.Players);
+        var current = options.Current ?? Empty(format);
         // A resumed run must never read rows of another width, games played by another learner, or seeds the gate will use.
         var data = Path.Combine(options.Output, $"data-{format.Encoding.Version}-{Learner(options.Current)}-{options.FirstSeed}-{options.Games}.bin");
-        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "current preset" : "current model")}.");
+        string[] files = [data, .. options.ExtraData ?? []];
+        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "hand-written terms" : $"model {Learner(options.Current)}")}, fitted on {files.Length} recording(s).");
         TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log);
-        var rows = format.Read([data]);
-        var network = new ValueTrainer(options.Hidden, options.Epochs, .001, 1e-5, .7, options.FitSeed, options.Threads, log).Fit(map, rows, options.Current, format);
+        var rows = format.Read(files);
+        var network = new ValueTrainer(options.Hidden, options.Epochs, .001, 1e-5, options.Lambda, options.FitSeed, options.Threads, log).Fit(map, rows, options.Current, format);
         var candidate = new ValueModel { Features = format.Encoding.Version, Scale = options.Scale, Limit = options.Limit, Members = [network] };
         var modelPath = Path.Combine(options.Output, "model.json");
         File.WriteAllText(modelPath, candidate.Serialize());
         // Evaluation seeds follow the recorded ones so they were never played before this generation.
         var evaluationSeed = options.FirstSeed + options.Games;
         var probeSeed = evaluationSeed + options.EvaluationSeeds;
-        log.WriteLine($"Evaluating the candidate against Ultimate on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the turtle probe on {probeSeed}+{options.ProbeSeeds}.");
-        var against = ModelEvaluator.Run(map, candidate, "ultimate", evaluationSeed, options.EvaluationSeeds, options.Players, false, options.Threads);
+        log.WriteLine($"Evaluating the candidate against the current model on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the turtle probe on {probeSeed}+{options.ProbeSeeds}.");
+        var against = ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads);
         var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
-        var probeCurrent = ModelEvaluator.Run(map, options.Current ?? Empty(format), "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        var probeCurrent = ModelEvaluator.Run(map, current, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
         // The probe check rejects only a demonstrable regression: with 900 games its rate moves several points on noise alone.
         var promoted = against.ConfidenceLower > against.FairShare && probeCandidate.ConfidenceLower <= probeCurrent.WinRate;
+        log.WriteLine($"Candidate {against.WinRate:P1} against the current model ({against.ConfidenceLower:P1}-{against.ConfidenceUpper:P1}); turtle {probeCandidate.WinRate:P1} against it, {probeCurrent.WinRate:P1} against the current model; {(promoted ? "promoted" : "rejected")}.");
         string promotedTo = null;
         if (promoted && options.PromoteTo != null)
         {
             File.Copy(modelPath, options.PromoteTo, true);
             promotedTo = options.PromoteTo;
-            log.WriteLine($"Promoted: copied the candidate to {options.PromoteTo}; rebuild to play it.");
+            log.WriteLine($"Copied the candidate to {options.PromoteTo}; rebuild to play it.");
         }
-        var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, against, probeCandidate, probeCurrent, promoted, promotedTo);
+        var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, probeCurrent, promoted, promotedTo);
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
     }
