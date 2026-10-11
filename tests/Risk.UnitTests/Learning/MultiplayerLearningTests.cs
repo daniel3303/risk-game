@@ -342,7 +342,8 @@ public sealed class MultiplayerLearningTests
             var bytes = new byte[rows.Length * sizeof(float)];
             Buffer.BlockCopy(rows, 0, bytes, 0, bytes.Length);
             File.WriteAllBytes(earlier, bytes);
-            var options = new Improvement.Options(3, 6000, 1, Path.Combine(root, "gen1"), null, 2, 1, .5, 60, 1, 1, null, 3, ExtraData: [earlier]);
+            var options = new Improvement.Options(3, 6000, 1, Path.Combine(root, "gen1"), null, 2, 1, .5, 60, 1, 1, null, 3, ExtraData: [earlier],
+                Reference: ValueModel.UltimateMultiplayer);
             var reports = Improvement.Generations(map, options, 2, 2, TextWriter.Null);
             // One seed cannot clear the conservative bound, so the run stops after its first, rejected generation.
             var report = reports.Should().ContainSingle().Subject;
@@ -352,6 +353,8 @@ public sealed class MultiplayerLearningTests
             report.AgainstCurrent.Opponent.Should().Be("current");
             report.AgainstCurrent.FirstSeed.Should().Be(6001);
             report.ProbeAgainstCandidate.FirstSeed.Should().Be(6002);
+            report.Reference.Should().Be(Improvement.Learner(ValueModel.UltimateMultiplayer));
+            report.ProbeAgainstReference.FirstSeed.Should().Be(6002);
             File.Exists(Path.Combine(root, "gen1", "improve.json")).Should().BeTrue();
             Directory.Exists(Path.Combine(root, "gen2")).Should().BeFalse();
         }

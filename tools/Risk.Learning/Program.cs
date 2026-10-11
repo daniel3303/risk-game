@@ -102,7 +102,7 @@ try
                 options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", .5, 0, 10), options.Number("--limit", 60, 0, 1000),
                 options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
-                Encoding: FeaturesOption(options, TrajectoryFormat.For(players)));
+                Encoding: FeaturesOption(options, TrajectoryFormat.For(players)), Reference: LoadModel(options.OptionalText("--reference"), null, players));
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
             options.RejectUnknown();

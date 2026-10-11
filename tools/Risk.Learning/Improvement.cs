@@ -12,18 +12,21 @@ namespace Risk.Learning;
 /// Self-improvement generations for games with more than two players. Each records league self-play with the current model, fits
 /// the next value network bootstrapped from it, then tests the candidate against copies of the current model and against the
 /// turtle probe. The candidate is promoted only when it beats the current model with the 95% normal lower bound over seed blocks
-/// above the fair share and the probe is not demonstrably stronger against it than against the current model on the same seeds;
-/// a promoted candidate becomes the next generation's learner, and a rejected one ends the run.
+/// above the fair share and the probe is not demonstrably stronger against it than against the reference model on the same seeds;
+/// a promoted candidate becomes the next generation's learner, and a rejected one ends the run. The reference defaults to each
+/// generation's current model; a fixed reference, such as the shipped model, stops small probe regressions from compounding.
 /// </summary>
 public static class Improvement
 {
     /// <param name="ExtraData">Earlier generations' recordings fitted together with this one's, as AlphaZero trains on a window of recent games.</param>
+    /// <param name="Reference">The model the turtle probe must not beat more often; null uses each generation's current model.</param>
     public sealed record Options(int Players, int FirstSeed, int Games, string Output, ValueModel Current, int Hidden, int Epochs, double Scale, double Limit,
         int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3, double Lambda = .7, string[] ExtraData = null,
-        BoardEncoding Encoding = null);
+        BoardEncoding Encoding = null, ValueModel Reference = null);
 
+    /// <param name="Reference">The probe reference's identifier, as <see cref="Learner"/> gives it.</param>
     public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
-        EvaluationSummary ProbeAgainstCandidate, EvaluationSummary ProbeAgainstCurrent, bool Promoted, string PromotedTo);
+        EvaluationSummary ProbeAgainstCandidate, string Reference, EvaluationSummary ProbeAgainstReference, bool Promoted, string PromotedTo);
 
     /// <summary>Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one, fitting each on the last <paramref name="window"/> recordings.</summary>
     public static IReadOnlyList<Report> Generations(WorldMap map, Options options, int generations, int window, TextWriter log)
@@ -79,11 +82,13 @@ public static class Improvement
         log.WriteLine($"Evaluating the candidate against the current model on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the turtle probe on {probeSeed}+{options.ProbeSeeds}.");
         var against = ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads);
         var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
-        var probeCurrent = ModelEvaluator.Run(map, current, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        var reference = options.Reference ?? current;
+        var probeReference = ModelEvaluator.Run(map, reference, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
         // Gains between neighbouring generations are a few points, inside the conservative Hoeffding margin, so the gate uses the
         // normal interval over seed blocks; the probe check rejects only a demonstrable regression.
-        var promoted = against.NormalLower > against.FairShare && probeCandidate.NormalLower <= probeCurrent.WinRate;
-        log.WriteLine($"Candidate {against.WinRate:P1} against the current model (normal {against.NormalLower:P1}-{against.NormalUpper:P1}, Hoeffding {against.ConfidenceLower:P1}-{against.ConfidenceUpper:P1}); turtle {probeCandidate.WinRate:P1} against it, {probeCurrent.WinRate:P1} against the current model; {(promoted ? "promoted" : "rejected")}.");
+        var promoted = against.NormalLower > against.FairShare && probeCandidate.NormalLower <= probeReference.WinRate;
+        var referenceName = options.Reference == null ? "the current model" : $"reference {Learner(options.Reference)}";
+        log.WriteLine($"Candidate {against.WinRate:P1} against the current model (normal {against.NormalLower:P1}-{against.NormalUpper:P1}, Hoeffding {against.ConfidenceLower:P1}-{against.ConfidenceUpper:P1}); turtle {probeCandidate.WinRate:P1} against it, {probeReference.WinRate:P1} against {referenceName}; {(promoted ? "promoted" : "rejected")}.");
         string promotedTo = null;
         if (promoted && options.PromoteTo != null)
         {
@@ -91,12 +96,14 @@ public static class Improvement
             promotedTo = options.PromoteTo;
             log.WriteLine($"Copied the candidate to {options.PromoteTo}; rebuild to play it.");
         }
-        var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, probeCurrent, promoted, promotedTo);
+        var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, Learner(options.Reference ?? options.Current),
+            probeReference, promoted, promotedTo);
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
     }
 
-    private static string Learner(ValueModel model) =>
+    /// <summary>A model's identifier: the first 12 hex digits of its serialized SHA-256, or "hand" for the hand-written terms.</summary>
+    public static string Learner(ValueModel model) =>
         model == null ? "hand" : Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(model.Serialize())))[..12];
 
     /// <summary>A model whose correction is always zero, so the current preset can be evaluated through the same path as a candidate.</summary>
