@@ -87,7 +87,7 @@ public static class TrajectoryRecorder
         for (var i = 0; i < pending.Count; i++)
         {
             var row = pending[i].Row;
-            row[format.Outcome] = game.State.Phase != Phase.Finished ? .5f : game.State.Winner == pending[i].Player ? 1 : 0;
+            row[format.Outcome] = game.State.Phase != Phase.Finished ? TrajectoryFormat.Stalled : game.State.Winner == pending[i].Player ? 1 : 0;
             row[format.Seed] = seed;
             row.CopyTo(result, i * format.Width);
         }

@@ -31,7 +31,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
             xs[r] = new float[encoding.Count];
             encoding.Extract(evaluator, board, evaluator.HandScore(board), xs[r]);
         });
-        var outcome = rows.Select(r => r[format.Outcome]).ToArray();
+        var outcome = format.Outcomes(rows);
         var validation = Enumerable.Range(0, rows.Length).Where(r => format.IsValidation(rows[r])).ToArray();
         var training = Enumerable.Range(0, rows.Length).Where(r => !format.IsValidation(rows[r])).ToArray();
         var random = new Random(seed);

@@ -392,6 +392,28 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Outcomes_StalledMultiplayerGame_SharesItAmongThePlayersLeftAtItsLastAfterstate()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        var game = TestWorld.Game(3, new(CardMode.Fixed, SetupMode.Automatic), 71);
+        float[] Row(int seed, int mover, float outcome)
+        {
+            var observation = GameObservation.From(game) with { Player = mover };
+            var row = format.Encode(observation, PlannerBoard.From(observation), 0);
+            row[format.Seed] = seed;
+            row[format.Outcome] = outcome;
+            return row;
+        }
+        var stalled = TrajectoryFormat.Stalled;
+        var rows = new List<float[]> { Row(11, 2, stalled), Row(11, 0, stalled), Row(12, 0, 1), Row(12, 1, 0), Row(13, 1, stalled) };
+        // Player 2 is out by game 11's last afterstate, so it gets nothing and the two players left share the stalemate.
+        game.State.Players[2].Eliminated = true;
+        rows.Insert(2, Row(11, 1, stalled));
+        format.Outcomes([.. rows]).Should().Equal(0, .5f, .5f, 1, 0, 1 / 3f);
+        TrajectoryFormat.Duel.Outcomes([Enumerable.Repeat(stalled, TrajectoryFormat.Duel.Width).ToArray()]).Should().Equal(stalled);
+    }
+
+    [Fact]
     public void IsValidation_DuelSeeds_KeepEveryTenthSeed()
     {
         var row = new float[TrajectoryFormat.Duel.Width];
