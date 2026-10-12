@@ -16,7 +16,8 @@ const string Usage = """
       evaluate --model model.json --first-seed 900000 --seeds 2000 [--players 2] [--opponent master|turtle|… | --opponent-model other.json] [--defend false] [--scale s] [--threads 8]
       improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale 0.5] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
-               [--generations 1] [--window 1] [--extra-data previous.bin] [--features multi-board-v2]
+               [--generations 1] [--window 1] [--extra-data previous.bin] [--features multi-board-v2] [--reference shipped.json]
+               [--league learners,turtle,master,expert]
       luck     --first-seed 870000 [--deals 200] [--replays 20] [--threads 8]
     """;
 // Logs and parsed numbers use invariant formatting regardless of the machine's locale.
@@ -102,7 +103,8 @@ try
                 options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", .5, 0, 10), options.Number("--limit", 60, 0, 1000),
                 options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
-                Encoding: FeaturesOption(options, TrajectoryFormat.For(players)), Reference: LoadModel(options.OptionalText("--reference"), null, players));
+                Encoding: FeaturesOption(options, TrajectoryFormat.For(players)), Reference: LoadModel(options.OptionalText("--reference"), null, players),
+                League: LeagueOption(options));
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
             options.RejectUnknown();
@@ -149,6 +151,18 @@ static ValueModel LoadModel(string path, CommandOptions options, int? players)
     if (players is int count && !TrajectoryFormat.For(count).Accepts(model.Encoding))
         throw new ArgumentException($"{path} is a {model.Features} model and cannot be used in {count}-player games.");
     return model;
+}
+
+// "--league" names four policies, one per seed modulo four; "learners" seats no league opponent.
+static IReadOnlyList<string> LeagueOption(CommandOptions options)
+{
+    var text = options.OptionalText("--league");
+    if (text == null) return null;
+    var league = text.Split(',').Select(name => name.Trim().ToLowerInvariant()).Select(name => name == "learners" ? null : name).ToArray();
+    if (league.Length != 4) throw new ArgumentException("--league names four policies, one for each seed modulo four.");
+    var unknown = league.FirstOrDefault(name => name != null && !PolicyCatalog.IsKnown(name));
+    if (unknown != null) throw new ArgumentException($"Unknown --league policy {unknown}; choose learners or one of {string.Join(", ", PolicyCatalog.Names)}.");
+    return league;
 }
 
 static bool Flag(CommandOptions options, string name) => options.Text(name, "false").ToLowerInvariant() switch

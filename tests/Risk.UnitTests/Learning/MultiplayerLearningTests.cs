@@ -294,6 +294,40 @@ public sealed class MultiplayerLearningTests
         }
     }
 
+    [Fact]
+    public void League_CustomRotation_SeatsEachSlotsPolicyInTheRotatingSeat()
+    {
+        string[] league = ["turtle", null, "master", "turtle"];
+        TrajectoryRecorder.League(3, 1000000, league).Should().Be(("turtle", 1000000 / 4 % 3));
+        TrajectoryRecorder.League(3, 1000004, league).Should().Be(("turtle", 1000004 / 4 % 3));
+        TrajectoryRecorder.League(3, 1000001, league).Should().Be(((string)null, -1));
+        TrajectoryRecorder.League(3, 1000003, league).Policy.Should().Be("turtle");
+        var threeSlots = () => TrajectoryRecorder.League(3, 1000000, ["turtle", "master", "expert"]);
+        threeSlots.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void Play_LeagueReplacingTheLearnersOnlyGame_SkipsItsPolicysSeat()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        string[] league = ["turtle", "turtle", "master", "expert"];
+        var seat = TrajectoryRecorder.League(3, 1000000, league).Seat;
+        var rows = TrajectoryRecorder.Play(TestWorld.Map(), 3, 1000000, null, league);
+        rows.Should().NotBeEmpty();
+        Enumerable.Range(0, rows.Length / format.Width).Select(r => (int)rows[r * format.Width + format.Mover]).Should().NotContain(seat).And.Contain(m => m != seat);
+    }
+
+    [Fact]
+    public void DataPath_League_IsNamedOnlyWhenItIsNotTheDefault()
+    {
+        var options = new Improvement.Options(3, 1100000, 10000, "gen7", null, 64, 8, .5, 60, 1000, 1000, null, 1);
+        Path.GetFileName(Improvement.DataPath(options)).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { League = [.. TrajectoryRecorder.DefaultLeague] })).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { League = ["turtle", "turtle", "master", "expert"] }))
+            .Should().Be("data-multi-board-v1-hand-turtle+turtle+master+expert-1100000-10000.bin");
+        Improvement.LeagueName(null).Should().Be("learners,turtle,master,expert");
+    }
+
     [Theory]
     [InlineData("artifacts/learning/gen3", "artifacts/learning/gen4")]
     [InlineData("artifacts/learning/gen9/", "artifacts/learning/gen10")]

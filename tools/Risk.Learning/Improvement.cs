@@ -20,9 +20,10 @@ public static class Improvement
 {
     /// <param name="ExtraData">Earlier generations' recordings fitted together with this one's, as AlphaZero trains on a window of recent games.</param>
     /// <param name="Reference">The model the turtle probe must not beat more often; null uses each generation's current model.</param>
+    /// <param name="League">The recorded games' league rotation, as <see cref="TrajectoryRecorder.League"/> takes it; null uses the default one.</param>
     public sealed record Options(int Players, int FirstSeed, int Games, string Output, ValueModel Current, int Hidden, int Epochs, double Scale, double Limit,
         int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3, double Lambda = .7, string[] ExtraData = null,
-        BoardEncoding Encoding = null, ValueModel Reference = null);
+        BoardEncoding Encoding = null, ValueModel Reference = null, IReadOnlyList<string> League = null);
 
     /// <param name="Reference">The probe reference's identifier, as <see cref="Learner"/> gives it.</param>
     public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
@@ -65,11 +66,10 @@ public static class Improvement
         Directory.CreateDirectory(options.Output);
         var format = TrajectoryFormat.For(options.Players);
         var current = options.Current ?? Empty(format);
-        // A resumed run must never read rows of another width, games played by another learner, or seeds the gate will use.
-        var data = Path.Combine(options.Output, $"data-{format.Encoding.Version}-{Learner(options.Current)}-{options.FirstSeed}-{options.Games}.bin");
+        var data = DataPath(options);
         string[] files = [data, .. options.ExtraData ?? []];
-        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "hand-written terms" : $"model {Learner(options.Current)}")}, fitted on {files.Length} recording(s).");
-        TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log);
+        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "hand-written terms" : $"model {Learner(options.Current)}")}, league {LeagueName(options.League)}, fitted on {files.Length} recording(s).");
+        TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log, options.League);
         var rows = format.Read(files);
         var encoding = options.Encoding ?? format.Encoding;
         var network = new ValueTrainer(options.Hidden, options.Epochs, .001, 1e-5, options.Lambda, options.FitSeed, options.Threads, log).Fit(map, rows, options.Current, format, encoding);
@@ -100,6 +100,19 @@ public static class Improvement
             probeReference, promoted, promotedTo);
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
+    }
+
+    /// <summary>The league's policies in seed order, "learners" standing for a game without a league seat.</summary>
+    public static string LeagueName(IReadOnlyList<string> league) => string.Join(',', (league ?? TrajectoryRecorder.DefaultLeague).Select(p => p ?? "learners"));
+
+    /// <summary>
+    /// The generation's recording. A resumed run must never read rows of another width, games played by another learner or league,
+    /// or seeds the gate will use; the default league adds nothing to the name, so recordings made before leagues could change resume.
+    /// </summary>
+    public static string DataPath(Options options)
+    {
+        var league = options.League == null || options.League.SequenceEqual(TrajectoryRecorder.DefaultLeague) ? "" : "-" + LeagueName(options.League).Replace(',', '+');
+        return Path.Combine(options.Output, $"data-{TrajectoryFormat.For(options.Players).Encoding.Version}-{Learner(options.Current)}{league}-{options.FirstSeed}-{options.Games}.bin");
     }
 
     /// <summary>A model's identifier: the first 12 hex digits of its serialized SHA-256, or "hand" for the hand-written terms.</summary>
