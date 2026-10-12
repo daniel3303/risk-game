@@ -34,7 +34,7 @@ try
     using var reader = new StreamReader(stream);
     var map = WorldMap.Parse(reader.ReadToEnd());
     var options = CommandOptions.Parse(args[1..]);
-    var threads = options.Integer("--threads", Environment.ProcessorCount, 1, 64);
+    var threads = options.Integer("--threads", Environment.ProcessorCount, 1, 256);
     var json = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver(), Formatting = Formatting.Indented };
     switch (args[0])
     {
