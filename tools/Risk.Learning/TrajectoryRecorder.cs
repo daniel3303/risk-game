@@ -8,15 +8,16 @@ namespace Risk.Learning;
 
 /// <summary>
 /// Self-play games that record the learner's board each time it ends its attacks, then the final outcome. Duels replay Master
-/// (or Master with a duel model); larger games seat the current Ultimate, with one seat in every fourth game given to a league
-/// opponent (turtle, Master or Expert) so the learned value also sees human-style and weaker play.
+/// (or Master with a duel model); larger games seat the current Ultimate, with one seat given to a league opponent (by default a
+/// turtle, Master or Expert in three games of every four) so the learned value also sees human-style and weaker play.
 /// </summary>
 public static class TrajectoryRecorder
 {
     public static void Record(WorldMap map, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log) =>
         Record(map, 2, firstSeed, games, output, model, threads, log);
 
-    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log)
+    /// <param name="league">The league policy of each seed modulo four, null for a game of learners only; null uses <see cref="DefaultLeague"/>.</param>
+    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log, IReadOnlyList<string> league = null)
     {
         var format = TrajectoryFormat.For(players);
         var watch = Stopwatch.StartNew();
@@ -30,7 +31,7 @@ public static class TrajectoryRecorder
         // Each game is appended as soon as it ends, so an interrupted run loses at most the games still in progress.
         Parallel.ForEach(seeds, new ParallelOptions { MaxDegreeOfParallelism = threads }, seed =>
         {
-            var result = Play(map, players, seed, model);
+            var result = Play(map, players, seed, model, league);
             var bytes = new byte[result.Length * sizeof(float)];
             Buffer.BlockCopy(result, 0, bytes, 0, bytes.Length);
             lock (writeLock)
@@ -46,20 +47,26 @@ public static class TrajectoryRecorder
 
     public static float[] Play(WorldMap map, int seed, ValueModel model) => Play(map, 2, seed, model);
 
-    /// <summary>The league seat of a game: none in every fourth game, otherwise a turtle, Master or Expert in a rotating seat.</summary>
-    public static (string Policy, int Seat) League(int players, int seed) => (seed % 4) switch
-    {
-        1 => ("turtle", seed / 4 % players),
-        2 => ("master", seed / 4 % players),
-        3 => ("expert", seed / 4 % players),
-        _ => (null, -1),
-    };
+    /// <summary>The league policy of each seed modulo four: learners only, then a turtle, Master and Expert.</summary>
+    public static IReadOnlyList<string> DefaultLeague { get; } = [null, "turtle", "master", "expert"];
 
-    public static float[] Play(WorldMap map, int players, int seed, ValueModel model)
+    /// <summary>
+    /// The league seat of a game: the policy <paramref name="league"/> gives its seed modulo four in a seat rotating with the seed
+    /// over four, or none (-1) where that policy is null. Validation holds out blocks of four seeds, so the league has four entries.
+    /// </summary>
+    public static (string Policy, int Seat) League(int players, int seed, IReadOnlyList<string> league = null)
+    {
+        league ??= DefaultLeague;
+        if (league.Count != 4) throw new ArgumentException("A league names one policy, or none, for each seed modulo four.", nameof(league));
+        var policy = league[seed % 4];
+        return policy == null ? (null, -1) : (policy, seed / 4 % players);
+    }
+
+    public static float[] Play(WorldMap map, int players, int seed, ValueModel model, IReadOnlyList<string> league = null)
     {
         var format = TrajectoryFormat.For(players);
         var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
-        var strategies = Strategies(players, seed, model, out var leagueSeat);
+        var strategies = Strategies(players, seed, model, league, out var leagueSeat);
         var tuning = players == 2 ? ExpertTuning.Master : ExpertTuning.Ultimate;
         var pending = new List<(int Player, float[] Row)>();
         var turns = new int[players];
@@ -87,7 +94,7 @@ public static class TrajectoryRecorder
         for (var i = 0; i < pending.Count; i++)
         {
             var row = pending[i].Row;
-            row[format.Outcome] = game.State.Phase != Phase.Finished ? .5f : game.State.Winner == pending[i].Player ? 1 : 0;
+            row[format.Outcome] = game.State.Phase != Phase.Finished ? TrajectoryFormat.Stalled : game.State.Winner == pending[i].Player ? 1 : 0;
             row[format.Seed] = seed;
             row.CopyTo(result, i * format.Width);
         }
@@ -95,12 +102,12 @@ public static class TrajectoryRecorder
     }
 
     /// <summary>Learners in every seat except the league seat (-1 when there is none); duel learners are Master with an optional duel model.</summary>
-    private static IPlayerStrategy[] Strategies(int players, int seed, ValueModel model, out int leagueSeat)
+    private static IPlayerStrategy[] Strategies(int players, int seed, ValueModel model, IReadOnlyList<string> league, out int leagueSeat)
     {
         IPlayerStrategy learner = players == 2
             ? model == null ? new MasterStrategy() : new ExpertStrategy(ExpertTuning.Master with { Valuation = model })
             : new ExpertStrategy(ExpertTuning.Ultimate with { Valuation = new UltimateValuation(ValueModel.Ultimate, model ?? ValueModel.UltimateMultiplayer) });
-        var (policy, seat) = players == 2 ? (null, -1) : League(players, seed);
+        var (policy, seat) = players == 2 ? (null, -1) : League(players, seed, league);
         leagueSeat = seat;
         return Enumerable.Range(0, players).Select(i => i == seat ? PolicyCatalog.Create(policy, unchecked(seed * 1000003 + i * 7919)) : learner).ToArray();
     }

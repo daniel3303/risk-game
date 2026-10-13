@@ -11,8 +11,11 @@ public sealed record ExpertTuning
         DuelEnemyIncomeValue = 8, BeamWidth = 16, Branches = 20, MaxDepth = 10, SearchBudget = 4096, DeployBorders = 24,
     };
 
-    /// <summary>Master's search plus frontier defence and threat weighting in games with more than two players; see docs/ultimate-ai.md.</summary>
-    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5 };
+    /// <summary>
+    /// Master's search plus frontier defence, threat weighting and siding against human rivals in games with more than two
+    /// players; see docs/ultimate-ai.md.
+    /// </summary>
+    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5, HumanRivalWeight = 3, BotRivalWeight = .5 };
 
     public double TerritoryValue { get; init; } = 1.4;
     public double IncomeValue { get; init; } = 4;
@@ -48,4 +51,12 @@ public sealed record ExpertTuning
     /// average rival, raised to this exponent; zero weights every rival alike.
     /// </summary>
     public double ThreatWeighting { get; init; }
+    /// <summary>
+    /// In games with more than two players, while both a human and a bot are among the rivals, each human rival's weighted armies
+    /// and income count this many times; applied after the learned correction, which keeps reading the plain score. One leaves the
+    /// score unchanged.
+    /// </summary>
+    public double HumanRivalWeight { get; init; } = 1;
+    /// <summary>The same multiplier for each bot rival in those games, below one to treat bots as softer targets.</summary>
+    public double BotRivalWeight { get; init; } = 1;
 }

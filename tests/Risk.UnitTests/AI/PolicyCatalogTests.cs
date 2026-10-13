@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using Risk.Arena;
 using Risk.Arena.Models;
 using Risk.Sim.AI;
 using Risk.Sim.AI.Probes;
@@ -32,5 +33,12 @@ public sealed class PolicyCatalogTests
     {
         ArenaOptions.Parse(["--candidate", "Turtle", "--opponent", "ultimate"]).Candidate.Should().Be("turtle");
         Enum.GetNames<BotDifficulty>().Should().NotContain(name => PolicyCatalog.Probes.Contains(name.ToLowerInvariant()));
+    }
+
+    [Fact]
+    public void HumanSeats_ArenaPolicies_FlagsOnlyProbes()
+    {
+        ArenaRunner.HumanSeats(["ultimate", "turtle", "master", "Turtle"]).Should().Equal(1, 3);
+        ArenaRunner.HumanSeats(["ultimate", "master"]).Should().BeEmpty();
     }
 }

@@ -23,13 +23,22 @@ public abstract class TrajectoryFormat
     public abstract int Mover { get; }
     public abstract int Outcome { get; }
     public abstract int Seed { get; }
+    /// <summary>The default encoding of models fitted on these rows.</summary>
     public abstract BoardEncoding Encoding { get; }
+    /// <summary>Whether models of <paramref name="encoding"/> can be fitted on these rows and played in their games.</summary>
+    public virtual bool Accepts(BoardEncoding encoding) => encoding == Encoding;
     public abstract float[] Encode(GameObservation observation, PlannerBoard board, double score);
     /// <summary>Rebuilds the mover's evaluator and board; hidden card identities are irrelevant to the features.</summary>
     public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row);
 
     /// <summary>Whether the game this row comes from is held out for validation.</summary>
     public virtual bool IsValidation(float[] row) => (int)row[Seed] % 10 == 0;
+
+    /// <summary>The recorded outcome of a game stopped at the round or action limit.</summary>
+    public const float Stalled = .5f;
+
+    /// <summary>The training outcome of each row: 1 for a win, 0 for a loss, and a duel stopped at the limit is worth half to each side.</summary>
+    public virtual float[] Outcomes(float[][] rows) => rows.Select(r => r[Outcome]).ToArray();
 
     public float[][] Read(IEnumerable<string> paths) => paths.SelectMany(path =>
     {
@@ -85,7 +94,8 @@ public sealed class DuelTrajectoryFormat : TrajectoryFormat
 
 /// <summary>
 /// 104 floats: absolute owners, troops, each player's card count and eliminated flag (six slots), player count, mover, conquered
-/// flag, trades, Ultimate's hand score, mover turn index, outcome, seed.
+/// flag, trades, Ultimate's hand score, mover turn index, outcome (<see cref="TrajectoryFormat.Stalled"/> for a game stopped at the
+/// limit), seed.
 /// </summary>
 public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
 {
@@ -101,6 +111,23 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
     /// holds out whole blocks of four seeds per player to cover every opponent in every seat.
     /// </summary>
     public override bool IsValidation(float[] row) => (int)row[Seed] / (4 * (int)row[Count]) % 10 == 0;
+
+    /// <summary>
+    /// A game stopped at the limit is worth an equal share to each player still in it at the game's last recorded afterstate and
+    /// nothing to those already out, so a stalemate scores a fair share rather than the half a duel would.
+    /// </summary>
+    public override float[] Outcomes(float[][] rows)
+    {
+        var last = new Dictionary<int, int>();
+        for (var r = 0; r < rows.Length; r++) last[(int)rows[r][Seed]] = r;
+        return rows.Select(row =>
+        {
+            if (row[Outcome] != Stalled) return row[Outcome];
+            var end = rows[last[(int)row[Seed]]];
+            if (end[Eliminated + (int)row[Mover]] == 1) return 0f;
+            return 1f / Enumerable.Range(0, (int)end[Count]).Count(id => end[Eliminated + id] != 1);
+        }).ToArray();
+    }
     public override int Width => 104;
     public override int Mover => Count + 1;
     public override int Score => Count + 4;
@@ -108,6 +135,8 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
     public override int Outcome => Count + 6;
     public override int Seed => Count + 7;
     public override BoardEncoding Encoding => BoardEncoding.Multiplayer;
+    public override bool Accepts(BoardEncoding encoding) =>
+        encoding == BoardEncoding.Multiplayer || encoding == BoardEncoding.MultiplayerForecast || encoding == BoardEncoding.MultiplayerIntent;
 
     public override float[] Encode(GameObservation observation, PlannerBoard board, double score)
     {

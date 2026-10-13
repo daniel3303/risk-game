@@ -11,7 +11,9 @@ public sealed class MultiplayerBoardFeatures : BoardEncoding
 {
     public const int Territories = 42;
     public const int Continents = 6;
-    private const int PerTerritory = 12;
+    public const int PerTerritory = 12;
+    /// <summary>Offset, within a territory's block, of the flag marking the strongest rival's territories.</summary>
+    public const int StrongestRivalFlag = 1;
     private const int MaxPlayers = 6;
     private const int Globals = 1 + 3 + 3 + 3 + 6 + 6 + 1 + 1 + Continents * 4 + 4 + (MaxPlayers - 1) + 1 + Elimination;
     /// <summary>The weakest rival's territories, armies, cards, and the worst and mean chance of capturing its territories outright from adjacent own stacks.</summary>

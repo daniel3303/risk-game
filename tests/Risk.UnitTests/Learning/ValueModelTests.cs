@@ -35,8 +35,8 @@ public sealed class ValueModelTests
     {
         var model = ValueModel.UltimateMultiplayer;
         model.Should().NotBeNull();
-        model.Encoding.Should().BeSameAs(BoardEncoding.Multiplayer);
-        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardEncoding.Multiplayer.Count);
+        model.Encoding.Should().BeSameAs(BoardEncoding.MultiplayerForecast);
+        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardEncoding.MultiplayerForecast.Count);
         UltimateValuation.Bundled.Multiplayer.Should().BeSameAs(model);
         var game = TestWorld.Game(3, new(), 55);
         var ultimate = new UltimateStrategy();

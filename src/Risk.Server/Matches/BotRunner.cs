@@ -33,7 +33,7 @@ public sealed class BotRunner(RoomPublisher publisher, ILogger<BotRunner> logger
                 if (room.Game.State.Phase == Phase.Finished || !room.Current.IsBot || !room.HasViewers)
                 { room.BotQueued = false; continue; }
                 strategy = room.Current.Strategy;
-                observation = GameObservation.From(room.Game);
+                observation = GameObservation.From(room.Game, room.HumanPlayers);
                 revision = room.Revision;
             }
             try

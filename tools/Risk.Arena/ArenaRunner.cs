@@ -23,14 +23,19 @@ public static class ArenaRunner
         var names = policies.Select((policy, seat) => $"{char.ToUpperInvariant(policy[0])}{policy[1..]} {seat + 1}").ToArray();
         var game = new Game(map, names, new(options.Cards, options.Setup), new SeededRandom(seed));
         var strategies = policies.Select((policy, seat) => PolicyCatalog.Create(policy, unchecked(seed * 1000003 + seat * 7919))).ToArray();
+        var humans = HumanSeats(policies);
         var actions = 0;
         while (game.State.Phase != Phase.Finished && game.State.Round <= options.MaxRounds && actions < options.MaxActions)
         {
             cancellation.ThrowIfCancellationRequested();
             var player = game.State.CurrentPlayer;
-            game.Apply(player, strategies[player].Choose(GameObservation.From(game)));
+            game.Apply(player, strategies[player].Choose(GameObservation.From(game, humans)));
             actions++;
         }
         return new(seed, candidateSeat, game.State.Winner, game.State.Phase == Phase.Finished, game.State.Round, actions);
     }
+
+    /// <summary>The seats of probes: they imitate people, so the bots see them as human rivals.</summary>
+    public static int[] HumanSeats(IReadOnlyList<string> policies) =>
+        Enumerable.Range(0, policies.Count).Where(seat => PolicyCatalog.Probes.Contains(policies[seat], StringComparer.OrdinalIgnoreCase)).ToArray();
 }

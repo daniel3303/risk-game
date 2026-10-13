@@ -158,17 +158,69 @@ public sealed class UltimateStrategyTests
         (master.Evaluate(lopsided) - weighted.Evaluate(lopsided)).Should().BePositive();
     }
 
+    [Fact]
+    public void Evaluate_RivalSides_WeighTheHumanRivalWithoutChangingTheHandScore()
+    {
+        var game = TestWorld.Game();
+        // Player 0 holds two territories; even territories go to the human (player 2), odd ones to the bot (player 1).
+        foreach (var territory in game.State.Territories) { territory.Owner = territory.Id < 2 ? 0 : 2 - territory.Id % 2; territory.Troops = 1; }
+        game.State.Phase = Phase.Attack;
+        var plain = GameObservation.From(game);
+        var flagged = GameObservation.From(game, [2]);
+        flagged.Players.Select(p => p.Human).Should().Equal(false, false, true);
+        var board = PlannerBoard.From(flagged);
+        var sides = ExpertTuning.Master with { HumanRivalWeight = 3, BotRivalWeight = .5 };
+        // Weights of one, or no human rival, leave the score exactly as before.
+        new PositionEvaluator(flagged, ExpertTuning.Master).Evaluate(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).Evaluate(board));
+        new PositionEvaluator(plain, sides).Evaluate(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).Evaluate(board));
+        var evaluator = new PositionEvaluator(flagged, sides);
+        evaluator.HandScore(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).HandScore(board));
+        var human = board.Copy();
+        human.Troops[2] += 10;
+        var bot = board.Copy();
+        bot.Troops[3] += 10;
+        // Ten more armies cost 0.3 each, three times for the human and half for the bot: 10 * 0.3 * (3 - 0.5).
+        (evaluator.Evaluate(bot) - evaluator.Evaluate(human)).Should().BeApproximately(7.5, 1e-9);
+        // People alone among the rivals leave no bot to side with, so the weights stay off.
+        new PositionEvaluator(GameObservation.From(game, [1, 2]), sides).Evaluate(human).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).Evaluate(human));
+        // Two players left: the weights stay off in the duel.
+        game.State.Players[1].Eliminated = true;
+        new PositionEvaluator(GameObservation.From(game, [2]), sides).Evaluate(human).Should().Be(new PositionEvaluator(GameObservation.From(game), ExpertTuning.Master).Evaluate(human));
+    }
+
     [Theory]
-    [InlineData(981000, 0, 17, 612, 0, 28, 944, 2, 14, 518)]
-    [InlineData(981001, 1, 10, 349, 1, 26, 928, 1, 18, 637)]
+    [InlineData(1272000, 0, 21, 685, 1, 16, 575, 2, 17, 590)]
+    [InlineData(1272001, 0, 14, 442, 2, 17, 539, 2, 10, 352)]
     public void Run_ThreePlayerSeeds_ReproduceThePublishedUltimateMatches(int seed, int winner0, int rounds0, int actions0,
         int winner1, int rounds1, int actions1, int winner2, int rounds2, int actions2)
     {
         var options = new ArenaOptions(Seeds: 1, FirstSeed: seed, Players: 3, Candidate: "ultimate", Opponent: "master");
         var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
-        // The first matches of the published three-player evaluation; they change if the multiplayer terms, weights or model change.
+        // The first matches of the published three-player evaluation; they change if the multiplayer terms or model change. No
+        // person sits at this table, so the rival weights are pinned by the turtle replays below instead.
         report.Matches.Should().Equal(new MatchResult(seed, 0, winner0, true, rounds0, actions0),
             new MatchResult(seed, 1, winner1, true, rounds1, actions1), new MatchResult(seed, 2, winner2, true, rounds2, actions2));
+    }
+
+    [Theory]
+    [InlineData(1270000, 1, 9, 194, 2, 16, 381, 0, 9, 214)]
+    [InlineData(1270001, 1, 21, 499, 2, 13, 346, 0, 20, 530)]
+    public void Run_TurtleSeeds_ReproduceThePublishedProbeMatches(int seed, int winner0, int rounds0, int actions0,
+        int winner1, int rounds1, int actions1, int winner2, int rounds2, int actions2)
+    {
+        var options = new ArenaOptions(Seeds: 1, FirstSeed: seed, Players: 3, Candidate: "turtle", Opponent: "ultimate");
+        var report = ArenaRunner.Run(TestWorld.Map(), options, TestContext.Current.CancellationToken);
+        // The first matches of the published probe evaluation, the turtle seated as the human; they change if the rival weights change.
+        report.Matches.Should().Equal(new MatchResult(seed, 0, winner0, true, rounds0, actions0),
+            new MatchResult(seed, 1, winner1, true, rounds1, actions1), new MatchResult(seed, 2, winner2, true, rounds2, actions2));
+    }
+
+    [Fact]
+    public void Ultimate_RivalWeights_SideWithBotsAgainstPeopleWhileMasterStaysNeutral()
+    {
+        (ExpertTuning.Ultimate.HumanRivalWeight, ExpertTuning.Ultimate.BotRivalWeight).Should().Be((3, .5));
+        (ExpertTuning.Master.HumanRivalWeight, ExpertTuning.Master.BotRivalWeight).Should().Be((1, 1));
+        (ExpertTuning.Default.HumanRivalWeight, ExpertTuning.Default.BotRivalWeight).Should().Be((1, 1));
     }
 
     [Fact]

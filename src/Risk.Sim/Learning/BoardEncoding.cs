@@ -7,6 +7,8 @@ public abstract class BoardEncoding
     public const double ScoreScale = 50;
     public static BoardEncoding Duel { get; } = new DuelBoardFeatures();
     public static BoardEncoding Multiplayer { get; } = new MultiplayerBoardFeatures();
+    public static BoardEncoding MultiplayerForecast { get; } = new ForecastBoardFeatures();
+    public static BoardEncoding MultiplayerIntent { get; } = new IntentBoardFeatures();
 
     public abstract string Version { get; }
     public abstract int Count { get; }
@@ -20,6 +22,8 @@ public abstract class BoardEncoding
     {
         _ when version == Duel.Version => Duel,
         _ when version == Multiplayer.Version => Multiplayer,
+        _ when version == MultiplayerForecast.Version => MultiplayerForecast,
+        _ when version == MultiplayerIntent.Version => MultiplayerIntent,
         _ => null,
     };
 }

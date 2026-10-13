@@ -82,7 +82,7 @@ public sealed class ExpertStrategyTests
         JsonConvert.SerializeObject(game.State).Should().Be(before);
         JsonConvert.SerializeObject(observation).Should().Be(copied);
         observation.Players.Single(p => p.Id == 1).CardCount.Should().Be(2);
-        observation.Players.Single(p => p.Id == 1).GetType().GetProperties().Select(p => p.Name).Should().Equal("Id", "Eliminated", "CardCount");
+        observation.Players.Single(p => p.Id == 1).GetType().GetProperties().Select(p => p.Name).Should().Equal("Id", "Eliminated", "CardCount", "Human");
         observation.Cards.Should().BeEmpty();
     }
 
