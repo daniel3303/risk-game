@@ -35,6 +35,7 @@ public static class ModelEvaluator
         var wins = new int[players];
         var blocks = new int[seeds];
         var unfinished = 0;
+        var stalled = new System.Collections.Concurrent.ConcurrentBag<(int Seed, int Seat, string Board)>();
         Parallel.For(0, seeds * players, new ParallelOptions { MaxDegreeOfParallelism = threads }, job =>
         {
             var seed = firstSeed + job / players;
@@ -45,14 +46,23 @@ public static class ModelEvaluator
             var actions = 0;
             while (game.State.Phase != Phase.Finished && game.State.Round <= 200 && actions++ < 20000)
                 game.Apply(game.State.CurrentPlayer, strategies[game.State.CurrentPlayer].Choose(GameObservation.From(game, humans)));
-            if (game.State.Phase != Phase.Finished) Interlocked.Increment(ref unfinished);
+            if (game.State.Phase != Phase.Finished)
+            {
+                Interlocked.Increment(ref unfinished);
+                var board = string.Join(" ", Enumerable.Range(0, players).Select(p =>
+                    $"{game.State.Territories.Count(t => t.Owner == p)}t/{game.State.Territories.Where(t => t.Owner == p).Sum(t => t.Troops)}a"));
+                stalled.Add((seed, seat, board));
+            }
             else if (game.State.Winner == seat) { Interlocked.Increment(ref wins[seat]); Interlocked.Increment(ref blocks[job / players]); }
         });
         var rate = wins.Sum() / (double)(seeds * players);
         // Same conservative Hoeffding bound over seed blocks as the Arena.
         var margin = Math.Sqrt(Math.Log(40) / (2.0 * seeds));
         var (lower, upper) = EvaluationSummary.SeedBlockNormal(blocks, players);
-        return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin), lower, upper);
+        return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin), lower, upper)
+        {
+            UnfinishedGames = stalled.OrderBy(g => g.Seed).ThenBy(g => g.Seat).Select(g => $"{g.Seed}/{g.Seat}: {g.Board}").ToList(),
+        };
     }
 
     public static IPlayerStrategy Candidate(ValueModel model, ExpertTuning tuning = null) => model.Encoding == BoardEncoding.Duel

@@ -10,6 +10,9 @@ public sealed record EvaluationSummary(string Opponent, int Players, bool Defend
 {
     public double FairShare => 1.0 / Players;
 
+    /// <summary>Each unfinished game as seed/seat with every player's final territories and armies, in seat order.</summary>
+    public IReadOnlyList<string> UnfinishedGames { get; init; } = [];
+
     /// <summary>The 95% normal interval of the mean over seed blocks, each block's value being its wins over its games.</summary>
     public static (double Lower, double Upper) SeedBlockNormal(int[] blockWins, int players)
     {
