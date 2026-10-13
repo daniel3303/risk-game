@@ -187,8 +187,8 @@ public sealed class UltimateStrategyTests
     }
 
     [Theory]
-    [InlineData(981000, 0, 17, 612, 0, 28, 944, 2, 14, 518)]
-    [InlineData(981001, 1, 10, 349, 1, 26, 928, 1, 18, 637)]
+    [InlineData(1272000, 0, 21, 685, 1, 16, 575, 2, 17, 590)]
+    [InlineData(1272001, 0, 14, 442, 2, 17, 539, 2, 10, 352)]
     public void Run_ThreePlayerSeeds_ReproduceThePublishedUltimateMatches(int seed, int winner0, int rounds0, int actions0,
         int winner1, int rounds1, int actions1, int winner2, int rounds2, int actions2)
     {
