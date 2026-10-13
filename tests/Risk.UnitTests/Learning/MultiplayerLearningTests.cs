@@ -353,11 +353,12 @@ public sealed class MultiplayerLearningTests
     public void DataPath_League_IsNamedOnlyWhenItIsNotTheDefault()
     {
         var options = new Improvement.Options(3, 1100000, 10000, "gen7", null, 64, 8, .5, 60, 1000, 1000, null, 1);
-        Path.GetFileName(Improvement.DataPath(options)).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
-        Path.GetFileName(Improvement.DataPath(options with { League = [.. TrajectoryRecorder.DefaultLeague] })).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
+        // Ultimate's rival weights change the games learners play, so they name every multiplayer recording.
+        Path.GetFileName(Improvement.DataPath(options)).Should().Be("data-multi-board-v1-hand-sides3x0.5-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { League = [.. TrajectoryRecorder.DefaultLeague] })).Should().Be("data-multi-board-v1-hand-sides3x0.5-1100000-10000.bin");
         Path.GetFileName(Improvement.DataPath(options with { League = ["turtle", "turtle", "master", "expert"] }))
-            .Should().Be("data-multi-board-v1-hand-turtle+turtle+master+expert-1100000-10000.bin");
-        Path.GetFileName(Improvement.DataPath(options with { AllyCredit = .25 })).Should().Be("data-multi-board-v1-hand-ally0.25-1100000-10000.bin");
+            .Should().Be("data-multi-board-v1-hand-turtle+turtle+master+expert-sides3x0.5-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { AllyCredit = .25 })).Should().Be("data-multi-board-v1-hand-sides3x0.5-ally0.25-1100000-10000.bin");
         Improvement.LeagueName(null).Should().Be("learners,turtle,master,expert");
     }
 
