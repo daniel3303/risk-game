@@ -37,5 +37,5 @@ public static class ArenaRunner
 
     /// <summary>The seats of probes: they imitate people, so the bots see them as human rivals.</summary>
     public static int[] HumanSeats(IReadOnlyList<string> policies) =>
-        Enumerable.Range(0, policies.Count).Where(seat => PolicyCatalog.Probes.Contains(policies[seat])).ToArray();
+        Enumerable.Range(0, policies.Count).Where(seat => PolicyCatalog.Probes.Contains(policies[seat], StringComparer.OrdinalIgnoreCase)).ToArray();
 }

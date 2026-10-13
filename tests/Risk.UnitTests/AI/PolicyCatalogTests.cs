@@ -38,7 +38,7 @@ public sealed class PolicyCatalogTests
     [Fact]
     public void HumanSeats_ArenaPolicies_FlagsOnlyProbes()
     {
-        ArenaRunner.HumanSeats(["ultimate", "turtle", "master", "turtle"]).Should().Equal(1, 3);
+        ArenaRunner.HumanSeats(["ultimate", "turtle", "master", "Turtle"]).Should().Equal(1, 3);
         ArenaRunner.HumanSeats(["ultimate", "master"]).Should().BeEmpty();
     }
 }

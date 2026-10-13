@@ -52,10 +52,11 @@ public sealed record ExpertTuning
     /// </summary>
     public double ThreatWeighting { get; init; }
     /// <summary>
-    /// In games with more than two players and a human rival left, each human rival's weighted armies and income count this many
-    /// times; applied after the learned correction, which keeps reading the plain score. One leaves the score unchanged.
+    /// In games with more than two players, while both a human and a bot are among the rivals, each human rival's weighted armies
+    /// and income count this many times; applied after the learned correction, which keeps reading the plain score. One leaves the
+    /// score unchanged.
     /// </summary>
     public double HumanRivalWeight { get; init; } = 1;
-    /// <summary>The same multiplier for each bot rival while a human rival is left, below one to treat bots as softer targets.</summary>
+    /// <summary>The same multiplier for each bot rival in those games, below one to treat bots as softer targets.</summary>
     public double BotRivalWeight { get; init; } = 1;
 }

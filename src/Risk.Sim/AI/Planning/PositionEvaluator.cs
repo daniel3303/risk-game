@@ -96,9 +96,12 @@ public sealed class PositionEvaluator
         return score;
     }
 
-    /// <summary>Whether the human and bot rival weights apply: more than two players, a human rival left, and a weight other than one.</summary>
+    /// <summary>
+    /// Whether the human and bot rival weights apply: more than two players, a weight other than one, and both a human and a bot
+    /// among the rivals; with people alone there is no bot to side with, so the weights would only shift own growth against damage.
+    /// </summary>
     private bool SidesApply(ObservedPlayer[] rivals) =>
-        !Duel && (Tuning.HumanRivalWeight != 1 || Tuning.BotRivalWeight != 1) && rivals.Any(r => r.Human);
+        !Duel && (Tuning.HumanRivalWeight != 1 || Tuning.BotRivalWeight != 1) && rivals.Any(r => r.Human) && rivals.Any(r => !r.Human);
 
     /// <summary>The frontier-risk weight for the current number of players; zero when the term is off.</summary>
     public double FrontierWeight => Duel ? Tuning.DuelFrontierRiskValue : Tuning.FrontierRiskValue;
