@@ -150,7 +150,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 
 - Intervals are the 95% normal interval over seed blocks. Unfinished games: 1 at weights 2 and 1, 5 at 3 and 0.5 on the turtle row, none in the other finished runs. The unweighted run with Ultimate in the human seat, three Ultimates that often stall, had not finished at publication.
 - Weights 3 and 0.5 shipped. The screen and the confirmation passed the weights explicitly to a build where they were not yet the default; the evaluation below plays the default.
-- The unfinished games are stand-offs at the 200-round limit: the probe on 4–7 territories behind about 900 armies, one bot on 30–34 territories, the other squeezed to 3–5 territories with a similar stack. The scripted probe never breaks out and no bot risks its stack; a person would break such a stand-off.
+- The unfinished games are stand-offs at the 200-round limit. In the screen's four at weights 3 and 0.5, whose final boards were logged, the probe held 5 territories behind about 900 armies, one bot 30–34 territories, and the other was squeezed to 3–7 territories with a similar stack. The scripted probe never breaks out and no bot risks its stack; a person would break such a stand-off.
 - `evaluate --opponent turtle --defend true` takes `--human-weight` and `--bot-weight` to screen other weights, and lists each unfinished game's final board.
 
 ### Multiplayer evaluation
@@ -253,6 +253,6 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 
 - The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated in larger games only against three Masters, generation 1 also against the probe in four- and six-player games.
 - Frontier defence and threat weighting were selected and evaluated in three-player Fixed-card automatic-setup games against the turtle probe and Master; four- to six-player games were evaluated once each, progressive cards and manual setup not at all.
-- The rival weights were selected against the turtle probe in three-player games and confirmed with Master and an unweighted Ultimate in the human seat; the bots visibly focus a person, and no real player has been measured.
+- The rival weights were selected against the turtle probe in three-player games and confirmed with Master in the human seat (with an unweighted Ultimate there, only the weighted rate was measured); the bots visibly focus a person, and no real player has been measured.
 - With the rival weights, 4–5 of 3,000 games against the scripted turtle stalled at the 200-round limit; real games have no limit.
 - Results measure strength against the bundled bots and one scripted human style, not against skilled humans.

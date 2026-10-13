@@ -12102,6 +12102,7 @@
   ],
   "multiplayer": {
     "policySourceSha256": "2a8c2a497c5290f9be1a555e6a18cdf5c46c0bc17ccf7c330af41227c6960e1a",
+    "policySourceNote": "Hash of the merged source. The evaluation ran at commit ddc01be, before 850c515 limited siding to tables with a bot rival; that cannot change these games, since each weighted Ultimate has both a person and a bot among its rivals until two players remain, and the pinned replays confirm it",
     "policySourceHashMethod": "SHA-256 over src/Risk.Sim/AI/**/*.cs, src/Risk.Sim/Learning/**/*.cs and the embedded duel and multiplayer models, sorted by repository-relative path; each file contributes its path, a NUL byte, and its bytes",
     "duelReproduction": "Seeds 900000-900049 of the Master duel report above replayed with this source: 100 of 100 matches identical (the multiplayer terms, rival weights and model apply only while more than two players remain)",
     "preset": {
@@ -12203,7 +12204,7 @@
       "arenaName": "turtle",
       "style": "holds one continent, one border stack, one capture per turn for a card, trades every set, campaigns with the Expert planner once its army is 1.5x the strongest rival's"
     },
-    "developmentSeeds": "960000-966999 (sweeps and selection); 965000-965007 (latency); 1000000-1004999 (signal check, discarded); 1000000-1089499 (generations 1-6); 1100000-1111999 and 1200000-1220499 (experiments after generation 4); 1230000-1260499 (rival-weight screen and confirmation)",
+    "developmentSeeds": "960000-966999 (sweeps and selection); 965000-965007 (latency); 1000000-1004999 (signal check, discarded); 1000000-1088799 (generations 1-6); 1100000-1111999 (search screens on generation 1, the generation-3 scale test, and experiments after generation 4); 1200000-1220499 (yardsticks of generations 4-6 and the intent encoding); 1230000-1260499 (rival-weight screen and confirmation)",
     "evaluationSeeds": "1270000-1276099 for generation 4 with the rival weights, played once from commit ddc01be (1274000-1274149 and 1276000-1276099 unfinished at publication and still reserved); 970000-972149 for the Master-only rows",
     "reports": [
       {
@@ -12366,7 +12367,7 @@
         "rate": 0.3617
       }
     },
-    "matchRecords": "Per-match results are not committed; each report reproduces exactly with the Arena command and seeds given (the server x86-64 build and an ARM64 Mac replayed the same matches), and raw reports are kept under ignored artifacts/evaluation/",
+    "matchRecords": "Per-match results are not committed; each report reproduces exactly with the Arena command and seeds given (the server x86-64 build and an ARM64 Mac replayed the same matches), and raw reports are kept under ignored artifacts/evaluation/ and artifacts/learning/server/",
     "generation1": {
       "model": {
         "path": "src/Risk.Sim/Learning/ultimate-multiplayer-model.json",
