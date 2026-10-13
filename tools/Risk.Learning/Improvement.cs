@@ -27,16 +27,20 @@ public static class Improvement
 
     /// <param name="Reference">The probe reference's identifier, as <see cref="Learner"/> gives it.</param>
     public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
-        EvaluationSummary ProbeAgainstCandidate, string Reference, EvaluationSummary ProbeAgainstReference, bool Promoted, string PromotedTo);
+        EvaluationSummary ProbeAgainstCandidate, string Reference, EvaluationSummary ProbeAgainstReference, bool Promoted, string PromotedTo,
+        double Lambda = 0, string Features = null, double Scale = 0, string League = null);
 
-    /// <summary>Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one, fitting each on the last <paramref name="window"/> recordings.</summary>
+    /// <summary>
+    /// Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one. The first fits its own
+    /// recording with every supplied extra one; later ones fit theirs with the previous <paramref name="window"/> − 1 recordings.
+    /// </summary>
     public static IReadOnlyList<Report> Generations(WorldMap map, Options options, int generations, int window, TextWriter log)
     {
         var reports = new List<Report>();
         var recent = new List<string>(options.ExtraData ?? []);
         for (var generation = 0; generation < generations; generation++)
         {
-            var report = Run(map, options with { ExtraData = recent.TakeLast(window - 1).ToArray() }, log);
+            var report = Run(map, options with { ExtraData = generation == 0 ? recent.ToArray() : recent.TakeLast(window - 1).ToArray() }, log);
             reports.Add(report);
             if (!report.Promoted) break;
             recent.Add(report.Data[0]);
@@ -97,7 +101,7 @@ public static class Improvement
             log.WriteLine($"Copied the candidate to {options.PromoteTo}; rebuild to play it.");
         }
         var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, Learner(options.Reference ?? options.Current),
-            probeReference, promoted, promotedTo);
+            probeReference, promoted, promotedTo, options.Lambda, candidate.Features, options.Scale, LeagueName(options.League));
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
     }

@@ -108,15 +108,19 @@ try
             var current = LoadModel(options.OptionalText("--model"), null, players) ?? ValueModel.UltimateMultiplayer;
             var first = options.Integer("--first-seed", 1000000, 0, TrajectoryFormat.SeedLimit - 1);
             var games = options.Integer("--games", 20000, 1, TrajectoryFormat.SeedLimit - first);
+            // A candidate keeps the learner's encoding and scale unless told otherwise, so promoting it never silently changes them.
             var improvement = new Improvement.Options(players, first, games, options.Text("--output"), current,
-                options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", .5, 0, 10), options.Number("--limit", 60, 0, 1000),
+                options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", current.Scale, 0, 10), options.Number("--limit", 60, 0, 1000),
                 options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
-                Encoding: FeaturesOption(options, TrajectoryFormat.For(players)), Reference: LoadModel(options.OptionalText("--reference"), null, players),
+                Encoding: FeaturesOption(options, TrajectoryFormat.For(players), current.Encoding), Reference: LoadModel(options.OptionalText("--reference"), null, players),
                 League: LeagueOption(options));
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
             options.RejectUnknown();
+            // Seeds are stored as floats, so every generation's recording, strength and probe seeds must stay below the exact limit.
+            if (first + (long)generations * (games + improvement.EvaluationSeeds + improvement.ProbeSeeds) > TrajectoryFormat.SeedLimit)
+                throw new ArgumentException($"{generations} generations from seed {first} would pass seed {TrajectoryFormat.SeedLimit}.");
             var reports = Improvement.Generations(map, improvement, generations, window, Console.Out);
             Console.WriteLine(JsonConvert.SerializeObject(reports, json));
             break;
@@ -141,16 +145,17 @@ catch (Exception error) when (error is ArgumentException or FormatException or O
     return 2;
 }
 
-// Loads a model file; "--scale" (when the command passes its options) overrides the model's own scale, and the encoding must suit the player count.
-static BoardEncoding FeaturesOption(CommandOptions options, TrajectoryFormat format)
+// The --features encoding, which must suit the player count; without the option, the fallback or the format's own.
+static BoardEncoding FeaturesOption(CommandOptions options, TrajectoryFormat format, BoardEncoding fallback = null)
 {
     var name = options.OptionalText("--features");
-    if (name == null) return format.Encoding;
+    if (name == null) return fallback != null && format.Accepts(fallback) ? fallback : format.Encoding;
     var encoding = BoardEncoding.For(name);
     if (encoding == null || !format.Accepts(encoding)) throw new ArgumentException($"Unknown or unsupported --features {name}.");
     return encoding;
 }
 
+// Loads a model file; "--scale" (when the command passes its options) overrides the model's own scale, and the encoding must suit the player count.
 static ValueModel LoadModel(string path, CommandOptions options, int? players)
 {
     if (path == null) return null;

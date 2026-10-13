@@ -378,11 +378,13 @@ public sealed class MultiplayerLearningTests
             File.WriteAllBytes(earlier, bytes);
             var options = new Improvement.Options(3, 6000, 1, Path.Combine(root, "gen1"), null, 2, 1, .5, 60, 1, 1, null, 3, ExtraData: [earlier],
                 Reference: ValueModel.UltimateMultiplayer);
-            var reports = Improvement.Generations(map, options, 2, 2, TextWriter.Null);
-            // One seed cannot clear the conservative bound, so the run stops after its first, rejected generation.
+            // A window of one still fits the supplied recording with the first generation's own.
+            var reports = Improvement.Generations(map, options, 2, 1, TextWriter.Null);
+            // One seed cannot clear the normal bound, so the run stops after its first, rejected generation.
             var report = reports.Should().ContainSingle().Subject;
             report.Promoted.Should().BeFalse();
             report.Data.Should().HaveCount(2).And.Contain(earlier);
+            (report.Lambda, report.Features, report.Scale, report.League).Should().Be((.7, "multi-board-v1", .5, "learners,turtle,master,expert"));
             report.Afterstates.Should().Be(TrajectoryFormat.Multiplayer.Read(report.Data).Length);
             report.AgainstCurrent.Opponent.Should().Be("current");
             report.AgainstCurrent.FirstSeed.Should().Be(6001);
