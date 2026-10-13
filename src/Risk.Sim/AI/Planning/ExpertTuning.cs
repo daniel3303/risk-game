@@ -11,8 +11,11 @@ public sealed record ExpertTuning
         DuelEnemyIncomeValue = 8, BeamWidth = 16, Branches = 20, MaxDepth = 10, SearchBudget = 4096, DeployBorders = 24,
     };
 
-    /// <summary>Master's search plus frontier defence and threat weighting in games with more than two players; see docs/ultimate-ai.md.</summary>
-    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5 };
+    /// <summary>
+    /// Master's search plus frontier defence, threat weighting and siding against human rivals in games with more than two
+    /// players; see docs/ultimate-ai.md.
+    /// </summary>
+    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5, HumanRivalWeight = 3, BotRivalWeight = .5 };
 
     public double TerritoryValue { get; init; } = 1.4;
     public double IncomeValue { get; init; } = 4;
