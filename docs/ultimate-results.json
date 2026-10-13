@@ -12101,109 +12101,110 @@
     }
   ],
   "multiplayer": {
-    "policySourceSha256": "a18f650681b47c71fade3a99c8a9defeb1147d46a5b2b977fe78b98c16cfc52b",
+    "policySourceSha256": "2a8c2a497c5290f9be1a555e6a18cdf5c46c0bc17ccf7c330af41227c6960e1a",
     "policySourceHashMethod": "SHA-256 over src/Risk.Sim/AI/**/*.cs, src/Risk.Sim/Learning/**/*.cs and the embedded duel and multiplayer models, sorted by repository-relative path; each file contributes its path, a NUL byte, and its bytes",
-    "duelReproduction": "Seeds 900000-900049 of the Master duel report above replayed with this source, multiplayer model bundled: 100 of 100 matches identical (frontier risk, threat weighting and the multiplayer model apply only while more than two players remain)",
+    "duelReproduction": "Seeds 900000-900049 of the Master duel report above replayed with this source: 100 of 100 matches identical (the multiplayer terms, rival weights and model apply only while more than two players remain)",
     "preset": {
       "frontierRiskValue": 1,
       "duelFrontierRiskValue": 0,
       "threatWeighting": 1.5,
-      "safeOccupations": "whenever frontier risk is scored"
+      "safeOccupations": "whenever frontier risk is scored",
+      "humanRivalWeight": 3,
+      "botRivalWeight": 0.5,
+      "rivalWeights": "only while both a person and another bot are among the rivals and more than two players remain; applied after the learned correction"
     },
     "model": {
       "path": "src/Risk.Sim/Learning/ultimate-multiplayer-model.json",
-      "sha256": "751109cb5b049bd09270032070196bb879d247d79c20f071a2f20c9dc9ce5dda",
-      "features": "multi-board-v1",
-      "inputs": 572,
+      "sha256": "a62c4c31178c20899e723c5360125200e69b00b6b6f90bac16cb70593780df72",
+      "features": "multi-board-v2",
+      "inputs": 706,
       "hidden": 64,
       "members": 1,
-      "scale": 0.5,
-      "limit": 60,
-      "generation": 1
+      "scale": 0.75,
+      "limit": 60.0,
+      "generation": 4
     },
     "training": {
-      "data": "Three-player league self-play, fixed cards, automatic setup, seeds 1000000-1019999 (20,000 games, 829,279 afterstates); seeds divisible by four seat the current Ultimate everywhere, the rest give one rotating seat to the turtle probe, Master or Expert; only Ultimate seats are recorded, while three players remain",
-      "learner": "Ultimate with the hand-written multiplayer terms and no multiplayer model",
-      "sourceCommit": "8314694",
-      "sourceNote": "Recorded, fitted and gated from source byte-identical to this commit (src/Risk.Sim and tools/Risk.Learning); its gate compared the probe's point rates, which this generation also passes",
-      "targets": "TD(lambda=0.7) bootstrapped from the calibrated hand score",
-      "fit": {
-        "epochs": 8,
-        "rate": 0.001,
-        "l2": 1e-05,
-        "seed": 3,
-        "heldOut": "seeds divisible by ten (later generations: seed / (4 x players) divisible by ten)"
-      },
+      "data": "Three-player league self-play, fixed cards, automatic setup: generation 4 seeds 1054900-1064899 (10,000 games, 751,312 afterstates) plus generation 3 seeds 1042600-1052599 (563,583); league as for generation 1",
+      "learner": "Generation 3 at correction scale 0.75 (46f525870d06)",
+      "targets": "TD(lambda=0.9) bootstrapped from the learner",
       "heldOutLogLoss": {
-        "calibratedHandScore": 0.5782,
-        "model": 0.5538
+        "calibratedHandScore": 0.6167,
+        "model": 0.5884
       },
       "gate": {
-        "againstUltimate": {
-          "opponent": "ultimate",
+        "againstCurrent": {
+          "opponent": "current",
           "players": 3,
           "defend": false,
-          "firstSeed": 1020000,
+          "firstSeed": 1064900,
           "seeds": 1000,
           "seatWins": [
-            772,
-            736,
-            676
+            584,
+            572,
+            559
           ],
-          "unfinished": 0,
-          "winRate": 0.728,
-          "confidenceLower": 0.6850530591653262,
-          "confidenceUpper": 0.7709469408346737,
+          "unfinished": 75,
+          "winRate": 0.5716666666666667,
+          "confidenceLower": 0.5287197258319929,
+          "confidenceUpper": 0.6146136075013404,
+          "normalLower": 0.5536966560578412,
+          "normalUpper": 0.589636677275491,
           "fairShare": 0.3333333333333333
         },
         "probeAgainstCandidate": {
           "opponent": "turtle",
           "players": 3,
           "defend": true,
-          "firstSeed": 1021000,
+          "firstSeed": 1065900,
           "seeds": 300,
           "seatWins": [
-            30,
-            12,
-            20
+            18,
+            16,
+            14
           ],
           "unfinished": 0,
-          "winRate": 0.06888888888888889,
+          "winRate": 0.05333333333333334,
           "confidenceLower": 0.0,
-          "confidenceUpper": 0.14729891645885745,
+          "confidenceUpper": 0.13174336090330188,
+          "normalLower": 0.03848687477087152,
+          "normalUpper": 0.06817979189579522,
           "fairShare": 0.3333333333333333
         },
         "probeAgainstCurrent": {
           "opponent": "turtle",
           "players": 3,
           "defend": true,
-          "firstSeed": 1021000,
+          "firstSeed": 1065900,
           "seeds": 300,
           "seatWins": [
-            43,
-            33,
-            25
+            22,
+            14,
+            22
           ],
           "unfinished": 0,
-          "winRate": 0.11222222222222222,
-          "confidenceLower": 0.03381219465225367,
-          "confidenceUpper": 0.1906322497921908,
+          "winRate": 0.06444444444444444,
+          "confidenceLower": 0.0,
+          "confidenceUpper": 0.14285447201441298,
+          "normalLower": 0.04829803229261422,
+          "normalUpper": 0.0805908565962746,
           "fairShare": 0.3333333333333333
         },
         "promoted": true
       },
-      "gateSeeds": "1020000-1020999 against two current Ultimates, 1021000-1021299 for the probe",
+      "gateSeeds": "1064900-1065899 against two generation-3 Ultimates, 1065900-1066199 for the probe",
       "commands": [
-        "improve --players 3 --first-seed 1000000 --games 20000 --output artifacts/learning/gen1 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json"
-      ]
+        "improve --players 3 --first-seed 1054900 --games 10000 --output artifacts/learning/gen4 --model artifacts/learning/gen3/model-scale-075.json --extra-data artifacts/learning/gen3/data-multi-board-v1-6f935237a4e6-1042600-10000.bin --generations 4 --window 2 --lambda 0.9 --scale 0.75 --features multi-board-v2"
+      ],
+      "laterGenerations": "Generations 5 and 6 and the experiments after generation 4 were not adopted; see docs/ultimate-ai.md#generations"
     },
     "probe": {
       "policy": "probe-turtle",
       "arenaName": "turtle",
       "style": "holds one continent, one border stack, one capture per turn for a card, trades every set, campaigns with the Expert planner once its army is 1.5x the strongest rival's"
     },
-    "developmentSeeds": "960000-966999 (sweeps and selection); 965000-965007 (latency); 1000000-1004999 (signal check, discarded)",
-    "evaluationSeeds": "980000-985149 for the bundled model, played once after promotion; 970000-975149 for the hand terms alone, played once before the model was trained",
+    "developmentSeeds": "960000-966999 (sweeps and selection); 965000-965007 (latency); 1000000-1004999 (signal check, discarded); 1000000-1089499 (generations 1-6); 1100000-1111999 and 1200000-1220499 (experiments after generation 4); 1230000-1260499 (rival-weight screen and confirmation)",
+    "evaluationSeeds": "1270000-1276099 for generation 4 with the rival weights, played once from commit ddc01be (1274000-1274149 and 1276000-1276099 unfinished at publication and still reserved); 970000-972149 for the Master-only rows",
     "reports": [
       {
         "options": {
@@ -12262,8 +12263,8 @@
       },
       {
         "options": {
-          "seeds": 300,
-          "firstSeed": 980000,
+          "seeds": 1000,
+          "firstSeed": 1270000,
           "players": 3,
           "candidate": "turtle",
           "opponent": "ultimate",
@@ -12271,26 +12272,21 @@
           "setup": "automatic",
           "maxRounds": 200,
           "maxActions": 20000,
-          "parallelism": 10
+          "parallelism": 12
         },
-        "games": 900,
-        "wins": 58,
-        "losses": 842,
-        "unfinished": 0,
-        "winRate": 0.06444444444444444,
+        "games": 3000,
+        "wins": 8,
+        "losses": 2988,
+        "unfinished": 4,
+        "winRate": 0.0026666666666666666,
         "confidenceLower": 0.0,
-        "confidenceUpper": 0.14285447201441298,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          23,
-          16,
-          19
-        ]
+        "confidenceUpper": 0.04561360750134042,
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
       },
       {
         "options": {
           "seeds": 300,
-          "firstSeed": 981000,
+          "firstSeed": 1272000,
           "players": 3,
           "candidate": "ultimate",
           "opponent": "master",
@@ -12298,26 +12294,21 @@
           "setup": "automatic",
           "maxRounds": 200,
           "maxActions": 20000,
-          "parallelism": 10
+          "parallelism": 12
         },
         "games": 900,
-        "wins": 763,
-        "losses": 137,
+        "wins": 824,
+        "losses": 76,
         "unfinished": 0,
-        "winRate": 0.8477777777777777,
-        "confidenceLower": 0.7693677502078092,
-        "confidenceUpper": 0.9261878053477463,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          263,
-          246,
-          254
-        ]
+        "winRate": 0.9155555555555556,
+        "confidenceLower": 0.8371455279855871,
+        "confidenceUpper": 0.9939655831255241,
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
       },
       {
         "options": {
           "seeds": 150,
-          "firstSeed": 984000,
+          "firstSeed": 1273000,
           "players": 3,
           "candidate": "ultimate",
           "opponent": "expert",
@@ -12325,223 +12316,21 @@
           "setup": "automatic",
           "maxRounds": 200,
           "maxActions": 20000,
-          "parallelism": 10
+          "parallelism": 12
         },
         "games": 450,
-        "wins": 379,
-        "losses": 71,
+        "wins": 411,
+        "losses": 39,
         "unfinished": 0,
-        "winRate": 0.8422222222222222,
-        "confidenceLower": 0.7313336978067244,
-        "confidenceUpper": 0.95311074663772,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          128,
-          127,
-          124
-        ]
-      },
-      {
-        "options": {
-          "seeds": 150,
-          "firstSeed": 982000,
-          "players": 4,
-          "candidate": "turtle",
-          "opponent": "ultimate",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 10
-        },
-        "games": 600,
-        "wins": 87,
-        "losses": 513,
-        "unfinished": 0,
-        "winRate": 0.145,
-        "confidenceLower": 0.03411147558450217,
-        "confidenceUpper": 0.2558885244154978,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          26,
-          19,
-          14,
-          28
-        ]
-      },
-      {
-        "options": {
-          "seeds": 150,
-          "firstSeed": 985000,
-          "players": 4,
-          "candidate": "ultimate",
-          "opponent": "master",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 10
-        },
-        "games": 600,
-        "wins": 534,
-        "losses": 66,
-        "unfinished": 0,
-        "winRate": 0.89,
-        "confidenceLower": 0.7791114755845022,
+        "winRate": 0.9133333333333333,
+        "confidenceLower": 0.8024448089178355,
         "confidenceUpper": 1.0,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          133,
-          133,
-          132,
-          136
-        ]
-      },
-      {
-        "options": {
-          "seeds": 100,
-          "firstSeed": 983000,
-          "players": 6,
-          "candidate": "turtle",
-          "opponent": "ultimate",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 10
-        },
-        "games": 600,
-        "wins": 73,
-        "losses": 527,
-        "unfinished": 0,
-        "winRate": 0.12166666666666667,
-        "confidenceLower": 0.0,
-        "confidenceUpper": 0.25747681824072866,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          10,
-          16,
-          16,
-          9,
-          12,
-          10
-        ]
-      }
-    ],
-    "handTermsOnlyReports": [
-      {
-        "options": {
-          "seeds": 300,
-          "firstSeed": 970000,
-          "players": 3,
-          "candidate": "turtle",
-          "opponent": "ultimate",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 6
-        },
-        "games": 900,
-        "wins": 101,
-        "losses": 799,
-        "unfinished": 0,
-        "winRate": 0.11222222222222222,
-        "confidenceLower": 0.03381219465225367,
-        "confidenceUpper": 0.1906322497921908,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          38,
-          32,
-          31
-        ]
-      },
-      {
-        "options": {
-          "seeds": 300,
-          "firstSeed": 971000,
-          "players": 3,
-          "candidate": "ultimate",
-          "opponent": "master",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 6
-        },
-        "games": 900,
-        "wins": 454,
-        "losses": 446,
-        "unfinished": 0,
-        "winRate": 0.5044444444444445,
-        "confidenceLower": 0.4260344168744759,
-        "confidenceUpper": 0.582854472014413,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          144,
-          157,
-          153
-        ]
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
       },
       {
         "options": {
           "seeds": 150,
-          "firstSeed": 974000,
-          "players": 3,
-          "candidate": "ultimate",
-          "opponent": "expert",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 6
-        },
-        "games": 450,
-        "wins": 266,
-        "losses": 184,
-        "unfinished": 0,
-        "winRate": 0.5911111111111111,
-        "confidenceLower": 0.48022258669561335,
-        "confidenceUpper": 0.7019996355266089,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          96,
-          92,
-          78
-        ]
-      },
-      {
-        "options": {
-          "seeds": 150,
-          "firstSeed": 972000,
-          "players": 4,
-          "candidate": "turtle",
-          "opponent": "ultimate",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 6
-        },
-        "games": 600,
-        "wins": 129,
-        "losses": 471,
-        "unfinished": 0,
-        "winRate": 0.215,
-        "confidenceLower": 0.10411147558450218,
-        "confidenceUpper": 0.3258885244154978,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          32,
-          29,
-          40,
-          28
-        ]
-      },
-      {
-        "options": {
-          "seeds": 150,
-          "firstSeed": 975000,
+          "firstSeed": 1275000,
           "players": 4,
           "candidate": "ultimate",
           "opponent": "master",
@@ -12549,55 +12338,19 @@
           "setup": "automatic",
           "maxRounds": 200,
           "maxActions": 20000,
-          "parallelism": 6
+          "parallelism": 12
         },
         "games": 600,
-        "wins": 252,
-        "losses": 348,
+        "wins": 573,
+        "losses": 27,
         "unfinished": 0,
-        "winRate": 0.42,
-        "confidenceLower": 0.30911147558450214,
-        "confidenceUpper": 0.5308885244154978,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          59,
-          58,
-          70,
-          65
-        ]
-      },
-      {
-        "options": {
-          "seeds": 100,
-          "firstSeed": 973000,
-          "players": 6,
-          "candidate": "turtle",
-          "opponent": "ultimate",
-          "cards": "fixed",
-          "setup": "automatic",
-          "maxRounds": 200,
-          "maxActions": 20000,
-          "parallelism": 6
-        },
-        "games": 600,
-        "wins": 122,
-        "losses": 478,
-        "unfinished": 0,
-        "winRate": 0.20333333333333334,
-        "confidenceLower": 0.06752318175927138,
-        "confidenceUpper": 0.3391434849073953,
-        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
-        "seatWins": [
-          22,
-          23,
-          20,
-          19,
-          18,
-          20
-        ]
+        "winRate": 0.955,
+        "confidenceLower": 0.8441114755845022,
+        "confidenceUpper": 1.0,
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
       }
     ],
-    "totalGames": 9600,
+    "totalGames": 6450,
     "previousPresetBaseline": {
       "note": "The exact previous preset (Master search with the learned duel correction, no frontier risk or threat weighting) replayed outside the Arena on the same seeds; only totals were kept.",
       "threePlayers": {
@@ -12613,6 +12366,612 @@
         "rate": 0.3617
       }
     },
-    "matchRecords": "Per-match results are not committed; each report reproduces exactly with the Arena command and seeds given, and the raw reports are kept under ignored artifacts/evaluation/."
+    "matchRecords": "Per-match results are not committed; each report reproduces exactly with the Arena command and seeds given (the server x86-64 build and an ARM64 Mac replayed the same matches), and raw reports are kept under ignored artifacts/evaluation/",
+    "generation1": {
+      "model": {
+        "path": "src/Risk.Sim/Learning/ultimate-multiplayer-model.json",
+        "sha256": "751109cb5b049bd09270032070196bb879d247d79c20f071a2f20c9dc9ce5dda",
+        "features": "multi-board-v1",
+        "inputs": 572,
+        "hidden": 64,
+        "members": 1,
+        "scale": 0.5,
+        "limit": 60,
+        "generation": 1
+      },
+      "training": {
+        "data": "Three-player league self-play, fixed cards, automatic setup, seeds 1000000-1019999 (20,000 games, 829,279 afterstates); seeds divisible by four seat the current Ultimate everywhere, the rest give one rotating seat to the turtle probe, Master or Expert; only Ultimate seats are recorded, while three players remain",
+        "learner": "Ultimate with the hand-written multiplayer terms and no multiplayer model",
+        "sourceCommit": "8314694",
+        "sourceNote": "Recorded, fitted and gated from source byte-identical to this commit (src/Risk.Sim and tools/Risk.Learning); its gate compared the probe's point rates, which this generation also passes",
+        "targets": "TD(lambda=0.7) bootstrapped from the calibrated hand score",
+        "fit": {
+          "epochs": 8,
+          "rate": 0.001,
+          "l2": 1e-05,
+          "seed": 3,
+          "heldOut": "seeds divisible by ten (later generations: seed / (4 x players) divisible by ten)"
+        },
+        "heldOutLogLoss": {
+          "calibratedHandScore": 0.5782,
+          "model": 0.5538
+        },
+        "gate": {
+          "againstUltimate": {
+            "opponent": "ultimate",
+            "players": 3,
+            "defend": false,
+            "firstSeed": 1020000,
+            "seeds": 1000,
+            "seatWins": [
+              772,
+              736,
+              676
+            ],
+            "unfinished": 0,
+            "winRate": 0.728,
+            "confidenceLower": 0.6850530591653262,
+            "confidenceUpper": 0.7709469408346737,
+            "fairShare": 0.3333333333333333
+          },
+          "probeAgainstCandidate": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1021000,
+            "seeds": 300,
+            "seatWins": [
+              30,
+              12,
+              20
+            ],
+            "unfinished": 0,
+            "winRate": 0.06888888888888889,
+            "confidenceLower": 0.0,
+            "confidenceUpper": 0.14729891645885745,
+            "fairShare": 0.3333333333333333
+          },
+          "probeAgainstCurrent": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1021000,
+            "seeds": 300,
+            "seatWins": [
+              43,
+              33,
+              25
+            ],
+            "unfinished": 0,
+            "winRate": 0.11222222222222222,
+            "confidenceLower": 0.03381219465225367,
+            "confidenceUpper": 0.1906322497921908,
+            "fairShare": 0.3333333333333333
+          },
+          "promoted": true
+        },
+        "gateSeeds": "1020000-1020999 against two current Ultimates, 1021000-1021299 for the probe",
+        "commands": [
+          "improve --players 3 --first-seed 1000000 --games 20000 --output artifacts/learning/gen1 --promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json"
+        ]
+      },
+      "reports": [
+        {
+          "options": {
+            "seeds": 300,
+            "firstSeed": 980000,
+            "players": 3,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 900,
+          "wins": 58,
+          "losses": 842,
+          "unfinished": 0,
+          "winRate": 0.06444444444444444,
+          "confidenceLower": 0.0,
+          "confidenceUpper": 0.14285447201441298,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            23,
+            16,
+            19
+          ]
+        },
+        {
+          "options": {
+            "seeds": 300,
+            "firstSeed": 981000,
+            "players": 3,
+            "candidate": "ultimate",
+            "opponent": "master",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 900,
+          "wins": 763,
+          "losses": 137,
+          "unfinished": 0,
+          "winRate": 0.8477777777777777,
+          "confidenceLower": 0.7693677502078092,
+          "confidenceUpper": 0.9261878053477463,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            263,
+            246,
+            254
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 984000,
+            "players": 3,
+            "candidate": "ultimate",
+            "opponent": "expert",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 450,
+          "wins": 379,
+          "losses": 71,
+          "unfinished": 0,
+          "winRate": 0.8422222222222222,
+          "confidenceLower": 0.7313336978067244,
+          "confidenceUpper": 0.95311074663772,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            128,
+            127,
+            124
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 982000,
+            "players": 4,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 600,
+          "wins": 87,
+          "losses": 513,
+          "unfinished": 0,
+          "winRate": 0.145,
+          "confidenceLower": 0.03411147558450217,
+          "confidenceUpper": 0.2558885244154978,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            26,
+            19,
+            14,
+            28
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 985000,
+            "players": 4,
+            "candidate": "ultimate",
+            "opponent": "master",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 600,
+          "wins": 534,
+          "losses": 66,
+          "unfinished": 0,
+          "winRate": 0.89,
+          "confidenceLower": 0.7791114755845022,
+          "confidenceUpper": 1.0,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            133,
+            133,
+            132,
+            136
+          ]
+        },
+        {
+          "options": {
+            "seeds": 100,
+            "firstSeed": 983000,
+            "players": 6,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 10
+          },
+          "games": 600,
+          "wins": 73,
+          "losses": 527,
+          "unfinished": 0,
+          "winRate": 0.12166666666666667,
+          "confidenceLower": 0.0,
+          "confidenceUpper": 0.25747681824072866,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            10,
+            16,
+            16,
+            9,
+            12,
+            10
+          ]
+        }
+      ],
+      "evaluationSeeds": "980000-985149 for the bundled model, played once after promotion; 970000-975149 for the hand terms alone, played once before the model was trained",
+      "handTermsOnlyReports": [
+        {
+          "options": {
+            "seeds": 300,
+            "firstSeed": 970000,
+            "players": 3,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 900,
+          "wins": 101,
+          "losses": 799,
+          "unfinished": 0,
+          "winRate": 0.11222222222222222,
+          "confidenceLower": 0.03381219465225367,
+          "confidenceUpper": 0.1906322497921908,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            38,
+            32,
+            31
+          ]
+        },
+        {
+          "options": {
+            "seeds": 300,
+            "firstSeed": 971000,
+            "players": 3,
+            "candidate": "ultimate",
+            "opponent": "master",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 900,
+          "wins": 454,
+          "losses": 446,
+          "unfinished": 0,
+          "winRate": 0.5044444444444445,
+          "confidenceLower": 0.4260344168744759,
+          "confidenceUpper": 0.582854472014413,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            144,
+            157,
+            153
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 974000,
+            "players": 3,
+            "candidate": "ultimate",
+            "opponent": "expert",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 450,
+          "wins": 266,
+          "losses": 184,
+          "unfinished": 0,
+          "winRate": 0.5911111111111111,
+          "confidenceLower": 0.48022258669561335,
+          "confidenceUpper": 0.7019996355266089,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            96,
+            92,
+            78
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 972000,
+            "players": 4,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 600,
+          "wins": 129,
+          "losses": 471,
+          "unfinished": 0,
+          "winRate": 0.215,
+          "confidenceLower": 0.10411147558450218,
+          "confidenceUpper": 0.3258885244154978,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            32,
+            29,
+            40,
+            28
+          ]
+        },
+        {
+          "options": {
+            "seeds": 150,
+            "firstSeed": 975000,
+            "players": 4,
+            "candidate": "ultimate",
+            "opponent": "master",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 600,
+          "wins": 252,
+          "losses": 348,
+          "unfinished": 0,
+          "winRate": 0.42,
+          "confidenceLower": 0.30911147558450214,
+          "confidenceUpper": 0.5308885244154978,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            59,
+            58,
+            70,
+            65
+          ]
+        },
+        {
+          "options": {
+            "seeds": 100,
+            "firstSeed": 973000,
+            "players": 6,
+            "candidate": "turtle",
+            "opponent": "ultimate",
+            "cards": "fixed",
+            "setup": "automatic",
+            "maxRounds": 200,
+            "maxActions": 20000,
+            "parallelism": 6
+          },
+          "games": 600,
+          "wins": 122,
+          "losses": 478,
+          "unfinished": 0,
+          "winRate": 0.20333333333333334,
+          "confidenceLower": 0.06752318175927138,
+          "confidenceUpper": 0.3391434849073953,
+          "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins",
+          "seatWins": [
+            22,
+            23,
+            20,
+            19,
+            18,
+            20
+          ]
+        }
+      ]
+    },
+    "sides": {
+      "screen": {
+        "seeds": "1230000-1230999",
+        "humanSeat": "turtle",
+        "results": {
+          "weights 1 / 1": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1230000,
+            "seeds": 1000,
+            "seatWins": [
+              76,
+              57,
+              63
+            ],
+            "unfinished": 0,
+            "winRate": 0.06533333333333333,
+            "normalLower": 0.05633311772277212,
+            "normalUpper": 0.07433354894389478
+          },
+          "weights 2 / 1": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1230000,
+            "seeds": 1000,
+            "seatWins": [
+              20,
+              25,
+              14
+            ],
+            "unfinished": 0,
+            "winRate": 0.019666666666666666,
+            "normalLower": 0.014457072427303493,
+            "normalUpper": 0.02487626090602984
+          },
+          "weights 4 / 1": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1230000,
+            "seeds": 1000,
+            "seatWins": [
+              11,
+              4,
+              1
+            ],
+            "unfinished": 23,
+            "winRate": 0.005333333333333333,
+            "normalLower": 0.0027396938249912915,
+            "normalUpper": 0.007926972841675373
+          },
+          "weights 3 / 0.5": {
+            "opponent": "turtle",
+            "players": 3,
+            "defend": true,
+            "firstSeed": 1230000,
+            "seeds": 1000,
+            "seatWins": [
+              6,
+              3,
+              4
+            ],
+            "unfinished": 4,
+            "winRate": 0.004333333333333333,
+            "normalLower": 0.001991897152256265,
+            "normalUpper": 0.006674769514410401
+          }
+        }
+      },
+      "confirmation": {
+        "master-gen4-1250000-500.json": {
+          "opponent": "master",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1250000,
+          "seeds": 500,
+          "seatWins": [
+            85,
+            81,
+            59
+          ],
+          "unfinished": 0,
+          "winRate": 0.15,
+          "normalLower": 0.13188796586659043,
+          "normalUpper": 0.16811203413340944
+        },
+        "master-h3b05-1250000-500.json": {
+          "opponent": "master",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1250000,
+          "seeds": 500,
+          "seatWins": [
+            4,
+            2,
+            1
+          ],
+          "unfinished": 0,
+          "winRate": 0.004666666666666667,
+          "normalLower": 0.0012303987352014984,
+          "normalUpper": 0.008102934598131835
+        },
+        "turtle-gen4-1240000-1000.json": {
+          "opponent": "turtle",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1240000,
+          "seeds": 1000,
+          "seatWins": [
+            71,
+            56,
+            42
+          ],
+          "unfinished": 0,
+          "winRate": 0.05633333333333333,
+          "normalLower": 0.047849865846605104,
+          "normalUpper": 0.06481680082006175
+        },
+        "turtle-h2-1240000-1000.json": {
+          "opponent": "turtle",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1240000,
+          "seeds": 1000,
+          "seatWins": [
+            30,
+            15,
+            22
+          ],
+          "unfinished": 1,
+          "winRate": 0.022333333333333334,
+          "normalLower": 0.017083216603084705,
+          "normalUpper": 0.027583450063581934
+        },
+        "turtle-h3b05-1240000-1000.json": {
+          "opponent": "turtle",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1240000,
+          "seeds": 1000,
+          "seatWins": [
+            5,
+            1,
+            3
+          ],
+          "unfinished": 5,
+          "winRate": 0.003,
+          "normalLower": 0.0010478636224801059,
+          "normalUpper": 0.004952136377519894
+        },
+        "ultimate-h3b05-1260000-500.json": {
+          "opponent": "ultimate",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1260000,
+          "seeds": 500,
+          "seatWins": [
+            3,
+            1,
+            0
+          ],
+          "unfinished": 0,
+          "winRate": 0.0026666666666666666,
+          "normalLower": 6.120088756411462e-05,
+          "normalUpper": 0.005272132445769219
+        }
+      },
+      "unfinishedAtPublication": [
+        "ultimate-gen4-1260000-500.json"
+      ],
+      "note": "Screen and confirmation passed the weights explicitly to a build where they were not yet the default; intervals are the 95% normal interval over seed blocks"
+    },
+    "unfinishedAtPublication": [
+      "4p-turtle-vs-ultimate",
+      "6p-turtle-vs-ultimate"
+    ]
   }
 }
