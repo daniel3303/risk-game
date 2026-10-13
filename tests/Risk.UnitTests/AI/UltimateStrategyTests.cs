@@ -158,6 +158,34 @@ public sealed class UltimateStrategyTests
         (master.Evaluate(lopsided) - weighted.Evaluate(lopsided)).Should().BePositive();
     }
 
+    [Fact]
+    public void Evaluate_RivalSides_WeighTheHumanRivalWithoutChangingTheHandScore()
+    {
+        var game = TestWorld.Game();
+        // Player 0 holds two territories; even territories go to the human (player 2), odd ones to the bot (player 1).
+        foreach (var territory in game.State.Territories) { territory.Owner = territory.Id < 2 ? 0 : 2 - territory.Id % 2; territory.Troops = 1; }
+        game.State.Phase = Phase.Attack;
+        var plain = GameObservation.From(game);
+        var flagged = GameObservation.From(game, [2]);
+        flagged.Players.Select(p => p.Human).Should().Equal(false, false, true);
+        var board = PlannerBoard.From(flagged);
+        var sides = ExpertTuning.Master with { HumanRivalWeight = 3, BotRivalWeight = .5 };
+        // Weights of one, or no human rival, leave the score exactly as before.
+        new PositionEvaluator(flagged, ExpertTuning.Master).Evaluate(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).Evaluate(board));
+        new PositionEvaluator(plain, sides).Evaluate(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).Evaluate(board));
+        var evaluator = new PositionEvaluator(flagged, sides);
+        evaluator.HandScore(board).Should().Be(new PositionEvaluator(plain, ExpertTuning.Master).HandScore(board));
+        var human = board.Copy();
+        human.Troops[2] += 10;
+        var bot = board.Copy();
+        bot.Troops[3] += 10;
+        // Ten more armies cost 0.3 each, three times for the human and half for the bot: 10 * 0.3 * (3 - 0.5).
+        (evaluator.Evaluate(bot) - evaluator.Evaluate(human)).Should().BeApproximately(7.5, 1e-9);
+        // Two players left: the weights stay off in the duel.
+        game.State.Players[1].Eliminated = true;
+        new PositionEvaluator(GameObservation.From(game, [2]), sides).Evaluate(human).Should().Be(new PositionEvaluator(GameObservation.From(game), ExpertTuning.Master).Evaluate(human));
+    }
+
     [Theory]
     [InlineData(981000, 0, 17, 612, 0, 28, 944, 2, 14, 518)]
     [InlineData(981001, 1, 10, 349, 1, 26, 928, 1, 18, 637)]
