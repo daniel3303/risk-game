@@ -11,10 +11,9 @@ namespace Risk.Learning;
 
 /// <summary>
 /// Self-improvement generations for games with more than two players. Each records league self-play with the current model, fits
-/// the next value network bootstrapped from it, then tests the candidate against copies of the current model and against the
-/// turtle probe. The candidate is promoted only when it beats the current model with the 95% normal lower bound over seed blocks
-/// above the fair share and the probe is not demonstrably stronger against it than against the reference model on the same seeds;
-/// a promoted candidate becomes the next generation's learner, and a rejected one ends the run. The reference defaults to each
+/// the next value network bootstrapped from it, then gates the candidate (see <see cref="Promote"/>) against copies of the current
+/// model and a probe in the human seat, or against the probe alone; a promoted candidate becomes the next generation's learner,
+/// and a rejected one ends the run. The reference defaults to each
 /// generation's current model; a fixed reference, such as the shipped model, stops small probe regressions from compounding.
 /// </summary>
 public static class Improvement
@@ -23,14 +22,18 @@ public static class Improvement
     /// <param name="Reference">The model the turtle probe must not beat more often; null uses each generation's current model.</param>
     /// <param name="League">The recorded games' league rotation, as <see cref="TrajectoryRecorder.League"/> takes it; null uses the default one.</param>
     /// <param name="AllyCredit">A learner's recorded outcome when another learner beats the league seat; zero scores it as a loss.</param>
+    /// <param name="Probe">The policy in the human seat of the probe games, played against two candidates and against two references.</param>
+    /// <param name="EvaluationSeeds">Seeds against copies of the current model; zero skips that test and gates on the probe alone.</param>
     public sealed record Options(int Players, int FirstSeed, int Games, string Output, ValueModel Current, int Hidden, int Epochs, double Scale, double Limit,
         int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3, double Lambda = .7, string[] ExtraData = null,
-        BoardEncoding Encoding = null, ValueModel Reference = null, IReadOnlyList<string> League = null, double AllyCredit = 0);
+        BoardEncoding Encoding = null, ValueModel Reference = null, IReadOnlyList<string> League = null, double AllyCredit = 0, string Probe = "turtle");
 
+    /// <param name="AgainstCurrent">The candidate against copies of the current model; null when that test is skipped.</param>
     /// <param name="Reference">The probe reference's identifier, as <see cref="Learner"/> gives it.</param>
+    /// <param name="ProbeGainLower">The 95% normal lower bound of the probe's per-seed win rate against the reference minus against the candidate.</param>
     public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
         EvaluationSummary ProbeAgainstCandidate, string Reference, EvaluationSummary ProbeAgainstReference, bool Promoted, string PromotedTo,
-        double Lambda = 0, string Features = null, double Scale = 0, string League = null);
+        double Lambda = 0, string Features = null, double Scale = 0, string League = null, double ProbeGainLower = 0);
 
     /// <summary>
     /// Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one. The first fits its own
@@ -85,16 +88,18 @@ public static class Improvement
         // Evaluation seeds follow the recorded ones so they were never played before this generation.
         var evaluationSeed = options.FirstSeed + options.Games;
         var probeSeed = evaluationSeed + options.EvaluationSeeds;
-        log.WriteLine($"Evaluating the candidate against the current model on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the turtle probe on {probeSeed}+{options.ProbeSeeds}.");
-        var against = ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads);
-        var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        log.WriteLine(options.EvaluationSeeds == 0
+            ? $"Evaluating the candidate against the {options.Probe} probe on seeds {probeSeed}+{options.ProbeSeeds}."
+            : $"Evaluating the candidate against the current model on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the {options.Probe} probe on {probeSeed}+{options.ProbeSeeds}.");
+        var against = options.EvaluationSeeds == 0 ? null : ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads);
+        var probeCandidate = ModelEvaluator.Run(map, candidate, options.Probe, probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
         var reference = options.Reference ?? current;
-        var probeReference = ModelEvaluator.Run(map, reference, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
-        // Gains between neighbouring generations are a few points, inside the conservative Hoeffding margin, so the gate uses the
-        // normal interval over seed blocks; the probe check rejects only a demonstrable regression.
-        var promoted = against.NormalLower > against.FairShare && probeCandidate.NormalLower <= probeReference.WinRate;
+        var probeReference = ModelEvaluator.Run(map, reference, options.Probe, probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        var gain = EvaluationSummary.PairedNormal(probeReference.BlockWins, probeCandidate.BlockWins, options.Players).Lower;
+        var promoted = Promote(against, probeCandidate, probeReference, gain);
         var referenceName = options.Reference == null ? "the current model" : $"reference {Learner(options.Reference)}";
-        log.WriteLine($"Candidate {against.WinRate:P1} against the current model (normal {against.NormalLower:P1}-{against.NormalUpper:P1}, Hoeffding {against.ConfidenceLower:P1}-{against.ConfidenceUpper:P1}); turtle {probeCandidate.WinRate:P1} against it, {probeReference.WinRate:P1} against {referenceName}; {(promoted ? "promoted" : "rejected")}.");
+        var strength = against == null ? "" : $"Candidate {against.WinRate:P1} against the current model (normal {against.NormalLower:P1}-{against.NormalUpper:P1}, Hoeffding {against.ConfidenceLower:P1}-{against.ConfidenceUpper:P1}); ";
+        log.WriteLine($"{strength}{options.Probe} {probeCandidate.WinRate:P1} against the candidate, {probeReference.WinRate:P1} against {referenceName}, paired gain lower bound {gain:P1}; {(promoted ? "promoted" : "rejected")}.");
         string promotedTo = null;
         if (promoted && options.PromoteTo != null)
         {
@@ -103,10 +108,20 @@ public static class Improvement
             log.WriteLine($"Copied the candidate to {options.PromoteTo}; rebuild to play it.");
         }
         var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, Learner(options.Reference ?? options.Current),
-            probeReference, promoted, promotedTo, options.Lambda, candidate.Features, options.Scale, LeagueName(options.League));
+            probeReference, promoted, promotedTo, options.Lambda, candidate.Features, options.Scale, LeagueName(options.League), gain);
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
     }
+
+    /// <summary>
+    /// The gate. With a strength test, the candidate must beat copies of the current model with the 95% normal lower bound over
+    /// seed blocks above the fair share, and the probe must not be demonstrably stronger against it than against the reference: gains
+    /// between neighbouring generations are a few points, inside the conservative Hoeffding margin. Without one, the probe is the
+    /// objective: its paired per-seed win rate against the reference minus against the candidate must have a lower bound above zero.
+    /// </summary>
+    public static bool Promote(EvaluationSummary against, EvaluationSummary probeCandidate, EvaluationSummary probeReference, double gainLower) => against == null
+        ? gainLower > 0
+        : against.NormalLower > against.FairShare && probeCandidate.NormalLower <= probeReference.WinRate;
 
     /// <summary>The league's policies in seed order, "learners" standing for a game without a league seat.</summary>
     public static string LeagueName(IReadOnlyList<string> league) => string.Join(',', (league ?? TrajectoryRecorder.DefaultLeague).Select(p => p ?? "learners"));

@@ -381,6 +381,31 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void PairedNormal_SameSeeds_GivesTheIntervalOfThePerSeedDifference()
+    {
+        // Differences of 1/3, 0, 1/3, 0: mean 1/6, sample deviation 0.19245, so the margin is 1.96 × 0.19245 / 2.
+        var (lower, upper) = Risk.Learning.Models.EvaluationSummary.PairedNormal([2, 1, 1, 0], [1, 1, 0, 0], 3);
+        lower.Should().BeApproximately(1 / 6.0 - .188602, 1e-5);
+        upper.Should().BeApproximately(1 / 6.0 + .188602, 1e-5);
+        // A worse first evaluation goes below zero rather than stopping at it.
+        Risk.Learning.Models.EvaluationSummary.PairedNormal([0, 0], [3, 3], 3).Should().Be((-1.0, -1.0));
+        var unpaired = () => Risk.Learning.Models.EvaluationSummary.PairedNormal([1], [1, 2], 3);
+        unpaired.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void Promote_WithoutAStrengthTest_RequiresADemonstrableProbeGain()
+    {
+        var probe = new Risk.Learning.Models.EvaluationSummary("ultimate", 3, true, 0, 10, [1, 1, 1], 0, .1, 0, .3, .05, .15);
+        Improvement.Promote(null, probe, probe, .001).Should().BeTrue();
+        Improvement.Promote(null, probe, probe, 0).Should().BeFalse();
+        // With a strength test the probe only guards against a regression, so a zero gain still passes.
+        var strong = probe with { Opponent = "current", Defend = false, NormalLower = .34 };
+        Improvement.Promote(strong, probe, probe, 0).Should().BeTrue();
+        Improvement.Promote(strong with { NormalLower = .33 }, probe, probe, .5).Should().BeFalse();
+    }
+
+    [Fact]
     public void NextSeed_Generation_StartsAfterItsRecordedStrengthAndProbeSeeds()
     {
         var options = new Improvement.Options(3, 1021300, 20000, "gen2", null, 64, 8, .5, 60, 1000, 300, null, 1);

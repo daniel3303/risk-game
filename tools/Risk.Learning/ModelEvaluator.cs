@@ -62,6 +62,7 @@ public static class ModelEvaluator
         return new(opponent, players, defend, firstSeed, seeds, wins, unfinished, rate, Math.Max(0, rate - margin), Math.Min(1, rate + margin), lower, upper)
         {
             UnfinishedGames = stalled.OrderBy(g => g.Seed).ThenBy(g => g.Seat).Select(g => $"{g.Seed}/{g.Seat}: {g.Board}").ToList(),
+            BlockWins = blocks,
         };
     }
 

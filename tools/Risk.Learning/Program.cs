@@ -19,7 +19,7 @@ const string Usage = """
       improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale learner's] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
                [--generations 1] [--window 1] [--extra-data previous.bin] [--features learner's] [--reference shipped.json]
-               [--league learners,turtle,master,expert] [--ally-credit 0]
+               [--league learners,turtle,master,expert] [--ally-credit 0] [--probe turtle]   (--evaluation-seeds 0 gates on the probe alone)
       luck     --first-seed 870000 [--deals 200] [--replays 20] [--threads 8]
     """;
 // Logs and parsed numbers use invariant formatting regardless of the machine's locale.
@@ -111,10 +111,11 @@ try
             // A candidate keeps the learner's encoding and scale unless told otherwise, so promoting it never silently changes them.
             var improvement = new Improvement.Options(players, first, games, options.Text("--output"), current,
                 options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", current?.Scale ?? .5, 0, 10), options.Number("--limit", 60, 0, 1000),
-                options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
+                options.Integer("--evaluation-seeds", 1000, 0, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
                 Encoding: FeaturesOption(options, TrajectoryFormat.For(players), current?.Encoding), Reference: LoadModel(options.OptionalText("--reference"), null, players),
-                League: LeagueOption(options), AllyCredit: options.Number("--ally-credit", 0, 0, 1));
+                League: LeagueOption(options), AllyCredit: options.Number("--ally-credit", 0, 0, 1), Probe: options.Text("--probe", "turtle").ToLowerInvariant());
+            if (!PolicyCatalog.IsKnown(improvement.Probe)) throw new ArgumentException($"Unknown probe {improvement.Probe}; choose one of {string.Join(", ", PolicyCatalog.Names)}.");
             TrajectoryRecorder.CheckAllyCredit(improvement.AllyCredit);
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
