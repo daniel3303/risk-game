@@ -318,6 +318,38 @@ public sealed class MultiplayerLearningTests
     }
 
     [Fact]
+    public void Play_AllyCredit_ScoresAnotherLearnersWinOverTheLeagueSeat()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        string[] league = ["turtle", "turtle", "master", "expert"];
+        foreach (var seed in new[] { 1000000, 1000001 })
+        {
+            var plain = Outcomes(TrajectoryRecorder.Play(TestWorld.Map(), 3, seed, null, league), format);
+            var credited = Outcomes(TrajectoryRecorder.Play(TestWorld.Map(), 3, seed, null, league, .25), format);
+            // Credit relabels the losses of a game a learner won and changes no decision.
+            credited.Should().HaveCount(plain.Length);
+            var learnerWon = plain.Contains(1f);
+            credited.Should().Equal(plain.Select(o => learnerWon && o == 0 ? .25f : o));
+        }
+        // A learners-only game has no league seat to beat.
+        var alone = Outcomes(TrajectoryRecorder.Play(TestWorld.Map(), 3, 1000000, null, null, .25), format);
+        alone.Should().OnlyContain(o => o == 0 || o == 1 || o == TrajectoryFormat.Stalled);
+    }
+
+    [Theory]
+    [InlineData(-.1)]
+    [InlineData(.5)]
+    [InlineData(1.1)]
+    public void CheckAllyCredit_OutsideTheUnitRangeOrTheStallMarker_Throws(double credit)
+    {
+        var check = () => TrajectoryRecorder.CheckAllyCredit(credit);
+        check.Should().Throw<ArgumentException>();
+    }
+
+    private static float[] Outcomes(float[] rows, TrajectoryFormat format) =>
+        Enumerable.Range(0, rows.Length / format.Width).Select(r => rows[r * format.Width + format.Outcome]).ToArray();
+
+    [Fact]
     public void DataPath_League_IsNamedOnlyWhenItIsNotTheDefault()
     {
         var options = new Improvement.Options(3, 1100000, 10000, "gen7", null, 64, 8, .5, 60, 1000, 1000, null, 1);
@@ -325,6 +357,7 @@ public sealed class MultiplayerLearningTests
         Path.GetFileName(Improvement.DataPath(options with { League = [.. TrajectoryRecorder.DefaultLeague] })).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
         Path.GetFileName(Improvement.DataPath(options with { League = ["turtle", "turtle", "master", "expert"] }))
             .Should().Be("data-multi-board-v1-hand-turtle+turtle+master+expert-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { AllyCredit = .25 })).Should().Be("data-multi-board-v1-hand-ally0.25-1100000-10000.bin");
         Improvement.LeagueName(null).Should().Be("learners,turtle,master,expert");
     }
 

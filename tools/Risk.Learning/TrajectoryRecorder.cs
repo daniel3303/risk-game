@@ -9,7 +9,9 @@ namespace Risk.Learning;
 /// <summary>
 /// Self-play games that record the learner's board each time it ends its attacks, then the final outcome. Duels replay Master
 /// (or Master with a duel model); larger games seat the current Ultimate, with one seat given to a league opponent (by default a
-/// turtle, Master or Expert in three games of every four) so the learned value also sees human-style and weaker play.
+/// turtle, Master or Expert in three games of every four) so the learned value also sees human-style and weaker play. The league
+/// seat stands for the person the learners face in real games: they see it as a human rival, and an ally credit can reward a
+/// learner when another learner rather than that seat wins.
 /// </summary>
 public static class TrajectoryRecorder
 {
@@ -17,8 +19,11 @@ public static class TrajectoryRecorder
         Record(map, 2, firstSeed, games, output, model, threads, log);
 
     /// <param name="league">The league policy of each seed modulo four, null for a game of learners only; null uses <see cref="DefaultLeague"/>.</param>
-    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log, IReadOnlyList<string> league = null)
+    /// <param name="allyCredit">A learner's outcome when another learner wins a game with a league seat; zero scores it as a loss.</param>
+    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log,
+        IReadOnlyList<string> league = null, double allyCredit = 0)
     {
+        CheckAllyCredit(allyCredit);
         var format = TrajectoryFormat.For(players);
         var watch = Stopwatch.StartNew();
         var done = Recorded(output, format, out var dropped);
@@ -31,7 +36,7 @@ public static class TrajectoryRecorder
         // Each game is appended as soon as it ends, so an interrupted run loses at most the games still in progress.
         Parallel.ForEach(seeds, new ParallelOptions { MaxDegreeOfParallelism = threads }, seed =>
         {
-            var result = Play(map, players, seed, model, league);
+            var result = Play(map, players, seed, model, league, allyCredit);
             var bytes = new byte[result.Length * sizeof(float)];
             Buffer.BlockCopy(result, 0, bytes, 0, bytes.Length);
             lock (writeLock)
@@ -62,11 +67,13 @@ public static class TrajectoryRecorder
         return policy == null ? (null, -1) : (policy, seed / 4 % players);
     }
 
-    public static float[] Play(WorldMap map, int players, int seed, ValueModel model, IReadOnlyList<string> league = null)
+    public static float[] Play(WorldMap map, int players, int seed, ValueModel model, IReadOnlyList<string> league = null, double allyCredit = 0)
     {
+        CheckAllyCredit(allyCredit);
         var format = TrajectoryFormat.For(players);
         var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
         var strategies = Strategies(players, seed, model, league, out var leagueSeat);
+        int[] humans = leagueSeat >= 0 ? [leagueSeat] : null;
         var tuning = players == 2 ? ExpertTuning.Master : ExpertTuning.Ultimate;
         var pending = new List<(int Player, float[] Row)>();
         var turns = new int[players];
@@ -74,7 +81,7 @@ public static class TrajectoryRecorder
         while (game.State.Phase != Phase.Finished && game.State.Round <= 200 && actions++ < 20000)
         {
             var player = game.State.CurrentPlayer;
-            var observation = GameObservation.From(game);
+            var observation = GameObservation.From(game, humans);
             var command = strategies[player].Choose(observation);
             if (command.Kind == CommandKind.EndAttack && player != leagueSeat)
             {
@@ -94,11 +101,20 @@ public static class TrajectoryRecorder
         for (var i = 0; i < pending.Count; i++)
         {
             var row = pending[i].Row;
-            row[format.Outcome] = game.State.Phase != Phase.Finished ? TrajectoryFormat.Stalled : game.State.Winner == pending[i].Player ? 1 : 0;
+            row[format.Outcome] = game.State.Phase != Phase.Finished ? TrajectoryFormat.Stalled
+                : game.State.Winner == pending[i].Player ? 1
+                : leagueSeat >= 0 && game.State.Winner != leagueSeat ? (float)allyCredit : 0;
             row[format.Seed] = seed;
             row.CopyTo(result, i * format.Width);
         }
         return result;
+    }
+
+    /// <summary>Ally credit is an outcome between a loss and a win, and never the stalled-game marker.</summary>
+    public static void CheckAllyCredit(double allyCredit)
+    {
+        if (allyCredit is < 0 or > 1 || (float)allyCredit == TrajectoryFormat.Stalled)
+            throw new ArgumentException($"Ally credit must lie in 0-1 and differ from {TrajectoryFormat.Stalled}, which marks a stalled game.", nameof(allyCredit));
     }
 
     /// <summary>Learners in every seat except the league seat (-1 when there is none); duel learners are Master with an optional duel model.</summary>
