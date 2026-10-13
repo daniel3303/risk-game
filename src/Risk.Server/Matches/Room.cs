@@ -22,6 +22,8 @@ public sealed class Room(string code, GameOptions options, bool aiOnly = false)
     public bool HasViewers => Members.Any(s => s.Connection != null);
     public Seat Current => Game == null ? null : Occupied.First(s => s.GamePlayer == Game.State.CurrentPlayer);
     public int PublicPlayer(int player) => player < 0 ? -1 : Occupied.First(s => s.GamePlayer == player).Id;
+    /// <summary>The game players a person holds; a seat handed to a bot when its person leaves no longer counts.</summary>
+    public int[] HumanPlayers => Occupied.Where(s => !s.IsBot && s.GamePlayer >= 0).Select(s => s.GamePlayer).ToArray();
 
     public void Changed() { Revision++; LastActive = DateTimeOffset.UtcNow; }
 }
