@@ -16,9 +16,9 @@ const string Usage = """
       bundle   --members a.json,b.json --output model.json [--scale 0.5] [--limit 60]
       evaluate --model model.json --first-seed 900000 --seeds 2000 [--players 2] [--opponent master|turtle|… | --opponent-model other.json] [--defend false] [--scale s] [--threads 8]
                [--human-weight 3] [--bot-weight 0.5]   (Ultimate's weights; with --defend the opponent seat is the human)
-      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale 0.5] [--limit 60]
+      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale learner's] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
-               [--generations 1] [--window 1] [--extra-data previous.bin] [--features multi-board-v2] [--reference shipped.json]
+               [--generations 1] [--window 1] [--extra-data previous.bin] [--features learner's] [--reference shipped.json]
                [--league learners,turtle,master,expert]
       luck     --first-seed 870000 [--deals 200] [--replays 20] [--threads 8]
     """;
@@ -110,10 +110,10 @@ try
             var games = options.Integer("--games", 20000, 1, TrajectoryFormat.SeedLimit - first);
             // A candidate keeps the learner's encoding and scale unless told otherwise, so promoting it never silently changes them.
             var improvement = new Improvement.Options(players, first, games, options.Text("--output"), current,
-                options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", current.Scale, 0, 10), options.Number("--limit", 60, 0, 1000),
+                options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000), options.Number("--scale", current?.Scale ?? .5, 0, 10), options.Number("--limit", 60, 0, 1000),
                 options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
-                Encoding: FeaturesOption(options, TrajectoryFormat.For(players), current.Encoding), Reference: LoadModel(options.OptionalText("--reference"), null, players),
+                Encoding: FeaturesOption(options, TrajectoryFormat.For(players), current?.Encoding), Reference: LoadModel(options.OptionalText("--reference"), null, players),
                 League: LeagueOption(options));
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
