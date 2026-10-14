@@ -107,7 +107,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 
 - A human playing one turtle against two Ultimates reported easy wins: hold one continent, keep one stack on its border, take one cheap territory per turn for a card, trade every set, and strike once the bots have bled each other.
 - The bots lost that way because Master's one-turn planner scores armies wherever they stand: its capture chains left trails of one-army territories that the turtle swept for free cards, and it fought the other bot at marginal odds while the turtle grew.
-- `TurtleStrategy` (`probe-turtle`, Arena name `turtle`) scripts that style, handing over to Expert's planner once its army is half again the strongest rival's. Probes are Arena opponents only; the lobby never offers them.
+- `TurtleStrategy` (`probe-turtle`, Arena name `turtle`) scripts that style, handing over to Expert's planner once its army is half again the strongest rival's. `TurtleStrategy.Breakout` (`probe-breakout`, Arena name `breakout`) is the same turtle handing over once its army matches the strongest rival's, as a person breaks a stand-off. Probes are Arena opponents only; the lobby never offers them.
 
 | Term | Ultimate | Effect |
 | --- | --- | --- |

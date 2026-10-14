@@ -12,7 +12,7 @@ public sealed class PolicyCatalogTests
     [Fact]
     public void Names_ListEveryLobbyDifficultyAndEveryProbe()
     {
-        PolicyCatalog.Names.Should().Contain(["easy", "normal", "hard", "expert", "master", "ultimate", "turtle"]);
+        PolicyCatalog.Names.Should().Contain(["easy", "normal", "hard", "expert", "master", "ultimate", "turtle", "breakout"]);
         PolicyCatalog.IsKnown("Ultimate").Should().BeTrue();
         PolicyCatalog.IsKnown("legendary").Should().BeFalse();
         PolicyCatalog.IsKnown(null).Should().BeFalse();
@@ -23,6 +23,7 @@ public sealed class PolicyCatalogTests
     {
         PolicyCatalog.Create("master", 1).Id.Should().Be("master-deep-planner");
         PolicyCatalog.Create("Turtle", 1).Should().BeOfType<TurtleStrategy>().Which.Id.Should().Be("probe-turtle");
+        PolicyCatalog.Create("breakout", 1).Should().BeOfType<TurtleStrategy>().Which.Id.Should().Be("probe-breakout");
         PolicyCatalog.Names.Select(name => PolicyCatalog.Create(name, 1).Id).Should().OnlyHaveUniqueItems();
         Action unknown = () => PolicyCatalog.Create("5", 1);
         unknown.Should().Throw<ArgumentException>();
@@ -39,6 +40,7 @@ public sealed class PolicyCatalogTests
     public void HumanSeats_ArenaPolicies_FlagsOnlyProbes()
     {
         ArenaRunner.HumanSeats(["ultimate", "turtle", "master", "Turtle"]).Should().Equal(1, 3);
+        ArenaRunner.HumanSeats(["breakout", "ultimate", "ultimate"]).Should().Equal(0);
         ArenaRunner.HumanSeats(["ultimate", "master"]).Should().BeEmpty();
     }
 }

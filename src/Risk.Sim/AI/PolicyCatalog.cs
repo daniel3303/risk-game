@@ -5,7 +5,7 @@ namespace Risk.Sim.AI;
 public static class PolicyCatalog
 {
     /// <summary>Probes are evaluation opponents only; the lobby never offers them.</summary>
-    public static IReadOnlyList<string> Probes { get; } = ["turtle"];
+    public static IReadOnlyList<string> Probes { get; } = ["turtle", "breakout"];
 
     public static IEnumerable<string> Names => Enum.GetNames<BotDifficulty>().Select(name => name.ToLowerInvariant()).Concat(Probes);
 
@@ -18,6 +18,7 @@ public static class PolicyCatalog
         return name?.ToLowerInvariant() switch
         {
             "turtle" => new TurtleStrategy(),
+            "breakout" => TurtleStrategy.Breakout(),
             _ => throw new ArgumentException($"Unknown policy {name}."),
         };
     }

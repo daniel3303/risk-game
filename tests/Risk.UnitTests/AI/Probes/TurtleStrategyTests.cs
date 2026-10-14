@@ -60,4 +60,25 @@ public sealed class TurtleStrategyTests
         command.Kind.Should().Be(CommandKind.Attack);
         (command.Kind, command.From, command.To, command.Count).Should().Be((expert.Kind, expert.From, expert.To, expert.Count));
     }
+
+    [Fact]
+    public void Choose_Breakout_CampaignsOnceItsArmyMatchesTheStrongestRival()
+    {
+        var game = TestWorld.Game();
+        TestWorld.Board(game);
+        game.State.Territories[2].Owner = 1;
+        game.State.ConqueredThisTurn = true;
+        // Forty armies against the strongest rival's thirty-nine: enough for the breakout, short of the turtle's half again.
+        game.State.Territories[0].Troops = 40;
+        var observation = GameObservation.From(game);
+        new TurtleStrategy().Choose(observation).Kind.Should().Be(CommandKind.EndAttack);
+        var breakout = TurtleStrategy.Breakout();
+        var command = breakout.Choose(observation);
+        var expert = new ExpertStrategy().Choose(observation);
+        breakout.Id.Should().Be("probe-breakout");
+        command.Kind.Should().Be(CommandKind.Attack);
+        (command.Kind, command.From, command.To, command.Count).Should().Be((expert.Kind, expert.From, expert.To, expert.Count));
+        game.State.Territories[0].Troops = 38;
+        breakout.Choose(GameObservation.From(game)).Kind.Should().Be(CommandKind.EndAttack);
+    }
 }

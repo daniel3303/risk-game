@@ -12,16 +12,29 @@ public sealed class TurtleStrategy : IPlayerStrategy
 {
     private const double FarmOdds = .9;
     private const double HomeOdds = .8;
-    private const double StrikeRatio = 1.5;
     private const int StrikeArmy = 30;
     private readonly ExpertStrategy striker = new();
-    public string Id => "probe-turtle";
+    private readonly double strikeRatio;
+    public string Id { get; }
+
+    /// <param name="strikeRatio">How many times the strongest rival's army its own must reach before it campaigns.</param>
+    public TurtleStrategy(double strikeRatio = 1.5, string id = "probe-turtle")
+    {
+        this.strikeRatio = strikeRatio;
+        Id = id;
+    }
+
+    /// <summary>
+    /// The same turtle breaking out as a person would from a stand-off: it campaigns once its army matches the strongest
+    /// rival's instead of waiting to be half again as large.
+    /// </summary>
+    public static TurtleStrategy Breakout() => new(1, "probe-breakout");
 
     public GameCommand Choose(GameObservation observation)
     {
         var evaluator = new PositionEvaluator(observation);
         var board = PlannerBoard.From(observation);
-        if (observation.Phase is (Phase.Draft or Phase.Attack or Phase.Occupy or Phase.Fortify) && Striking(evaluator, board)) return striker.Choose(observation);
+        if (observation.Phase is (Phase.Draft or Phase.Attack or Phase.Occupy or Phase.Fortify) && Striking(evaluator, board, strikeRatio)) return striker.Choose(observation);
         var home = Home(evaluator, board);
         return observation.Phase switch
         {
@@ -85,15 +98,15 @@ public sealed class TurtleStrategy : IPlayerStrategy
         return new() { Kind = CommandKind.Trade, Cards = best, BonusTerritory = territory };
     }
 
-    /// <summary>Campaign only with a real army at least half again as large as the strongest rival's.</summary>
-    private static bool Striking(PositionEvaluator evaluator, PlannerBoard board)
+    /// <summary>Campaign only with a real army at least <paramref name="ratio"/> times the strongest rival's.</summary>
+    private static bool Striking(PositionEvaluator evaluator, PlannerBoard board, double ratio)
     {
         var armies = new Dictionary<int, int>();
         for (var id = 0; id < board.Owners.Length; id++)
             if (board.Owners[id] >= 0) armies[board.Owners[id]] = armies.GetValueOrDefault(board.Owners[id]) + board.Troops[id];
         var own = armies.GetValueOrDefault(evaluator.Player);
         var rival = armies.Where(a => a.Key != evaluator.Player).Select(a => a.Value).DefaultIfEmpty(0).Max();
-        return own >= StrikeArmy && own >= StrikeRatio * rival;
+        return own >= StrikeArmy && own >= ratio * rival;
     }
 
     private static GameCommand Attack(GameObservation observation, PositionEvaluator evaluator, PlannerBoard board, int[] home)
