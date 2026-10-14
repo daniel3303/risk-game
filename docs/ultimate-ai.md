@@ -173,7 +173,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 | 3 | 0.5 | −1 (shipped) | 0 | 6 | 0 |
 | 3 | 0.5 | −2 | 0 | 6 | 0 |
 
-- −1 and −2 played identically on these seeds. The games still unfinished at −1 are the probe holding out on 4–5 territories behind 320–960 armies, as in three-player games.
+- −1 and −2 gave identical results on these seeds. The games still unfinished at −1 are the probe holding out on 4–5 territories behind 320–960 armies, as in three-player games.
 - Replayed with exponents 0 and −1.5, the game that ran to round 360 (seed 1280004, probe in the first seat) ended at rounds 49 and 54.
 - `evaluate --defend true` takes `--endgame-threat` (a number, or `none`) to screen other exponents.
 
@@ -275,9 +275,9 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 
 ## Limits
 
-- The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated in four- and six-player games once each, against Masters and the probe.
+- The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated once each against three Masters and against the probe in four-player games, and against the probe in six-player games.
 - Frontier defence and threat weighting were selected and evaluated in three-player Fixed-card automatic-setup games against the turtle probe and Master; four- to six-player games were evaluated once each, progressive cards and manual setup not at all.
 - The rival weights were selected against the turtle probe in three-player games and confirmed with Master in the human seat (with an unweighted Ultimate there, only the weighted rate was measured); the bots visibly focus a person, and no real player has been measured.
 - With the rival weights, 4–5 of 3,000 games against the scripted turtle stalled at the 200-round limit, and 6 of 200 four-player games with the bots-only exponent, all with the probe holding out; real games have no limit.
-- A table that never had a person keeps the ordinary exponent, so three or more Ultimates alone, as in an AI-only room, can still churn for hundreds of rounds.
+- The bots-only exponent needs a seat still flagged as a person: a table that never had one, as in an AI-only room, keeps the ordinary exponent, and so does a table whose last person left, since a seat handed to a bot stops counting. With someone still watching, three or more Ultimates there can churn for hundreds of rounds.
 - Results measure strength against the bundled bots and one scripted human style, not against skilled humans.

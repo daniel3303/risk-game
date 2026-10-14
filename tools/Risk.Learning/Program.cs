@@ -15,7 +15,7 @@ const string Usage = """
       fit      --data a.bin,b.bin --output net.json [--players 2] [--features multi-board-v2] [--bootstrap model.json] [--hidden 64] [--epochs 8] [--rate 0.001] [--l2 0.00001] [--lambda 0.7] [--seed 3] [--threads 8]
       bundle   --members a.json,b.json --output model.json [--scale 0.5] [--limit 60]
       evaluate --model model.json --first-seed 900000 --seeds 2000 [--players 2] [--opponent master|turtle|… | --opponent-model other.json] [--defend false] [--scale s] [--threads 8]
-               [--human-weight 3] [--bot-weight 0.5] [--endgame-threat none]   (Ultimate's weights; with --defend the opponent seat is the human)
+               [--human-weight 3] [--bot-weight 0.5] [--endgame-threat -1|none]   (Ultimate's weights; with --defend the opponent seat is the human)
       improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale learner's] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
                [--generations 1] [--window 1] [--extra-data previous.bin] [--features learner's] [--reference shipped.json]

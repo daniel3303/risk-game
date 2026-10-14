@@ -12101,7 +12101,7 @@
     }
   ],
   "multiplayer": {
-    "policySourceSha256": "bd3bfb7ac2e8ae9c0f5c03202e5b9e67ef164b76b5d16c2ecac8ddc24ce15edb",
+    "policySourceSha256": "6ba48fa4d219a5740ba4e0d9e5ff2f80eb5d0aa61ed8f75ceb3a7c6d17d80eb0",
     "policySourceNote": "Hash of the merged source. The evaluation ran at commit ddc01be, before 850c515 limited siding to tables with a bot rival and before the bots-only endgame exponent; neither can change these games: each weighted Ultimate has both a person and a bot among its rivals until two players remain, the exponent applies only once every person is out, so it cannot change a probe result, and the pinned replays confirm it. In the four- and six-player probe runs it would change only how games the probe had already lost end",
     "policySourceHashMethod": "SHA-256 over src/Risk.Sim/AI/**/*.cs, src/Risk.Sim/Learning/**/*.cs and the embedded duel and multiplayer models, sorted by repository-relative path; each file contributes its path, a NUL byte, and its bytes",
     "duelReproduction": "Seeds 900000-900049 of the Master duel report above replayed with this source: 100 of 100 matches identical (the multiplayer terms, rival weights and model apply only while more than two players remain)",

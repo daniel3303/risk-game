@@ -48,18 +48,19 @@ public sealed class PositionEvaluator
     {
         var score = Score(board, out var incomes, out var rivalry);
         if (incomes == null) return score;
-        // The learned correction reads the hand-written score it was trained on, before any frontier risk or rival sides.
+        // The learned correction reads the hand-written score it was trained on, before any frontier risk, rival sides or bots-only exponent.
         if (Tuning.Valuation != null) score += Tuning.Valuation.Correction(this, board, score);
         if (FrontierWeight > 0) score -= FrontierWeight * FrontierRisk(board, incomes);
         return score - rivalry;
     }
 
-    /// <summary>The hand-written score alone, without the learned correction, frontier risk or rival sides; value models calibrate against it.</summary>
+    /// <summary>The hand-written score alone, without the learned correction, frontier risk, rival sides or the bots-only exponent; value models calibrate against it.</summary>
     public double HandScore(PlannerBoard board) => Score(board, out _, out _);
 
     /// <summary>
     /// The hand-written score; <paramref name="incomes"/> is null when the board is already won. <paramref name="rivalry"/> is
-    /// the extra loss from the human and bot rival weights, kept apart so the score itself stays what value models read.
+    /// the extra loss from the human and bot rival weights or the bots-only exponent, kept apart so the score itself stays what
+    /// value models read.
     /// </summary>
     private double Score(PlannerBoard board, out int[] incomes, out double rivalry)
     {
