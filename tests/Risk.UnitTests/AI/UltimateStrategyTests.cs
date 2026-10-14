@@ -249,6 +249,8 @@ public sealed class UltimateStrategyTests
         (ExpertTuning.Ultimate.HumanRivalWeight, ExpertTuning.Ultimate.BotRivalWeight).Should().Be((3, .5));
         (ExpertTuning.Master.HumanRivalWeight, ExpertTuning.Master.BotRivalWeight).Should().Be((1, 1));
         (ExpertTuning.Default.HumanRivalWeight, ExpertTuning.Default.BotRivalWeight).Should().Be((1, 1));
+        ExpertTuning.Ultimate.BotEndgameThreatWeighting.Should().Be(-1);
+        ExpertTuning.Master.BotEndgameThreatWeighting.Should().BeNull();
     }
 
     [Fact]

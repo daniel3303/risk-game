@@ -117,8 +117,9 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 | Duel frontier risk (`DuelFrontierRiskValue`) | 0 | Off: in duels the same term scored 42%–47% against Master on 200 development seeds, so duels keep the evaluated model's exact decisions |
 | Human rival weight (`HumanRivalWeight`) | 3 | While both a person and another bot are among the rivals, each human rival's weighted armies and income count three times; see [siding against people](#siding-against-people) |
 | Bot rival weight (`BotRivalWeight`) | 0.5 | In the same games, each bot rival's armies and income count half |
+| Bots-only threat exponent (`BotEndgameThreatWeighting`) | −1 | Once every person at the table is out, threat weighting uses this exponent instead, so the weaker bots weigh more; see [bots-only endgames](#bots-only-endgames) |
 
-- These terms are scored only while more than two players remain, and the two rival weights only while both a person and another bot are among the rivals; `ExpertTuning.Ultimate` holds them and `ExpertTuning.Master` is untouched, so Master and Expert reproduce their published matches.
+- These terms are scored only while more than two players remain, the two rival weights only while both a person and another bot are among the rivals, and the bots-only exponent only once every person at the table is out; `ExpertTuning.Ultimate` holds them and `ExpertTuning.Master` is untouched, so Master and Expert reproduce their published matches.
 - Selection used development seeds 960000–966999: 100 seeds per setting against the turtle (two candidates and one probe, the probe in every seat) and 100 against two Masters, then 150 more of each for the four leading pairs. Frontier risk alone took the probe from 33% to 13%–16%; threat weighting alone to 17%; together 10%–13%. Over both banks the chosen pair scored 53% against two Masters where the alternatives scored 43%–49%, with the probe at 10%–12% for all of them.
 - Raising the attack thresholds against several rivals (0.75 to open, 0.85 to continue) or doubling rival income's weight cut the probe to 9%–13% but cost 2–5 points against two Masters, so neither shipped.
 - A frontier weight of 2 or more cost the duel about 15 points on development seeds, which is why the weight is split by player count.
@@ -130,7 +131,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 - Every generation learned only its own win, so two Ultimates fought each other as hard as they fought a person: generation 5 beat generation 4 in the gate, yet against generations 5 and 6 the turtle won 7.8% and 7.3% of seeds 1220000–1220499 where generation 4 allowed 5.5%.
 - Bots now know which seats people play: the server flags them in each bot's observation, and a seat handed to a bot after its person leaves stops counting. The Arena flags probe seats, and `evaluate --defend true` flags the defended seat whatever its policy; self-play recording does not flag the league seat yet, so the networks were trained without siding.
 - With both a person and another bot among its rivals, Ultimate counts each human rival's weighted armies and income more and each bot rival's less, after the learned correction, so the network keeps reading the score it was trained on. With people alone there is no bot to side with, and the weights stay off.
-- It changes nothing in duels, in games without people (AI-only rooms, the Arena against bots, self-play), or once the last person is out.
+- It changes nothing in duels, in games without people (AI-only rooms, the Arena against bots, self-play), or once the last person is out; [bots-only endgames](#bots-only-endgames) covers how the bots left then finish.
 - Screen on seeds 1230000–1230999, the turtle probe in every seat against two generation-4 Ultimates (3,000 games; lower is better):
 
 | Human weight | Bot weight | Probe wins | Rate | Normal 95% | Unfinished |
@@ -153,6 +154,29 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 - The unfinished games are stand-offs at the 200-round limit. In the screen's four at weights 3 and 0.5, whose final boards were logged, the probe held 5 territories behind about 900 armies, one bot 30–34 territories, and the other was squeezed to 3–7 territories with a similar stack. The scripted probe never breaks out and no bot risks its stack; a person would break such a stand-off.
 - `evaluate --opponent turtle --defend true` takes `--human-weight` and `--bot-weight` to screen other weights, and lists each unfinished game's final board.
 
+### Bots-only endgames
+
+- Once the people are out, three or more generation-4 Ultimates kept knocking down whichever bot led, because threat weighting makes each one hit the strongest rival; armies changed hands every round and nobody fell. Three Ultimates without the rival weights do the same: 405 of the 1,500 games above with plain Ultimate in the human seat reached the round limit.
+- Left alone, three such four-player games ended at rounds 331, 360 and 602. In the lobby a bot moves every 0.4 s, so that is hours of bots after the person has lost.
+- Ultimate therefore swaps the threat exponent once every person at the table is out and more than two players remain (`BotEndgameThreatWeighting`, −1), applied after the learned correction like the rival weights: the weaker bots now weigh more, so the bots stop ganging up on the leader.
+- It cannot change a person's result, since it starts only after the last person is out. Three-player games are untouched, because the two bots left duel, and so are tables that never had a person.
+- Screen on seeds 1280000–1280049, the turtle probe in every seat against three generation-4 Ultimates (200 four-player games). The probe's wins are identical with and without the exponent, as they must be:
+
+| Human weight | Bot weight | Bots-only exponent | Probe wins | Unfinished | Of those, probe already out |
+| ---: | ---: | --- | ---: | ---: | ---: |
+| 1 | 1 (generation 4 as it was) | — | 48 (24.0%) | 7 | 0 |
+| 2 | 1 | — | 8 (4.0%) | 41 | 11 |
+| 3 | 1 | — | 1 (0.5%) | 58 | 41 |
+| 3 | 0.5 | — (as published) | 0 | 59 | 53 |
+| 3 | 0.5 | 0.5 | 0 | 8 | 2 |
+| 3 | 0.5 | 0 | 0 | 7 | 1 |
+| 3 | 0.5 | −1 (shipped) | 0 | 6 | 0 |
+| 3 | 0.5 | −2 | 0 | 6 | 0 |
+
+- −1 and −2 played identically on these seeds. The games still unfinished at −1 are the probe holding out on 4–5 territories behind 320–960 armies, as in three-player games.
+- Replayed with exponents 0 and −1.5, the game that ran to round 360 (seed 1280004, probe in the first seat) ended at rounds 49 and 54.
+- `evaluate --defend true` takes `--endgame-threat` (a number, or `none`) to screen other exponents.
+
 ### Multiplayer evaluation
 
 - The bundled model (generation 4) and the rival weights were frozen before seeds 1270000–1276099 were played, from commit `ddc01be`; the probe or the candidate took every seat in turn, and the Arena seats the probe as the human.
@@ -167,11 +191,11 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 | 4 | turtle against three Masters | 972000–972149 | 214 / 600 | 35.7% | 24.6%–46.8% | — | 25.0% |
 | 4 | turtle against three Ultimates | 1274000–1274149 | 1 / 600 | 0.2% | 0.0%–11.3% | 14.5% | 25.0% |
 | 4 | Ultimate against three Masters | 1275000–1275149 | 573 / 600 | 95.5% | 84.4%–100.0% | 89.0% | 25.0% |
-| 6 | turtle against five Ultimates | 1276000–1276099 | not finished | — | — | 12.2% | 16.7% |
+| 6 | turtle against five Ultimates | 1276000–1276099 | 0 / 600 | 0.0% | 0.0%–13.6% | 12.2% | 16.7% |
 
 - The previous Ultimate decided exactly as Master until the first elimination, so the Master rows are close to its baseline; the exact previous preset (`ExpertTuning.Master with { Valuation = ValueModel.Ultimate }`, seated with the Arena's seeding and limits), replayed on the same seeds outside the Arena, gave the probe 31.7% (285 of 900) in three-player and 36.2% (217 of 600) in four-player games.
 - In three-player games the probe fell from its fair share to under a hundredth of it, and Ultimate went from a third of the games against two Masters to eleven in twelve. Of the 3,000 probe games, 4 reached the round limit.
-- The multiplayer model saw only three-player games in training. The four- and six-player probe runs for generation 4 had not finished at publication, on a shared machine; their seeds stay reserved for them, and the generation-1 column holds the previous release's rates.
+- The multiplayer model saw only three-player games in training, yet with the rival weights the probe won 1 of 600 four-player and none of 600 six-player games. Those two runs finished after publication, on a shared machine. They reached the round limit in 153 and 194 games; in the four-player screen most such games were bots churning after the probe was out (see [bots-only endgames](#bots-only-endgames)). Both ran before that rule, which changes only how games the probe had already lost end.
 - Each report's totals are recorded in [ultimate-results.json](ultimate-results.json) under `multiplayer`; the duel evaluation above is unchanged, and seeds 900000–900049 of its Master report replayed identically with this source (100 of 100 matches).
 
 ```sh
@@ -251,8 +275,9 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 
 ## Limits
 
-- The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated in larger games only against three Masters, generation 1 also against the probe in four- and six-player games.
+- The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated in four- and six-player games once each, against Masters and the probe.
 - Frontier defence and threat weighting were selected and evaluated in three-player Fixed-card automatic-setup games against the turtle probe and Master; four- to six-player games were evaluated once each, progressive cards and manual setup not at all.
 - The rival weights were selected against the turtle probe in three-player games and confirmed with Master in the human seat (with an unweighted Ultimate there, only the weighted rate was measured); the bots visibly focus a person, and no real player has been measured.
-- With the rival weights, 4–5 of 3,000 games against the scripted turtle stalled at the 200-round limit; real games have no limit.
+- With the rival weights, 4–5 of 3,000 games against the scripted turtle stalled at the 200-round limit, and 6 of 200 four-player games with the bots-only exponent, all with the probe holding out; real games have no limit.
+- A table that never had a person keeps the ordinary exponent, so three or more Ultimates alone, as in an AI-only room, can still churn for hundreds of rounds.
 - Results measure strength against the bundled bots and one scripted human style, not against skilled humans.
