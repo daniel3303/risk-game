@@ -146,9 +146,9 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 | --- | --- | --- | --- | --- |
 | Turtle probe | 1240000–1240999 | 169 / 3,000, 5.6% (4.8%–6.5%) | 67, 2.2% (1.7%–2.8%) | 9, 0.3% (0.1%–0.5%) |
 | Master | 1250000–1250499 | 225 / 1,500, 15.0% (13.2%–16.8%) | — | 7, 0.5% (0.1%–0.8%) |
-| Ultimate as it was | 1260000–1260499 | not finished | — | 4, 0.3% (0.0%–0.5%) |
+| Ultimate as it was | 1260000–1260499 | 365 / 1,500, 24.3% (23.0%–25.6%) | — | 4, 0.3% (0.0%–0.5%) |
 
-- Intervals are the 95% normal interval over seed blocks. Unfinished games: 1 at weights 2 and 1, 5 at 3 and 0.5 on the turtle row, none in the other finished runs. The unweighted run with Ultimate in the human seat, three Ultimates that often stall, had not finished at publication.
+- Intervals are the 95% normal interval over seed blocks. Unfinished games: 1 at weights 2 and 1, 5 at 3 and 0.5 on the turtle row, and 405 of 1,500 in the unweighted run with Ultimate in the human seat, where three Ultimates churn without anyone falling; none in the other runs. With the weights the two bots finish the person and then duel, and none of those 1,500 games stalled.
 - Weights 3 and 0.5 shipped. The screen and the confirmation passed the weights explicitly to a build where they were not yet the default; the evaluation below plays the default.
 - The unfinished games are stand-offs at the 200-round limit. In the screen's four at weights 3 and 0.5, whose final boards were logged, the probe held 5 territories behind about 900 armies, one bot 30–34 territories, and the other was squeezed to 3–7 territories with a similar stack. The scripted probe never breaks out and no bot risks its stack; a person would break such a stand-off.
 - `evaluate --opponent turtle --defend true` takes `--human-weight` and `--bot-weight` to screen other weights, and lists each unfinished game's final board.
@@ -165,7 +165,7 @@ All rows are against Master on development seeds, 1,000 games each unless noted;
 | 3 | Ultimate against two Masters | 1272000–1272299 | 824 / 900 | 91.6% | 83.7%–99.4% | 84.8% | 33.3% |
 | 3 | Ultimate against two Experts | 1273000–1273149 | 411 / 450 | 91.3% | 80.2%–100.0% | 84.2% | 33.3% |
 | 4 | turtle against three Masters | 972000–972149 | 214 / 600 | 35.7% | 24.6%–46.8% | — | 25.0% |
-| 4 | turtle against three Ultimates | 1274000–1274149 | not finished | — | — | 14.5% | 25.0% |
+| 4 | turtle against three Ultimates | 1274000–1274149 | 1 / 600 | 0.2% | 0.0%–11.3% | 14.5% | 25.0% |
 | 4 | Ultimate against three Masters | 1275000–1275149 | 573 / 600 | 95.5% | 84.4%–100.0% | 89.0% | 25.0% |
 | 6 | turtle against five Ultimates | 1276000–1276099 | not finished | — | — | 12.2% | 16.7% |
 

@@ -188,6 +188,34 @@ public sealed class UltimateStrategyTests
         new PositionEvaluator(GameObservation.From(game, [2]), sides).Evaluate(human).Should().Be(new PositionEvaluator(GameObservation.From(game), ExpertTuning.Master).Evaluate(human));
     }
 
+    [Fact]
+    public void Evaluate_BotEndgame_SwapsTheThreatExponentOnlyOnceThePeopleAreOut()
+    {
+        var game = TestWorld.Game(4);
+        // Player 0 holds two territories, bots 1 and 2 split the rest, and the human (player 3) is already out.
+        foreach (var territory in game.State.Territories) { territory.Owner = territory.Id < 2 ? 0 : 1 + territory.Id % 2; territory.Troops = 1; }
+        game.State.Players[3].Eliminated = true;
+        game.State.Phase = Phase.Attack;
+        var plain = GameObservation.From(game);
+        var flagged = GameObservation.From(game, [3]);
+        var board = PlannerBoard.From(flagged);
+        board.Troops[2] = 31;
+        var threat = ExpertTuning.Master with { ThreatWeighting = 1.5 };
+        var flat = threat with { BotEndgameThreatWeighting = 0 };
+        var evaluator = new PositionEvaluator(flagged, flat);
+        // The learned correction keeps reading the threat-weighted score; the bots-only exponent weighs the rivals afterwards.
+        evaluator.HandScore(board).Should().Be(new PositionEvaluator(flagged, threat).HandScore(board));
+        evaluator.Evaluate(board).Should().BeApproximately(new PositionEvaluator(flagged, ExpertTuning.Master).Evaluate(board), 1e-9);
+        evaluator.Evaluate(board).Should().NotBe(new PositionEvaluator(flagged, threat).Evaluate(board));
+        // No person at the table: the ordinary exponent stays.
+        new PositionEvaluator(plain, flat).Evaluate(board).Should().Be(new PositionEvaluator(plain, threat).Evaluate(board));
+        // While the human is still in, the exponent stays off.
+        game.State.Players[3].Eliminated = false;
+        game.State.Territories[4].Owner = 3;
+        var alive = GameObservation.From(game, [3]);
+        new PositionEvaluator(alive, flat).Evaluate(board).Should().Be(new PositionEvaluator(alive, threat).Evaluate(board));
+    }
+
     [Theory]
     [InlineData(1272000, 0, 21, 685, 1, 16, 575, 2, 17, 590)]
     [InlineData(1272001, 0, 14, 442, 2, 17, 539, 2, 10, 352)]

@@ -59,4 +59,10 @@ public sealed record ExpertTuning
     public double HumanRivalWeight { get; init; } = 1;
     /// <summary>The same multiplier for each bot rival in those games, below one to treat bots as softer targets.</summary>
     public double BotRivalWeight { get; init; } = 1;
+    /// <summary>
+    /// Once every human rival is out of a game with more than two players, the threat-weighting exponent used against the bots
+    /// left instead of <see cref="ThreatWeighting"/>, applied after the learned correction like the rival weights; null keeps
+    /// <see cref="ThreatWeighting"/>.
+    /// </summary>
+    public double? BotEndgameThreatWeighting { get; init; }
 }
