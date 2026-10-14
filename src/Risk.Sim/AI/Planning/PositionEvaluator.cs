@@ -48,18 +48,19 @@ public sealed class PositionEvaluator
     {
         var score = Score(board, out var incomes, out var rivalry);
         if (incomes == null) return score;
-        // The learned correction reads the hand-written score it was trained on, before any frontier risk or rival sides.
+        // The learned correction reads the hand-written score it was trained on, before any frontier risk, rival sides or bots-only exponent.
         if (Tuning.Valuation != null) score += Tuning.Valuation.Correction(this, board, score);
         if (FrontierWeight > 0) score -= FrontierWeight * FrontierRisk(board, incomes);
         return score - rivalry;
     }
 
-    /// <summary>The hand-written score alone, without the learned correction, frontier risk or rival sides; value models calibrate against it.</summary>
+    /// <summary>The hand-written score alone, without the learned correction, frontier risk, rival sides or the bots-only exponent; value models calibrate against it.</summary>
     public double HandScore(PlannerBoard board) => Score(board, out _, out _);
 
     /// <summary>
     /// The hand-written score; <paramref name="incomes"/> is null when the board is already won. <paramref name="rivalry"/> is
-    /// the extra loss from the human and bot rival weights, kept apart so the score itself stays what value models read.
+    /// the extra loss from the human and bot rival weights or the bots-only exponent, kept apart so the score itself stays what
+    /// value models read.
     /// </summary>
     private double Score(PlannerBoard board, out int[] incomes, out double rivalry)
     {
@@ -80,15 +81,18 @@ public sealed class PositionEvaluator
         var score = armies[Player] + territories[Player] * Tuning.TerritoryValue + incomes[Player] * Tuning.IncomeValue;
         var rivals = players.Where(p => p.Id != Player && !p.Eliminated).ToArray();
         foreach (var rival in rivals) incomes[rival.Id] = Income(board, rival.Id, territories[rival.Id]);
-        var weights = ThreatWeights(rivals, armies, incomes);
+        var weights = ThreatWeights(rivals, armies, incomes, Tuning.ThreatWeighting);
         var sides = SidesApply(rivals);
+        var endgame = BotEndgame(rivals);
+        var endgameWeights = endgame ? ThreatWeights(rivals, armies, incomes, Tuning.BotEndgameThreatWeighting.Value) : null;
         foreach (var opponent in rivals)
         {
-            var loss = armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
+            var plain = armies[opponent.Id] * (Duel ? Tuning.DuelEnemyArmyValue : Tuning.MultiplayerEnemyArmyValue)
                 + incomes[opponent.Id] * (Duel ? Tuning.DuelEnemyIncomeValue : Tuning.MultiplayerEnemyIncomeValue);
-            if (weights != null) loss *= weights[opponent.Id];
+            var loss = weights != null ? plain * weights[opponent.Id] : plain;
             score -= loss;
             if (sides) rivalry += loss * ((opponent.Human ? Tuning.HumanRivalWeight : Tuning.BotRivalWeight) - 1);
+            else if (endgame) rivalry += (endgameWeights != null ? plain * endgameWeights[opponent.Id] : plain) - loss;
         }
         score += EliminationValue(board, territories) + (board.Conquered ? CardValue : 0);
         // Exposure stays a separate subtraction so Expert and Master scores keep their exact floating-point values.
@@ -103,19 +107,29 @@ public sealed class PositionEvaluator
     private bool SidesApply(ObservedPlayer[] rivals) =>
         !Duel && (Tuning.HumanRivalWeight != 1 || Tuning.BotRivalWeight != 1) && rivals.Any(r => r.Human) && rivals.Any(r => !r.Human);
 
+    /// <summary>
+    /// Whether the bots-only threat exponent applies: more than two players, one set, and every human rival already out though
+    /// people sat at the table; with no people from the start the ordinary exponent stays.
+    /// </summary>
+    private bool BotEndgame(ObservedPlayer[] rivals) =>
+        !Duel && Tuning.BotEndgameThreatWeighting.HasValue && players.Any(p => p.Human && p.Id != Player) && !rivals.Any(r => r.Human);
+
     /// <summary>The frontier-risk weight for the current number of players; zero when the term is off.</summary>
     public double FrontierWeight => Duel ? Tuning.DuelFrontierRiskValue : Tuning.FrontierRiskValue;
 
-    /// <summary>Rival weights relative to the average rival by armies, income and cards; null when disabled or in a duel.</summary>
-    private double[] ThreatWeights(ObservedPlayer[] rivals, double[] armies, int[] incomes)
+    /// <summary>
+    /// Rival weights relative to the average rival by armies, income and cards, raised to <paramref name="exponent"/>; a negative
+    /// exponent gives the weaker rivals the larger weights. Null when the exponent is zero or in a duel.
+    /// </summary>
+    private double[] ThreatWeights(ObservedPlayer[] rivals, double[] armies, int[] incomes, double exponent)
     {
-        if (Tuning.ThreatWeighting <= 0 || Duel) return null;
+        if (exponent == 0 || Duel) return null;
         var strength = new double[incomes.Length];
         foreach (var rival in rivals) strength[rival.Id] = armies[rival.Id] + incomes[rival.Id] * ThreatIncomeWeight + rival.CardCount * CardValue;
         var mean = rivals.Average(r => strength[r.Id]);
         if (mean <= 0) return null;
         var weights = new double[incomes.Length];
-        foreach (var rival in rivals) weights[rival.Id] = Math.Clamp(Math.Pow(strength[rival.Id] / mean, Tuning.ThreatWeighting), ThreatWeightMinimum, ThreatWeightMaximum);
+        foreach (var rival in rivals) weights[rival.Id] = Math.Clamp(Math.Pow(strength[rival.Id] / mean, exponent), ThreatWeightMinimum, ThreatWeightMaximum);
         return weights;
     }
 

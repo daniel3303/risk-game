@@ -12101,8 +12101,8 @@
     }
   ],
   "multiplayer": {
-    "policySourceSha256": "2a8c2a497c5290f9be1a555e6a18cdf5c46c0bc17ccf7c330af41227c6960e1a",
-    "policySourceNote": "Hash of the merged source. The evaluation ran at commit ddc01be, before 850c515 limited siding to tables with a bot rival; that cannot change these games, since each weighted Ultimate has both a person and a bot among its rivals until two players remain, and the pinned replays confirm it",
+    "policySourceSha256": "6ba48fa4d219a5740ba4e0d9e5ff2f80eb5d0aa61ed8f75ceb3a7c6d17d80eb0",
+    "policySourceNote": "Hash of the merged source. The evaluation ran at commit ddc01be, before 850c515 limited siding to tables with a bot rival and before the bots-only endgame exponent; neither can change these games: each weighted Ultimate has both a person and a bot among its rivals until two players remain, the exponent applies only once every person is out, so it cannot change a probe result, and the pinned replays confirm it. In the four- and six-player probe runs it would change only how games the probe had already lost end",
     "policySourceHashMethod": "SHA-256 over src/Risk.Sim/AI/**/*.cs, src/Risk.Sim/Learning/**/*.cs and the embedded duel and multiplayer models, sorted by repository-relative path; each file contributes its path, a NUL byte, and its bytes",
     "duelReproduction": "Seeds 900000-900049 of the Master duel report above replayed with this source: 100 of 100 matches identical (the multiplayer terms, rival weights and model apply only while more than two players remain)",
     "preset": {
@@ -12112,7 +12112,9 @@
       "safeOccupations": "whenever frontier risk is scored",
       "humanRivalWeight": 3,
       "botRivalWeight": 0.5,
-      "rivalWeights": "only while both a person and another bot are among the rivals and more than two players remain; applied after the learned correction"
+      "rivalWeights": "only while both a person and another bot are among the rivals and more than two players remain; applied after the learned correction",
+      "botEndgameThreatWeighting": -1,
+      "botEndgame": "once every person at the table is out and more than two players remain, threat weighting uses this exponent; applied after the learned correction"
     },
     "model": {
       "path": "src/Risk.Sim/Learning/ultimate-multiplayer-model.json",
@@ -12205,7 +12207,7 @@
       "style": "holds one continent, one border stack, one capture per turn for a card, trades every set, campaigns with the Expert planner once its army is 1.5x the strongest rival's"
     },
     "developmentSeeds": "960000-966999 (sweeps and selection); 965000-965007 (latency); 1000000-1004999 (signal check, discarded); 1000000-1088799 (generations 1-6); 1100000-1111999 (search screens on generation 1, the generation-3 scale test, and experiments after generation 4); 1200000-1220499 (yardsticks of generations 4-6 and the intent encoding); 1230000-1260499 (rival-weight screen and confirmation)",
-    "evaluationSeeds": "1270000-1276099 for generation 4 with the rival weights, played once from commit ddc01be (1274000-1274149 and 1276000-1276099 unfinished at publication and still reserved); 970000-972149 for the Master-only rows",
+    "evaluationSeeds": "1270000-1276099 for generation 4 with the rival weights, played once from commit ddc01be (the four- and six-player probe runs finished after publication); 970000-972149 for the Master-only rows",
     "reports": [
       {
         "options": {
@@ -12331,6 +12333,28 @@
       {
         "options": {
           "seeds": 150,
+          "firstSeed": 1274000,
+          "players": 4,
+          "candidate": "turtle",
+          "opponent": "ultimate",
+          "cards": "fixed",
+          "setup": "automatic",
+          "maxRounds": 200,
+          "maxActions": 20000,
+          "parallelism": 12
+        },
+        "games": 600,
+        "wins": 1,
+        "losses": 446,
+        "unfinished": 153,
+        "winRate": 0.0016666666666666668,
+        "confidenceLower": 0.0,
+        "confidenceUpper": 0.11255519108216448,
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
+      },
+      {
+        "options": {
+          "seeds": 150,
           "firstSeed": 1275000,
           "players": 4,
           "candidate": "ultimate",
@@ -12349,9 +12373,31 @@
         "confidenceLower": 0.8441114755845022,
         "confidenceUpper": 1.0,
         "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
+      },
+      {
+        "options": {
+          "seeds": 100,
+          "firstSeed": 1276000,
+          "players": 6,
+          "candidate": "turtle",
+          "opponent": "ultimate",
+          "cards": "fixed",
+          "setup": "automatic",
+          "maxRounds": 200,
+          "maxActions": 20000,
+          "parallelism": 12
+        },
+        "games": 600,
+        "wins": 0,
+        "losses": 406,
+        "unfinished": 194,
+        "winRate": 0.0,
+        "confidenceLower": 0.0,
+        "confidenceUpper": 0.13581015157406195,
+        "confidenceMethod": "95% Hoeffding bound over seed blocks; unfinished games count as non-wins"
       }
     ],
-    "totalGames": 6450,
+    "totalGames": 7650,
     "previousPresetBaseline": {
       "note": "The exact previous preset (Master search with the learned duel correction, no frontier risk or threat weighting) replayed outside the Arena on the same seeds; only totals were kept.",
       "threePlayers": {
@@ -12963,16 +13009,179 @@
           "winRate": 0.0026666666666666666,
           "normalLower": 6.120088756411462e-05,
           "normalUpper": 0.005272132445769219
+        },
+        "ultimate-gen4-1260000-500.json": {
+          "opponent": "ultimate",
+          "players": 3,
+          "defend": true,
+          "firstSeed": 1260000,
+          "seeds": 500,
+          "seatWins": [
+            140,
+            112,
+            113
+          ],
+          "unfinished": 405,
+          "winRate": 0.24333333333333335,
+          "normalLower": 0.2303487548435575,
+          "normalUpper": 0.2563179118231066
         }
       },
-      "unfinishedAtPublication": [
-        "ultimate-gen4-1260000-500.json"
-      ],
       "note": "Screen and confirmation passed the weights explicitly to a build where they were not yet the default; intervals are the 95% normal interval over seed blocks"
     },
-    "unfinishedAtPublication": [
-      "4p-turtle-vs-ultimate",
-      "6p-turtle-vs-ultimate"
-    ]
+    "endgame": {
+      "seeds": "1280000-1280049",
+      "humanSeat": "turtle",
+      "players": 4,
+      "opponents": "three generation-4 Ultimates",
+      "results": {
+        "weights 1 / 1": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            12,
+            14,
+            12,
+            10
+          ],
+          "unfinished": 7,
+          "winRate": 0.24,
+          "normalLower": 0.19158347389578634,
+          "normalUpper": 0.28841652610421364,
+          "unfinishedWithProbeOut": 0
+        },
+        "weights 2 / 1": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            3,
+            2,
+            3,
+            0
+          ],
+          "unfinished": 41,
+          "winRate": 0.04,
+          "normalLower": 0.014337576108247312,
+          "normalUpper": 0.0656624238917527,
+          "unfinishedWithProbeOut": 11
+        },
+        "weights 3 / 1": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "unfinished": 58,
+          "winRate": 0.005,
+          "normalLower": 0.0,
+          "normalUpper": 0.014799999999999994,
+          "unfinishedWithProbeOut": 41
+        },
+        "weights 3 / 0.5": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "unfinished": 59,
+          "winRate": 0.0,
+          "normalLower": 0.0,
+          "normalUpper": 0.0,
+          "unfinishedWithProbeOut": 53
+        },
+        "weights 3 / 0.5, endgame 0.5": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "unfinished": 8,
+          "winRate": 0.0,
+          "normalLower": 0.0,
+          "normalUpper": 0.0,
+          "unfinishedWithProbeOut": 2
+        },
+        "weights 3 / 0.5, endgame 0": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "unfinished": 7,
+          "winRate": 0.0,
+          "normalLower": 0.0,
+          "normalUpper": 0.0,
+          "unfinishedWithProbeOut": 1
+        },
+        "weights 3 / 0.5, endgame -1": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "unfinished": 6,
+          "winRate": 0.0,
+          "normalLower": 0.0,
+          "normalUpper": 0.0,
+          "unfinishedWithProbeOut": 0
+        },
+        "weights 3 / 0.5, endgame -2": {
+          "opponent": "turtle",
+          "players": 4,
+          "defend": true,
+          "firstSeed": 1280000,
+          "seeds": 50,
+          "seatWins": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "unfinished": 6,
+          "winRate": 0.0,
+          "normalLower": 0.0,
+          "normalUpper": 0.0,
+          "unfinishedWithProbeOut": 0
+        }
+      },
+      "replays": "Without the rule, stalled games 1280002 (probe in seat 3) and 1280003 (seat 2) at weights 3 / 1 and 1280004 (seat 0) at 3 / 0.5 ended at rounds 331, 602 and 360; with exponents 0 and -1.5, 1280004 ended at rounds 49 and 54",
+      "note": "Passed explicitly to a build where the exponent was not yet the default; unfinishedWithProbeOut counts stalled games whose probe was already eliminated"
+    }
   }
 }

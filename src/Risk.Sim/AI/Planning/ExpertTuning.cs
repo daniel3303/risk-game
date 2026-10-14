@@ -12,10 +12,13 @@ public sealed record ExpertTuning
     };
 
     /// <summary>
-    /// Master's search plus frontier defence, threat weighting and siding against human rivals in games with more than two
-    /// players; see docs/ultimate-ai.md.
+    /// Master's search plus frontier defence, threat weighting, siding against human rivals and, once the people are out, no
+    /// more balancing among the bots left in games with more than two players; see docs/ultimate-ai.md.
     /// </summary>
-    public static ExpertTuning Ultimate { get; } = Master with { FrontierRiskValue = 1, ThreatWeighting = 1.5, HumanRivalWeight = 3, BotRivalWeight = .5 };
+    public static ExpertTuning Ultimate { get; } = Master with
+    {
+        FrontierRiskValue = 1, ThreatWeighting = 1.5, HumanRivalWeight = 3, BotRivalWeight = .5, BotEndgameThreatWeighting = -1,
+    };
 
     public double TerritoryValue { get; init; } = 1.4;
     public double IncomeValue { get; init; } = 4;
@@ -59,4 +62,10 @@ public sealed record ExpertTuning
     public double HumanRivalWeight { get; init; } = 1;
     /// <summary>The same multiplier for each bot rival in those games, below one to treat bots as softer targets.</summary>
     public double BotRivalWeight { get; init; } = 1;
+    /// <summary>
+    /// Once every human rival is out of a game with more than two players, the threat-weighting exponent used against the bots
+    /// left instead of <see cref="ThreatWeighting"/>, applied after the learned correction like the rival weights; null keeps
+    /// <see cref="ThreatWeighting"/>.
+    /// </summary>
+    public double? BotEndgameThreatWeighting { get; init; }
 }

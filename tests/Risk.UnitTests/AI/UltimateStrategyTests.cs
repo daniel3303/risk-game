@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using Risk.Arena;
 using Risk.Arena.Models;
+using Risk.Sim;
 using Risk.Sim.AI;
 using Risk.Sim.AI.Planning;
 using Risk.Sim.Learning;
@@ -188,6 +189,54 @@ public sealed class UltimateStrategyTests
         new PositionEvaluator(GameObservation.From(game, [2]), sides).Evaluate(human).Should().Be(new PositionEvaluator(GameObservation.From(game), ExpertTuning.Master).Evaluate(human));
     }
 
+    [Fact]
+    public void Evaluate_BotEndgame_SwapsTheThreatExponentOnlyOnceThePeopleAreOut()
+    {
+        var game = TestWorld.Game(4);
+        // Player 0 holds two territories, bots 1 and 2 split the rest, and the human (player 3) is already out.
+        foreach (var territory in game.State.Territories) { territory.Owner = territory.Id < 2 ? 0 : 1 + territory.Id % 2; territory.Troops = 1; }
+        game.State.Players[3].Eliminated = true;
+        game.State.Phase = Phase.Attack;
+        var plain = GameObservation.From(game);
+        var flagged = GameObservation.From(game, [3]);
+        var board = PlannerBoard.From(flagged);
+        board.Troops[2] = 31;
+        var threat = ExpertTuning.Master with { ThreatWeighting = 1.5 };
+        var flat = threat with { BotEndgameThreatWeighting = 0 };
+        var evaluator = new PositionEvaluator(flagged, flat);
+        // The learned correction keeps reading the threat-weighted score; the bots-only exponent weighs the rivals afterwards.
+        evaluator.HandScore(board).Should().Be(new PositionEvaluator(flagged, threat).HandScore(board));
+        evaluator.Evaluate(board).Should().BeApproximately(new PositionEvaluator(flagged, ExpertTuning.Master).Evaluate(board), 1e-9);
+        evaluator.Evaluate(board).Should().NotBe(new PositionEvaluator(flagged, threat).Evaluate(board));
+        // No person at the table: the ordinary exponent stays.
+        new PositionEvaluator(plain, flat).Evaluate(board).Should().Be(new PositionEvaluator(plain, threat).Evaluate(board));
+        // While the human is still in, the exponent stays off.
+        game.State.Players[3].Eliminated = false;
+        game.State.Territories[4].Owner = 3;
+        var alive = GameObservation.From(game, [3]);
+        var held = PlannerBoard.From(alive);
+        new PositionEvaluator(alive, flat).Evaluate(held).Should().Be(new PositionEvaluator(alive, threat).Evaluate(held));
+    }
+
+    [Fact]
+    public void Play_FourPlayerTurtleSeed_BotsFinishOnceTheProbeIsOut()
+    {
+        // Seed 1280004 of the bots-only endgame screen, the probe in the first seat, seated as the Arena seats it. The probe falls
+        // at round 22; with the shipped exponent the three Ultimates finish at round 49, without it they still fight at round 200.
+        const int seed = 1280004;
+        string[] policies = ["turtle", "ultimate", "ultimate", "ultimate"];
+        var game = new Game(TestWorld.Map(), policies.Select((p, seat) => $"{p} {seat + 1}").ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
+        var strategies = policies.Select((policy, seat) => PolicyCatalog.Create(policy, unchecked(seed * 1000003 + seat * 7919))).ToArray();
+        var humans = ArenaRunner.HumanSeats(policies);
+        var actions = 0;
+        while (game.State.Phase != Phase.Finished && game.State.Round <= 200)
+        {
+            game.Apply(game.State.CurrentPlayer, strategies[game.State.CurrentPlayer].Choose(GameObservation.From(game, humans)));
+            actions++;
+        }
+        (game.State.Phase, game.State.Winner, game.State.Round, actions).Should().Be((Phase.Finished, 3, 49, 1081));
+    }
+
     [Theory]
     [InlineData(1272000, 0, 21, 685, 1, 16, 575, 2, 17, 590)]
     [InlineData(1272001, 0, 14, 442, 2, 17, 539, 2, 10, 352)]
@@ -221,6 +270,8 @@ public sealed class UltimateStrategyTests
         (ExpertTuning.Ultimate.HumanRivalWeight, ExpertTuning.Ultimate.BotRivalWeight).Should().Be((3, .5));
         (ExpertTuning.Master.HumanRivalWeight, ExpertTuning.Master.BotRivalWeight).Should().Be((1, 1));
         (ExpertTuning.Default.HumanRivalWeight, ExpertTuning.Default.BotRivalWeight).Should().Be((1, 1));
+        ExpertTuning.Ultimate.BotEndgameThreatWeighting.Should().Be(-1);
+        ExpertTuning.Master.BotEndgameThreatWeighting.Should().BeNull();
     }
 
     [Fact]
