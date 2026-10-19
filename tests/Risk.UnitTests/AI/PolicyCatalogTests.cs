@@ -41,4 +41,21 @@ public sealed class PolicyCatalogTests
         ArenaRunner.HumanSeats(["ultimate", "turtle", "master", "Turtle"]).Should().Equal(1, 3);
         ArenaRunner.HumanSeats(["ultimate", "master"]).Should().BeEmpty();
     }
+
+    [Fact]
+    public void Create_SmgPreset_IsSeatableButNeverALobbyDifficulty()
+    {
+        PolicyCatalog.Create("SMG", 1).Should().BeOfType<SmgStrategy>().Which.Id.Should().Be("smg-learned-planner");
+        Enum.GetNames<BotDifficulty>().Should().NotContain(name => PolicyCatalog.Presets.Contains(name.ToLowerInvariant()));
+        ArenaRunner.HumanSeats(["smg", "master"]).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Parse_Dice_DefaultsToTrueRandomAndAcceptsBalancedBlitz()
+    {
+        ArenaOptions.Parse([]).Dice.Should().Be(DiceMode.TrueRandom);
+        ArenaOptions.Parse(["--dice", "BalancedBlitz"]).Dice.Should().Be(DiceMode.BalancedBlitz);
+        Action unknown = () => ArenaOptions.Parse(["--dice", "loaded"]);
+        unknown.Should().Throw<ArgumentException>();
+    }
 }

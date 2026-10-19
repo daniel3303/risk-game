@@ -21,7 +21,7 @@ public static class ArenaRunner
     {
         var policies = Enumerable.Range(0, options.Players).Select(seat => seat == candidateSeat ? options.Candidate : options.Opponent).ToArray();
         var names = policies.Select((policy, seat) => $"{char.ToUpperInvariant(policy[0])}{policy[1..]} {seat + 1}").ToArray();
-        var game = new Game(map, names, new(options.Cards, options.Setup), new SeededRandom(seed));
+        var game = new Game(map, names, new(options.Cards, options.Setup, options.Dice), new SeededRandom(seed));
         var strategies = policies.Select((policy, seat) => PolicyCatalog.Create(policy, unchecked(seed * 1000003 + seat * 7919))).ToArray();
         var humans = HumanSeats(policies);
         var actions = 0;

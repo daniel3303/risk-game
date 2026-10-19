@@ -5,14 +5,15 @@ namespace Risk.Arena.Models;
 /// <summary>Candidate and opponent name any <see cref="PolicyCatalog"/> policy: a lobby difficulty or a benchmark probe.</summary>
 public sealed record ArenaOptions(int Seeds = 16, int FirstSeed = 1000, int Players = 2,
     string Candidate = "expert", string Opponent = "hard",
-    CardMode Cards = CardMode.Fixed, SetupMode Setup = SetupMode.Automatic, int MaxRounds = 200, int MaxActions = 20000, int Parallelism = 1)
+    CardMode Cards = CardMode.Fixed, SetupMode Setup = SetupMode.Automatic, int MaxRounds = 200, int MaxActions = 20000, int Parallelism = 1,
+    DiceMode Dice = DiceMode.TrueRandom)
 {
     public void Validate()
     {
         if (Seeds is < 1 or > 5000 || Players is < 2 or > 6 || MaxRounds is < 1 or > 1000 || MaxActions is < 1 or > 100000 || Parallelism is < 1 or > 64)
             throw new ArgumentException("Use 1–5000 seeds, 2–6 players, 1–1000 rounds, 1–100000 actions, and 1–64 parallel matches.");
         if (FirstSeed < 0 || FirstSeed > int.MaxValue - Seeds) throw new ArgumentException("Choose a nonnegative seed range within Int32.");
-        if (!PolicyCatalog.IsKnown(Candidate) || !PolicyCatalog.IsKnown(Opponent) || !Enum.IsDefined(Cards) || !Enum.IsDefined(Setup))
+        if (!PolicyCatalog.IsKnown(Candidate) || !PolicyCatalog.IsKnown(Opponent) || !Enum.IsDefined(Cards) || !Enum.IsDefined(Setup) || !Enum.IsDefined(Dice))
             throw new ArgumentException($"Choose a supported ruleset and policies from: {string.Join(", ", PolicyCatalog.Names)}.");
     }
 
@@ -39,6 +40,7 @@ public sealed record ArenaOptions(int Seeds = 16, int FirstSeed = 1000, int Play
         "--opponent" => options with { Opponent = value.ToLowerInvariant() },
         "--cards" => options with { Cards = Choice<CardMode>(value) },
         "--setup" => options with { Setup = Choice<SetupMode>(value) },
+        "--dice" => options with { Dice = Choice<DiceMode>(value) },
         "--max-rounds" => options with { MaxRounds = int.Parse(value) },
         "--max-actions" => options with { MaxActions = int.Parse(value) },
         "--parallel" => options with { Parallelism = int.Parse(value) },

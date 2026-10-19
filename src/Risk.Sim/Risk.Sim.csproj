@@ -4,5 +4,7 @@
     <EmbeddedResource Include="Learning/ultimate-model.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" />
     <!-- Optional: without it Ultimate plays the hand-written multiplayer terms alone. -->
     <EmbeddedResource Include="Learning/ultimate-multiplayer-model.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" Condition="Exists('Learning/ultimate-multiplayer-model.json')" />
+    <!-- Optional: without it the mobile-game preset plays Ultimate's hand-written multiplayer terms alone. -->
+    <EmbeddedResource Include="Learning/smg-multiplayer-model.json" LogicalName="Risk.Sim.Learning.%(Filename)%(Extension)" Condition="Exists('Learning/smg-multiplayer-model.json')" />
   </ItemGroup>
 </Project>
