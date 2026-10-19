@@ -71,7 +71,7 @@ public sealed class MultiplayerBoardFeatures : BoardEncoding
                 var other = board.Owners[neighbor];
                 if (other == owner) continue;
                 if (other >= 0) enemyNeighbor = true;
-                if (other >= 0 && board.Troops[neighbor] > 1) threat = Math.Max(threat, BattleOdds.Estimate(board.Troops[neighbor] - 1, troops).WinChance);
+                if (other >= 0 && board.Troops[neighbor] > 1) threat = Math.Max(threat, evaluator.Odds(board.Troops[neighbor] - 1, troops).WinChance);
             }
             x[at + 8] = (float)threat;
             x[at + 11] = outside / 6f;
@@ -125,7 +125,7 @@ public sealed class MultiplayerBoardFeatures : BoardEncoding
             var chance = 0.0;
             foreach (var neighbor in map.Territories[id].Neighbors)
                 if (board.Owners[neighbor] == player && board.Troops[neighbor] > 1)
-                    chance = Math.Max(chance, BattleOdds.Estimate(board.Troops[neighbor] - 1, board.Troops[id]).WinChance);
+                    chance = Math.Max(chance, evaluator.Odds(board.Troops[neighbor] - 1, board.Troops[id]).WinChance);
             worst = Math.Min(worst, chance);
             total += chance;
         }

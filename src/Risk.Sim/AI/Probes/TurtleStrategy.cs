@@ -100,7 +100,7 @@ public sealed class TurtleStrategy : IPlayerStrategy
     {
         var options = Enumerable.Range(0, board.Owners.Length).Where(from => board.Owners[from] == evaluator.Player && board.Troops[from] > 1)
             .SelectMany(from => observation.Map.Territories[from].Neighbors.Where(to => board.Owners[to] >= 0 && board.Owners[to] != evaluator.Player)
-                .Select(to => (From: from, To: to, Odds: BattleOdds.Estimate(board.Troops[from] - 1, board.Troops[to]).WinChance)))
+                .Select(to => (From: from, To: to, Odds: evaluator.Odds(board.Troops[from] - 1, board.Troops[to]).WinChance)))
             .ToArray();
         if (options.Length == 0) return null;
         // Eliminate a rival whose last territory is in reach; its cards come with it.

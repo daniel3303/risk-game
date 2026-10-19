@@ -40,7 +40,7 @@ public sealed class DuelBoardFeatures : BoardEncoding
             var threat = 0.0;
             foreach (var neighbor in map.Territories[id].Neighbors)
                 if (board.Owners[neighbor] != owner && board.Owners[neighbor] >= 0 && board.Troops[neighbor] > 1)
-                    threat = Math.Max(threat, BattleOdds.Estimate(board.Troops[neighbor] - 1, troops).WinChance);
+                    threat = Math.Max(threat, evaluator.Odds(board.Troops[neighbor] - 1, troops).WinChance);
             x[at + 6] = (float)threat;
             if (owner == player) { ownTerritories++; ownArmies += troops; } else { rivalTerritories++; rivalArmies += troops; }
         }

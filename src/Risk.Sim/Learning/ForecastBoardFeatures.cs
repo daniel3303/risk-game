@@ -40,7 +40,7 @@ public sealed class ForecastBoardFeatures : BoardEncoding
                 var other = board.Owners[n];
                 // Own territories face enemy stacks; enemy territories face own stacks.
                 if (other < 0 || other == owner || (owner != player && other != player)) continue;
-                chance = Math.Max(chance, BattleOdds.Estimate(evaluator.ForecastAttackers(board, n), board.Troops[id]).WinChance);
+                chance = Math.Max(chance, evaluator.Odds(evaluator.ForecastAttackers(board, n), board.Troops[id]).WinChance);
             }
             if (owner == player) { x[at + ThreatOffset] = (float)chance; threat += chance; worst = Math.Max(worst, chance); }
             else { x[at + 2] = (float)chance; opportunity += chance; }

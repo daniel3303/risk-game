@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using Risk.Sim.AI.Planning;
+using Risk.Sim.Models;
 using Xunit;
 namespace Risk.UnitTests.AI;
 
@@ -47,4 +48,29 @@ public sealed class BattleOddsTests
         large.DefendersOnLoss.Should().BeInRange(1, 10000);
         BattleOdds.Estimate(1000, 5000).WinChance.Should().BeLessThan(.001);
     }
+
+    [Fact]
+    public void Estimate_BalancedBlitzRules_ReadTheBalancedDistribution()
+    {
+        var balanced = BattleOdds.Estimate(3, 2, new GameOptions(Dice: DiceMode.BalancedBlitz));
+        balanced.WinChance.Should().BeApproximately(0.7477944615882757, 1e-12);
+        balanced.Should().Be(BattleOdds.Balanced(3, 2));
+        BattleOdds.Estimate(3, 2, new GameOptions()).Should().Be(BattleOdds.Estimate(3, 2));
+        BattleOdds.Estimate(3, 2, null).Should().Be(BattleOdds.Estimate(3, 2));
+    }
+
+    [Fact]
+    public void Balanced_ExpectedArmies_WeighEachOutcomeBySurvivors()
+    {
+        var (attackLoss, defendLoss) = Risk.Sim.Rules.BalancedBlitz.Odds(3, 2);
+        var estimate = BattleOdds.Balanced(3, 2);
+        estimate.WinningArmies.Should().BeApproximately(attackLoss[0] * 3 + attackLoss[1] * 2 + attackLoss[2], 1e-12);
+        estimate.LosingDefenders.Should().BeApproximately(defendLoss[0] * 2 + defendLoss[1], 1e-12);
+        BattleOdds.Balanced(5, 0).Should().Be(new BattleEstimate(1, 5, 0));
+        BattleOdds.Balanced(0, 5).Should().Be(new BattleEstimate(0, 0, 5));
+    }
+
+    [Fact]
+    public void Balanced_BattlesTheClientEstimates_KeepTrueRandomOdds() =>
+        BattleOdds.Balanced(1999, 2).Should().Be(BattleOdds.Estimate(1999, 2));
 }

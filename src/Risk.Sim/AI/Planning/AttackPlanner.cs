@@ -42,7 +42,7 @@ public sealed class AttackPlanner(PositionEvaluator evaluator)
     {
         var available = node.Board.Troops[action.From] - 1;
         var defenders = node.Board.Troops[action.To];
-        var odds = BattleOdds.Estimate(available, defenders);
+        var odds = evaluator.Odds(available, defenders);
         var threshold = !node.Board.Conquered ? Tuning.AttackThreshold : evaluator.Duel ? Tuning.DuelContinuationThreshold : Tuning.ContinuationThreshold;
         if (odds.WinChance < threshold) yield break;
         var success = node.Board.Copy();
@@ -89,7 +89,7 @@ public sealed class AttackPlanner(PositionEvaluator evaluator)
             .Where(n => board.Owners[n] >= 0 && board.Owners[n] != evaluator.Player).Select(n => evaluator.ForecastAttackers(board, n)).DefaultIfEmpty(0).Max();
         if (attackers == 0) return 1;
         for (var guard = 2; guard < SafeGuardLimit; guard++)
-            if (BattleOdds.Estimate(attackers, guard).WinChance < SafeGuardOdds) return guard;
+            if (evaluator.Odds(attackers, guard).WinChance < SafeGuardOdds) return guard;
         return SafeGuardLimit;
     }
 }

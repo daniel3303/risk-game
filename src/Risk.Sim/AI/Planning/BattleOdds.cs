@@ -1,3 +1,6 @@
+using System.Collections.Concurrent;
+using Risk.Sim.Models;
+using Risk.Sim.Rules;
 namespace Risk.Sim.AI.Planning;
 
 public static class BattleOdds
@@ -5,6 +8,35 @@ public static class BattleOdds
     public const int ExactLimit = 512;
     private static readonly DiceOutcome[][][] rounds = CreateRounds();
     private static readonly Lazy<BattleEstimate[,]> table = new(CreateTable);
+    private static readonly ConcurrentDictionary<(int, int), BattleEstimate> balanced = new();
+
+    /// <summary>The all-in odds under the game's dice rule; no options means true-random dice.</summary>
+    public static BattleEstimate Estimate(int attackers, int defenders, GameOptions options) =>
+        options?.Dice == DiceMode.BalancedBlitz ? Balanced(attackers, defenders) : Estimate(attackers, defenders);
+
+    /// <summary>
+    /// <see cref="Rules.BalancedBlitz"/>'s distribution: the win chance, and the expected survivors on a win and defenders on a loss
+    /// (unconditional, like the true-random table). Battles the rule leaves to real dice use the true-random odds.
+    /// </summary>
+    public static BattleEstimate Balanced(int attackers, int defenders)
+    {
+        if (attackers < 0 || defenders < 0) throw new ArgumentOutOfRangeException(nameof(attackers));
+        if (defenders == 0) return new(1, attackers, 0);
+        if (attackers == 0) return new(0, 0, defenders);
+        if (attackers + defenders >= BalancedBlitz.EstimationTotal) return Estimate(attackers, defenders);
+        // Planning asks the same battles thousands of times, and a large one costs milliseconds; every balanced battle is cached
+        // (only the battles that occur, at most about two million).
+        return balanced.GetOrAdd((attackers, defenders), static key => BalancedEstimate(key.Item1, key.Item2));
+    }
+
+    private static BattleEstimate BalancedEstimate(int attackers, int defenders)
+    {
+        var (attackLoss, defendLoss) = BalancedBlitz.Odds(attackers, defenders);
+        double armies = 0, remaining = 0;
+        for (var lost = 0; lost < attackers; lost++) armies += attackLoss[lost] * (attackers - lost);
+        for (var lost = 0; lost < defenders; lost++) remaining += defendLoss[lost] * (defenders - lost);
+        return new(Math.Clamp(defendLoss[defenders], 0, 1), armies, remaining);
+    }
 
     public static BattleEstimate Estimate(int attackers, int defenders)
     {
