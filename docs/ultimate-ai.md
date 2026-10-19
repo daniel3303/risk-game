@@ -249,6 +249,16 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 - Neither change helped: the value network was fitted on positions its own search reaches, so a wider or deeper search without retraining mostly finds the network's blind spots. AlphaZero avoids this by training the network on the searching policy's own games, so such changes have to enter through a generation rather than be bolted on.
 - Related work: TD(λ) with a graph network and game-tree search for Risk ([Carr 2020](https://arxiv.org/abs/2009.06355)); expert iteration with graph networks for Risk ([Gnecco Heredia and Cazenave](https://www.lamsade.dauphine.fr/~cazenave/papers/RiskConferencePaper.pdf)); AlphaZero-style search for Risk ([Blomqvist 2020](https://forums.triplea-game.org/assets/uploads/files/1637032761173-fulltext01.pdf)). The latter two report that the attack phases remain the hard part for tree search.
 
+## Mobile game rules
+
+- The SMG bridge plays the mobile game's regular public rooms: four players, Fixed cards, [balanced blitz dice](balanced-blitz.md).
+- On attack-phase boards from a ranked public game, Ultimate attacked at 8 of 15 decisions, while Master and Expert attacked at all 15. It refused captures with 92–100% odds.
+- The cause is the generation 4 multiplayer model (trained on three-player true-dice games) together with frontier defence. The dice odds are not the cause: with the model removed, the same planner attacked at all 15.
+- `smg` (`SmgStrategy`, `smg-learned-planner`) is Ultimate's planner and duel model with its own multiplayer model, trained under those rules. It is never offered in the lobby.
+- Until a model passes the gate, `smg` plays the hand-written multiplayer terms alone.
+- The model trains with `improve --track smg --players 4 --model hand`: league self-play, the fit and both gate checks all run under balanced blitz, with a fair share of 25%.
+- A candidate is bundled as `src/Risk.Sim/Learning/smg-multiplayer-model.json` only after it passes that gate.
+
 ## Limits
 
 - The duel model was trained and evaluated only on two-player Classic games with Fixed cards and automatic setup; the multiplayer model was trained only on three-player games with the same rules; generation 4 was evaluated in larger games only against three Masters, generation 1 also against the probe in four- and six-player games.

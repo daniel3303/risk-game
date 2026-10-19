@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using Risk.Learning;
+using Risk.Learning.Models;
 using Risk.Sim.AI;
 using Risk.Sim.AI.Planning;
 using Risk.Sim.Learning;
@@ -467,5 +468,35 @@ public sealed class MultiplayerLearningTests
     {
         var run = () => ModelEvaluator.Run(TestWorld.Map(), ValueModel.Ultimate, "master", 0, 1, 3, false, 1);
         run.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void DataPath_Track_IsNamedOnlyWhenItIsNotUltimates()
+    {
+        var options = new Improvement.Options(3, 1100000, 10000, "gen7", null, 64, 8, .5, 60, 1000, 1000, null, 1);
+        Path.GetFileName(Improvement.DataPath(options with { Track = LearningTrack.Ultimate })).Should().Be("data-multi-board-v1-hand-1100000-10000.bin");
+        Path.GetFileName(Improvement.DataPath(options with { Track = LearningTrack.Smg })).Should().Be("data-smg-multi-board-v1-hand-1100000-10000.bin");
+    }
+
+    [Fact]
+    public void For_TrackNames_ResolveIgnoringCase()
+    {
+        LearningTrack.For("SMG").Should().BeSameAs(LearningTrack.Smg);
+        LearningTrack.Smg.Rules.Should().Be(new GameOptions(CardMode.Fixed, SetupMode.Automatic, DiceMode.BalancedBlitz));
+        LearningTrack.Ultimate.Rules.Dice.Should().Be(DiceMode.TrueRandom);
+        var unknown = () => LearningTrack.For("progressive");
+        unknown.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void Rebuild_TrackRules_FeaturesReadThatTracksOdds()
+    {
+        var format = TrajectoryFormat.Multiplayer;
+        var rows = TrajectoryRecorder.Play(TestWorld.Map(), 3, 2000000, null, track: LearningTrack.Smg);
+        rows.Should().NotBeEmpty();
+        var row = rows.AsSpan(0, format.Width).ToArray();
+        var (evaluator, _) = format.Rebuild(TestWorld.Map(), row, LearningTrack.Smg.Rules);
+        evaluator.Observation.Options.Dice.Should().Be(DiceMode.BalancedBlitz);
+        format.Rebuild(TestWorld.Map(), row).Evaluator.Observation.Options.Dice.Should().Be(DiceMode.TrueRandom);
     }
 }

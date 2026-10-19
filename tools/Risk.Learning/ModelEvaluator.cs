@@ -17,18 +17,21 @@ public static class ModelEvaluator
         Run(map, model, opponent, firstSeed, seeds, 2, false, threads);
 
     /// <param name="tuning">The multiplayer candidates' planner with the model as its correction; null plays Ultimate's.</param>
-    public static EvaluationSummary Run(WorldMap map, ValueModel model, string opponent, int firstSeed, int seeds, int players, bool defend, int threads, ExpertTuning tuning = null) =>
-        Play(map, model, opponent, (seed, i) => PolicyCatalog.Create(opponent, unchecked(seed * 1000003 + i * 7919)), firstSeed, seeds, players, defend, threads, tuning);
+    /// <param name="rules">The games' rules; null is Fixed cards and true dice.</param>
+    public static EvaluationSummary Run(WorldMap map, ValueModel model, string opponent, int firstSeed, int seeds, int players, bool defend, int threads, ExpertTuning tuning = null,
+        GameOptions rules = null) =>
+        Play(map, model, opponent, (seed, i) => PolicyCatalog.Create(opponent, unchecked(seed * 1000003 + i * 7919)), firstSeed, seeds, players, defend, threads, tuning, rules);
 
     /// <summary>Plays the candidate against copies of <paramref name="opponent"/>, reported under <paramref name="label"/>.</summary>
-    public static EvaluationSummary Run(WorldMap map, ValueModel model, ValueModel opponent, string label, int firstSeed, int seeds, int players, int threads)
+    public static EvaluationSummary Run(WorldMap map, ValueModel model, ValueModel opponent, string label, int firstSeed, int seeds, int players, int threads, GameOptions rules = null)
     {
         if (!TrajectoryFormat.For(players).Accepts(opponent.Encoding))
             throw new ArgumentException($"A {opponent.Features} model cannot play {players}-player games.");
-        return Play(map, model, label, (_, _) => Candidate(opponent), firstSeed, seeds, players, false, threads, null);
+        return Play(map, model, label, (_, _) => Candidate(opponent), firstSeed, seeds, players, false, threads, null, rules);
     }
 
-    private static EvaluationSummary Play(WorldMap map, ValueModel model, string opponent, Func<int, int, IPlayerStrategy> create, int firstSeed, int seeds, int players, bool defend, int threads, ExpertTuning tuning)
+    private static EvaluationSummary Play(WorldMap map, ValueModel model, string opponent, Func<int, int, IPlayerStrategy> create, int firstSeed, int seeds, int players, bool defend, int threads, ExpertTuning tuning,
+        GameOptions rules)
     {
         if (!TrajectoryFormat.For(players).Accepts(model.Encoding))
             throw new ArgumentException($"A {model.Features} model cannot be evaluated in {players}-player games.");
@@ -40,7 +43,7 @@ public static class ModelEvaluator
         {
             var seed = firstSeed + job / players;
             var seat = job % players;
-            var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
+            var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), rules ?? new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
             var strategies = Enumerable.Range(0, players).Select(i => (i == seat) != defend ? Candidate(model, tuning) : create(seed, i)).ToArray();
             int[] humans = defend ? [seat] : null;
             var actions = 0;

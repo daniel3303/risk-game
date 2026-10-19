@@ -29,7 +29,8 @@ public abstract class TrajectoryFormat
     public virtual bool Accepts(BoardEncoding encoding) => encoding == Encoding;
     public abstract float[] Encode(GameObservation observation, PlannerBoard board, double score);
     /// <summary>Rebuilds the mover's evaluator and board; hidden card identities are irrelevant to the features.</summary>
-    public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row);
+    /// <param name="rules">The recorded games' rules (their dice decide the battle odds the features read); null is Fixed cards and true dice.</param>
+    public abstract (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row, GameOptions rules = null);
 
     /// <summary>Whether the game this row comes from is held out for validation.</summary>
     public virtual bool IsValidation(float[] row) => (int)row[Seed] % 10 == 0;
@@ -77,7 +78,7 @@ public sealed class DuelTrajectoryFormat : TrajectoryFormat
         return row;
     }
 
-    public override (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row)
+    public override (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row, GameOptions rules = null)
     {
         var owners = new int[42];
         var troops = new int[42];
@@ -86,7 +87,7 @@ public sealed class DuelTrajectoryFormat : TrajectoryFormat
         var ownCards = (int)row[85];
         var observation = new GameObservation(map, Phase.Attack, 0, 0, new int[ownCards],
             Enumerable.Range(0, 42).Select(id => new ObservedTerritory(id, owners[id], troops[id])).ToArray(), null, conquered,
-            new GameOptions(CardMode.Fixed, SetupMode.Automatic), (int)row[87],
+            rules ?? new GameOptions(CardMode.Fixed, SetupMode.Automatic), (int)row[87],
             [new ObservedPlayer(0, false, ownCards), new ObservedPlayer(1, false, (int)row[86])]);
         return (new PositionEvaluator(observation, ExpertTuning.Master), new PlannerBoard(owners, troops, conquered));
     }
@@ -155,7 +156,7 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
         return row;
     }
 
-    public override (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row)
+    public override (PositionEvaluator Evaluator, PlannerBoard Board) Rebuild(WorldMap map, float[] row, GameOptions rules = null)
     {
         var owners = new int[42];
         var troops = new int[42];
@@ -166,7 +167,7 @@ public sealed class MultiplayerTrajectoryFormat : TrajectoryFormat
         var conquered = row[Count + 2] == 1;
         var observation = new GameObservation(map, Phase.Attack, mover, 0, new int[(int)row[Cards + mover]],
             Enumerable.Range(0, 42).Select(id => new ObservedTerritory(id, owners[id], troops[id])).ToArray(), null, conquered,
-            new GameOptions(CardMode.Fixed, SetupMode.Automatic), (int)row[Count + 3], players);
+            rules ?? new GameOptions(CardMode.Fixed, SetupMode.Automatic), (int)row[Count + 3], players);
         return (new PositionEvaluator(observation, ExpertTuning.Ultimate), new PlannerBoard(owners, troops, conquered));
     }
 }

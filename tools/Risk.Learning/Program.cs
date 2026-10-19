@@ -10,13 +10,15 @@ using Risk.Sim.Learning;
 using Risk.Sim.Models;
 
 const string Usage = """
-    Risk value learning (Classic, fixed cards, automatic setup; --players 2 trains the duel model, 3-6 the multiplayer model):
-      record   --output traj.bin --first-seed 760000 --games 30000 [--players 2] [--model model.json] [--scale 0.5] [--threads 8]
-      fit      --data a.bin,b.bin --output net.json [--players 2] [--features multi-board-v2] [--bootstrap model.json] [--hidden 64] [--epochs 8] [--rate 0.001] [--l2 0.00001] [--lambda 0.7] [--seed 3] [--threads 8]
+    Risk value learning (Classic, fixed cards, automatic setup; --players 2 trains the duel model, 3-6 the multiplayer model).
+    --track ultimate (default) plays true random dice with Ultimate's model; --track smg plays balanced blitz with the SMG preset's.
+    --model hand is the hand-written multiplayer terms; without --model, record and improve start from the track's shipped model.
+      record   --output traj.bin --first-seed 760000 --games 30000 [--players 2] [--track ultimate] [--model model.json|hand] [--scale 0.5] [--threads 8]
+      fit      --data a.bin,b.bin --output net.json [--players 2] [--track ultimate] [--features multi-board-v2] [--bootstrap model.json] [--hidden 64] [--epochs 8] [--rate 0.001] [--l2 0.00001] [--lambda 0.7] [--seed 3] [--threads 8]
       bundle   --members a.json,b.json --output model.json [--scale 0.5] [--limit 60]
-      evaluate --model model.json --first-seed 900000 --seeds 2000 [--players 2] [--opponent master|turtle|… | --opponent-model other.json] [--defend false] [--scale s] [--threads 8]
+      evaluate --model model.json|hand --first-seed 900000 --seeds 2000 [--players 2] [--track ultimate] [--opponent master|turtle|… | --opponent-model other.json] [--defend false] [--scale s] [--threads 8]
                [--human-weight 3] [--bot-weight 0.5]   (Ultimate's weights; with --defend the opponent seat is the human)
-      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--model current.json] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale learner's] [--limit 60]
+      improve  --output artifacts/learning/gen1 --first-seed 1000000 --games 20000 [--players 3] [--track ultimate] [--model current.json|hand] [--hidden 64] [--epochs 8] [--lambda 0.7] [--scale learner's] [--limit 60]
                [--evaluation-seeds 1000] [--probe-seeds 300] [--promote src/Risk.Sim/Learning/ultimate-multiplayer-model.json] [--threads 8]
                [--generations 1] [--window 1] [--extra-data previous.bin] [--features learner's] [--reference shipped.json]
                [--league learners,turtle,master,expert]
@@ -44,11 +46,14 @@ try
         {
             var output = options.Text("--output");
             var players = options.Integer("--players", 2, 2, 6);
-            var model = LoadModel(options.OptionalText("--model"), options, players);
+            var track = TrackOption(options);
+            var name = options.OptionalText("--model");
+            // Duels replay Master without a model; larger games start from the track's shipped model unless told otherwise.
+            var model = IsHand(name) ? null : LoadModel(name, options, players) ?? (players == 2 ? null : track.Shipped());
             var first = options.Integer("--first-seed", 0, 0, TrajectoryFormat.SeedLimit - 1);
             var games = options.Integer("--games", 1000, 1, TrajectoryFormat.SeedLimit - first);
             options.RejectUnknown();
-            TrajectoryRecorder.Record(map, players, first, games, output, model, threads, Console.Out);
+            TrajectoryRecorder.Record(map, players, first, games, output, model, threads, Console.Out, track: track);
             break;
         }
         case "fit":
@@ -57,13 +62,14 @@ try
             var output = options.Text("--output");
             var players = options.Integer("--players", 2, 2, 6);
             var format = TrajectoryFormat.For(players);
+            var track = TrackOption(options);
             var bootstrap = LoadModel(options.OptionalText("--bootstrap"), null, players);
             var encoding = FeaturesOption(options, format);
             var trainer = new ValueTrainer(options.Integer("--hidden", 64, 1, 1024), options.Integer("--epochs", 8, 1, 1000),
                 options.Number("--rate", .001, 1e-6, 1), options.Number("--l2", 1e-5, 0, 1), options.Number("--lambda", .7, 0, 1),
                 options.Integer("--seed", 3, 0, int.MaxValue), threads, Console.Out);
             options.RejectUnknown();
-            var network = trainer.Fit(map, format.Read(data), bootstrap, format, encoding);
+            var network = trainer.Fit(map, format.Read(data), bootstrap, format, encoding, track.Rules);
             File.WriteAllText(output, new ValueModel { Features = encoding.Version, Members = [network] }.Serialize());
             break;
         }
@@ -80,7 +86,10 @@ try
         case "evaluate":
         {
             var players = options.Integer("--players", 2, 2, 6);
-            var model = LoadModel(options.Text("--model"), options, players);
+            var track = TrackOption(options);
+            var name = options.Text("--model");
+            if (IsHand(name) && players == 2) throw new ArgumentException("--model hand is the multiplayer terms; duels need a model file.");
+            var model = IsHand(name) ? Improvement.Empty(TrajectoryFormat.For(players)) : LoadModel(name, options, players);
             var opponentModel = LoadModel(options.OptionalText("--opponent-model"), null, players);
             var opponent = options.Text("--opponent", players == 2 ? "master" : "ultimate").ToLowerInvariant();
             if (opponentModel == null && !PolicyCatalog.IsKnown(opponent)) throw new ArgumentException($"Unknown opponent {opponent}; choose one of {string.Join(", ", PolicyCatalog.Names)}.");
@@ -97,15 +106,18 @@ try
             if (tuning != ExpertTuning.Ultimate && !(defend && players > 2))
                 throw new ArgumentException("--human-weight and --bot-weight need --defend in games with more than two players.");
             var summary = opponentModel != null
-                ? ModelEvaluator.Run(map, model, opponentModel, "model", first, seeds, players, threads)
-                : ModelEvaluator.Run(map, model, opponent, first, seeds, players, defend, threads, tuning);
+                ? ModelEvaluator.Run(map, model, opponentModel, "model", first, seeds, players, threads, track.Rules)
+                : ModelEvaluator.Run(map, model, opponent, first, seeds, players, defend, threads, tuning, track.Rules);
             Console.WriteLine(JsonConvert.SerializeObject(summary, json));
             break;
         }
         case "improve":
         {
             var players = options.Integer("--players", 3, 3, 6);
-            var current = LoadModel(options.OptionalText("--model"), null, players) ?? ValueModel.UltimateMultiplayer;
+            var track = TrackOption(options);
+            var name = options.OptionalText("--model");
+            // Null is the hand-written terms: a track that ships no model yet starts from them.
+            var current = IsHand(name) ? null : LoadModel(name, null, players) ?? track.Shipped();
             var first = options.Integer("--first-seed", 1000000, 0, TrajectoryFormat.SeedLimit - 1);
             var games = options.Integer("--games", 20000, 1, TrajectoryFormat.SeedLimit - first);
             // A candidate keeps the learner's encoding and scale unless told otherwise, so promoting it never silently changes them.
@@ -114,7 +126,7 @@ try
                 options.Integer("--evaluation-seeds", 1000, 1, 5000), options.Integer("--probe-seeds", 300, 1, 5000), options.OptionalText("--promote"), threads,
                 Lambda: options.Number("--lambda", .7, 0, 1), ExtraData: options.OptionalText("--extra-data")?.Split(','),
                 Encoding: FeaturesOption(options, TrajectoryFormat.For(players), current?.Encoding), Reference: LoadModel(options.OptionalText("--reference"), null, players),
-                League: LeagueOption(options));
+                League: LeagueOption(options), Track: track);
             var generations = options.Integer("--generations", 1, 1, 100);
             var window = options.Integer("--window", 1, 1, 10);
             options.RejectUnknown();
@@ -154,6 +166,10 @@ static BoardEncoding FeaturesOption(CommandOptions options, TrajectoryFormat for
     if (encoding == null || !format.Accepts(encoding)) throw new ArgumentException($"Unknown or unsupported --features {name}.");
     return encoding;
 }
+
+static LearningTrack TrackOption(CommandOptions options) => LearningTrack.For(options.Text("--track", LearningTrack.Ultimate.Name));
+
+static bool IsHand(string model) => string.Equals(model, "hand", StringComparison.OrdinalIgnoreCase);
 
 // Loads a model file; "--scale" (when the command passes its options) overrides the model's own scale, and the encoding must suit the player count.
 static ValueModel LoadModel(string path, CommandOptions options, int? players)
