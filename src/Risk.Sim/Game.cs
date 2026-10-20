@@ -81,7 +81,7 @@ public sealed class Game
         var from = Owned(command.From);
         var to = Territory(command.To);
         if (!Map.Territories[from.Id].Neighbors.Contains(to.Id)) throw new RuleException("These territories do not share a border.");
-        State.Battle = CombatRules.Attack(State, from, to, command, random);
+        State.Battle = CombatRules.Attack(State, from, to, command, random, Options.Dice);
         State.Record($"{State.Players[State.CurrentPlayer].Name} attacks {Map.Territories[to.Id].Name}: −{State.Battle.AttackerLosses} / −{State.Battle.DefenderLosses}.");
     }
 

@@ -23,6 +23,9 @@ public sealed class PositionEvaluator
     public double CardValue { get; }
     public bool Duel { get; }
 
+    /// <summary>All-in odds under this game's dice rule.</summary>
+    public BattleEstimate Odds(int attackers, int defenders) => BattleOdds.Estimate(attackers, defenders, Observation.Options);
+
     public PositionEvaluator(GameObservation observation, ExpertTuning tuning = null)
     {
         Observation = observation;
@@ -138,7 +141,7 @@ public sealed class PositionEvaluator
                 // Surrendered armies stay on the board but never attack.
                 if (owner < 0 || owner == Player || board.Troops[n] < 2 || Eliminated(owner)) continue;
                 var attackers = board.Troops[n] - 1 + incomes[owner] / 2 + TradeForecast(owner);
-                chance = Math.Max(chance, BattleOdds.Estimate(attackers, board.Troops[id]).WinChance);
+                chance = Math.Max(chance, Odds(attackers, board.Troops[id]).WinChance);
             }
             if (chance == 0) continue;
             risk += chance * (Tuning.TerritoryValue + Tuning.IncomeValue / 3 + board.Troops[id]);
@@ -198,7 +201,7 @@ public sealed class PositionEvaluator
         foreach (var r in Enumerable.Range(0, Regions.Length).Where(r => Regions[r].All(id => board.Owners[id] == Player)))
         {
             var threat = Regions[r].SelectMany(id => Observation.Map.Territories[id].Neighbors.Where(n => board.Owners[n] >= 0 && board.Owners[n] != Player)
-                .Select(n => BattleOdds.Estimate(ForecastAttackers(board, n), board.Troops[id]).WinChance)).DefaultIfEmpty(0).Max();
+                .Select(n => Odds(ForecastAttackers(board, n), board.Troops[id]).WinChance)).DefaultIfEmpty(0).Max();
             risk += threat * Observation.Map.Continents[r].Bonus * Tuning.ContinentExposureValue;
         }
         return risk;

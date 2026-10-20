@@ -17,7 +17,8 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
     private const double Beta1 = .9, Beta2 = .999, Epsilon = 1e-8;
 
     /// <param name="encoding">The fitted network's encoding, by default the format's; the bootstrap model may use another one the format accepts.</param>
-    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap, TrajectoryFormat format = null, BoardEncoding encoding = null)
+    /// <param name="rules">The recorded games' rules, as <see cref="TrajectoryFormat.Rebuild"/> takes them.</param>
+    public ValueNetwork Fit(WorldMap map, float[][] rows, ValueModel bootstrap, TrajectoryFormat format = null, BoardEncoding encoding = null, GameOptions rules = null)
     {
         format ??= TrajectoryFormat.Duel;
         encoding ??= format.Encoding;
@@ -27,7 +28,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         var xs = new float[rows.Length][];
         Parallel.For(0, rows.Length, parallel, r =>
         {
-            var (evaluator, board) = format.Rebuild(map, rows[r]);
+            var (evaluator, board) = format.Rebuild(map, rows[r], rules);
             xs[r] = new float[encoding.Count];
             encoding.Extract(evaluator, board, evaluator.HandScore(board), xs[r]);
         });
@@ -46,7 +47,7 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
         Parallel.For(0, rows.Length, parallel, r =>
         {
             if (bootstrap == null) values[r] = Sigmoid(network.A * xs[r][scoreIndex] + network.B);
-            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(BootstrapFeatures(map, rows[r], xs[r], bootstrap, encoding, format), new float[m.Hidden], bootstrap.Encoding.ScoreIndex)));
+            else values[r] = bootstrap.Members.Average(m => Sigmoid(m.Logit(BootstrapFeatures(map, rows[r], xs[r], bootstrap, encoding, format, rules), new float[m.Hidden], bootstrap.Encoding.ScoreIndex)));
         });
         var target = new float[rows.Length];
         foreach (var sequence in Enumerable.Range(0, rows.Length).GroupBy(r => ((int)rows[r][format.Seed], (int)rows[r][format.Mover])))
@@ -74,10 +75,10 @@ public sealed class ValueTrainer(int hidden, int epochs, double rate, double l2,
     private static double Sigmoid(double z) => 1 / (1 + Math.Exp(-z));
 
     /// <summary>The row's features in the bootstrap model's encoding: the fitted ones when the encodings match, otherwise extracted again.</summary>
-    private static float[] BootstrapFeatures(WorldMap map, float[] row, float[] fitted, ValueModel bootstrap, BoardEncoding encoding, TrajectoryFormat format)
+    private static float[] BootstrapFeatures(WorldMap map, float[] row, float[] fitted, ValueModel bootstrap, BoardEncoding encoding, TrajectoryFormat format, GameOptions rules)
     {
         if (bootstrap.Encoding == encoding) return fitted;
-        var (evaluator, board) = format.Rebuild(map, row);
+        var (evaluator, board) = format.Rebuild(map, row, rules);
         var x = new float[bootstrap.Encoding.Count];
         bootstrap.Encoding.Extract(evaluator, board, evaluator.HandScore(board), x);
         return x;

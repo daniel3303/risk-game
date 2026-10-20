@@ -22,7 +22,8 @@ public sealed class RoomRegistry
         lock (sync)
         {
             RequireFree(connection);
-            if (options == null || !Enum.IsDefined(options.Cards) || !Enum.IsDefined(options.Setup)) throw new HubException("Choose valid rules.");
+            // The lobby plays true random dice; balanced blitz exists only for the mobile game's preset.
+            if (options == null || !Enum.IsDefined(options.Cards) || !Enum.IsDefined(options.Setup) || options.Dice != DiceMode.TrueRandom) throw new HubException("Choose valid rules.");
             name = CleanName(name);
             if (rooms.Count >= 64) throw new HubException("All tables are occupied. Try again shortly.");
             var code = NewCode();

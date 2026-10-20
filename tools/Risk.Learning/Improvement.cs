@@ -21,14 +21,18 @@ public static class Improvement
     /// <param name="ExtraData">Earlier generations' recordings fitted together with this one's, as AlphaZero trains on a window of recent games.</param>
     /// <param name="Reference">The model the turtle probe must not beat more often; null uses each generation's current model.</param>
     /// <param name="League">The recorded games' league rotation, as <see cref="TrajectoryRecorder.League"/> takes it; null uses the default one.</param>
+    /// <param name="Track">The rules every game is recorded, fitted and evaluated under; null is <see cref="LearningTrack.Ultimate"/>.</param>
     public sealed record Options(int Players, int FirstSeed, int Games, string Output, ValueModel Current, int Hidden, int Epochs, double Scale, double Limit,
         int EvaluationSeeds, int ProbeSeeds, string PromoteTo, int Threads, int FitSeed = 3, double Lambda = .7, string[] ExtraData = null,
-        BoardEncoding Encoding = null, ValueModel Reference = null, IReadOnlyList<string> League = null);
+        BoardEncoding Encoding = null, ValueModel Reference = null, IReadOnlyList<string> League = null, LearningTrack Track = null)
+    {
+        public LearningTrack Rules => Track ?? LearningTrack.Ultimate;
+    }
 
     /// <param name="Reference">The probe reference's identifier, as <see cref="Learner"/> gives it.</param>
     public sealed record Report(int Players, int FirstSeed, int Games, int Afterstates, string Model, string[] Data, EvaluationSummary AgainstCurrent,
         EvaluationSummary ProbeAgainstCandidate, string Reference, EvaluationSummary ProbeAgainstReference, bool Promoted, string PromotedTo,
-        double Lambda = 0, string Features = null, double Scale = 0, string League = null);
+        double Lambda = 0, string Features = null, double Scale = 0, string League = null, string Track = null);
 
     /// <summary>
     /// Runs up to <paramref name="generations"/> generations, each from the seeds after the previous one. The first fits its own
@@ -70,13 +74,14 @@ public static class Improvement
         Directory.CreateDirectory(options.Output);
         var format = TrajectoryFormat.For(options.Players);
         var current = options.Current ?? Empty(format);
+        var rules = options.Rules.Rules;
         var data = DataPath(options);
         string[] files = [data, .. options.ExtraData ?? []];
-        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player games from seed {options.FirstSeed}, learner = {(options.Current == null ? "hand-written terms" : $"model {Learner(options.Current)}")}, league {LeagueName(options.League)}, fitted on {files.Length} recording(s).");
-        TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log, options.League);
+        log.WriteLine($"Generation at {options.Output}: {options.Games} {options.Players}-player {options.Rules.Name} games from seed {options.FirstSeed}, learner = {(options.Current == null ? "hand-written terms" : $"model {Learner(options.Current)}")}, league {LeagueName(options.League)}, fitted on {files.Length} recording(s).");
+        TrajectoryRecorder.Record(map, options.Players, options.FirstSeed, options.Games, data, options.Current, options.Threads, log, options.League, options.Rules);
         var rows = format.Read(files);
         var encoding = options.Encoding ?? format.Encoding;
-        var network = new ValueTrainer(options.Hidden, options.Epochs, .001, 1e-5, options.Lambda, options.FitSeed, options.Threads, log).Fit(map, rows, options.Current, format, encoding);
+        var network = new ValueTrainer(options.Hidden, options.Epochs, .001, 1e-5, options.Lambda, options.FitSeed, options.Threads, log).Fit(map, rows, options.Current, format, encoding, rules);
         var candidate = new ValueModel { Features = encoding.Version, Scale = options.Scale, Limit = options.Limit, Members = [network] };
         var modelPath = Path.Combine(options.Output, "model.json");
         File.WriteAllText(modelPath, candidate.Serialize());
@@ -84,10 +89,10 @@ public static class Improvement
         var evaluationSeed = options.FirstSeed + options.Games;
         var probeSeed = evaluationSeed + options.EvaluationSeeds;
         log.WriteLine($"Evaluating the candidate against the current model on seeds {evaluationSeed}+{options.EvaluationSeeds} and against the turtle probe on {probeSeed}+{options.ProbeSeeds}.");
-        var against = ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads);
-        var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        var against = ModelEvaluator.Run(map, candidate, current, "current", evaluationSeed, options.EvaluationSeeds, options.Players, options.Threads, rules);
+        var probeCandidate = ModelEvaluator.Run(map, candidate, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads, rules: rules);
         var reference = options.Reference ?? current;
-        var probeReference = ModelEvaluator.Run(map, reference, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads);
+        var probeReference = ModelEvaluator.Run(map, reference, "turtle", probeSeed, options.ProbeSeeds, options.Players, true, options.Threads, rules: rules);
         // Gains between neighbouring generations are a few points, inside the conservative Hoeffding margin, so the gate uses the
         // normal interval over seed blocks; the probe check rejects only a demonstrable regression.
         var promoted = against.NormalLower > against.FairShare && probeCandidate.NormalLower <= probeReference.WinRate;
@@ -101,7 +106,7 @@ public static class Improvement
             log.WriteLine($"Copied the candidate to {options.PromoteTo}; rebuild to play it.");
         }
         var report = new Report(options.Players, options.FirstSeed, options.Games, rows.Length, modelPath, files, against, probeCandidate, Learner(options.Reference ?? options.Current),
-            probeReference, promoted, promotedTo, options.Lambda, candidate.Features, options.Scale, LeagueName(options.League));
+            probeReference, promoted, promotedTo, options.Lambda, candidate.Features, options.Scale, LeagueName(options.League), options.Rules.Name);
         File.WriteAllText(Path.Combine(options.Output, "improve.json"), JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         return report;
     }
@@ -111,12 +116,13 @@ public static class Improvement
 
     /// <summary>
     /// The generation's recording. A resumed run must never read rows of another width, games played by another learner or league,
-    /// or seeds the gate will use; the default league adds nothing to the name, so recordings made before leagues could change resume.
+    /// or seeds the gate will use; the default league and track add nothing to the name, so recordings made before either could change resume.
     /// </summary>
     public static string DataPath(Options options)
     {
+        var track = options.Rules == LearningTrack.Ultimate ? "" : options.Rules.Name + "-";
         var league = options.League == null || options.League.SequenceEqual(TrajectoryRecorder.DefaultLeague) ? "" : "-" + LeagueName(options.League).Replace(',', '+');
-        return Path.Combine(options.Output, $"data-{TrajectoryFormat.For(options.Players).Encoding.Version}-{Learner(options.Current)}{league}-{options.FirstSeed}-{options.Games}.bin");
+        return Path.Combine(options.Output, $"data-{track}{TrajectoryFormat.For(options.Players).Encoding.Version}-{Learner(options.Current)}{league}-{options.FirstSeed}-{options.Games}.bin");
     }
 
     /// <summary>A model's identifier: the first 12 hex digits of its serialized SHA-256, or "hand" for the hand-written terms.</summary>
@@ -124,7 +130,7 @@ public static class Improvement
         model == null ? "hand" : Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(model.Serialize())))[..12];
 
     /// <summary>A model whose correction is always zero, so the current preset can be evaluated through the same path as a candidate.</summary>
-    private static ValueModel Empty(TrajectoryFormat format) => new()
+    public static ValueModel Empty(TrajectoryFormat format) => new()
     {
         Features = format.Encoding.Version, Scale = 0,
         Members = [new ValueNetwork { Inputs = format.Encoding.Count, Hidden = 1, A = 1, W = new float[format.Encoding.Count], C = new float[1], V = new float[1] }],

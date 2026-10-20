@@ -49,7 +49,7 @@ public sealed class IntentBoardFeatures : BoardEncoding
                 var rival = rivals[i];
                 var slot = Math.Min(i, Slots - 1);
                 var held = region.Count(id => board.Owners[id] == rival);
-                var chance = CompletionChance(map, board, attackers, region, rival, held);
+                var chance = CompletionChance(evaluator, board, attackers, region, rival, held);
                 x[c + slot * 2] = Math.Max(x[c + slot * 2], held / (float)region.Length);
                 x[c + slot * 2 + 1] = Math.Max(x[c + slot * 2 + 1], (float)chance);
                 if (held == region.Length) foreach (var id in region) x[at + id * PerTerritory + 1] = bonus / MaxBonus;
@@ -80,7 +80,7 @@ public sealed class IntentBoardFeatures : BoardEncoding
     /// The chance <paramref name="rival"/> holds the whole region after its next turn: the product, over the territories it lacks,
     /// of its best forecast capture from an adjacent stack it owns. Capture chains and spent armies are ignored.
     /// </summary>
-    private static double CompletionChance(WorldMap map, PlannerBoard board, int[] attackers, int[] region, int rival, int held)
+    private static double CompletionChance(PositionEvaluator evaluator, PlannerBoard board, int[] attackers, int[] region, int rival, int held)
     {
         if (held == region.Length) return 1;
         if (region.Length - held > MaxMissing) return 0;
@@ -89,8 +89,8 @@ public sealed class IntentBoardFeatures : BoardEncoding
         {
             if (board.Owners[id] == rival) continue;
             var best = 0.0;
-            foreach (var n in map.Territories[id].Neighbors)
-                if (board.Owners[n] == rival) best = Math.Max(best, BattleOdds.Estimate(attackers[n], board.Troops[id]).WinChance);
+            foreach (var n in evaluator.Observation.Map.Territories[id].Neighbors)
+                if (board.Owners[n] == rival) best = Math.Max(best, evaluator.Odds(attackers[n], board.Troops[id]).WinChance);
             chance *= best;
             if (chance == 0) break;
         }

@@ -3,13 +3,30 @@ namespace Risk.Sim.Rules;
 
 public static class CombatRules
 {
-    public static BattleResult Attack(GameState state, TerritoryState from, TerritoryState to, GameCommand command, IRandomSource random)
+    /// <param name="rule">
+    /// <see cref="DiceMode.BalancedBlitz"/> settles every attack as one all-in blitz of the committed troops, sampled from
+    /// <see cref="BalancedBlitz"/> with no dice shown; battles the mobile client estimates instead (2001 units or more) keep real dice.
+    /// </param>
+    public static BattleResult Attack(GameState state, TerritoryState from, TerritoryState to, GameCommand command, IRandomSource random, DiceMode rule = DiceMode.TrueRandom)
     {
         if (to.Owner == state.CurrentPlayer || to.Owner < 0 || from.Troops < 2) throw new RuleException("Attack an adjacent enemy with at least two troops.");
         var committed = command.Count == 0 ? from.Troops - 1 : command.Count;
         if (committed < 1 || committed >= from.Troops || command.Dice is < 1 or > 3)
             throw new RuleException("Choose valid troops and one to three attack dice.");
         if (!command.Blitz && command.Dice > committed) throw new RuleException("Each attacking die needs one committed troop.");
+        if (rule == DiceMode.BalancedBlitz && committed + to.Troops < BalancedBlitz.EstimationTotal)
+        {
+            var (lost, killed) = BalancedBlitz.Resolve(committed, to.Troops, BalancedBlitz.NextUniform(random));
+            from.Troops -= lost;
+            to.Troops -= killed;
+            // With no final roll to size the move, the capture must take in up to three of the surviving attackers.
+            if (to.Troops == 0)
+            {
+                state.Capture = new(from.Id, to.Id, Math.Min(3, committed - lost), from.Troops - 1);
+                state.Phase = Phase.Occupy;
+            }
+            return new(from.Id, to.Id, lost, killed, [], [], to.Troops == 0);
+        }
         var attackerLosses = 0;
         var defenderLosses = 0;
         int[] attackDice = [], defendDice = [];

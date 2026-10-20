@@ -11,6 +11,7 @@ public sealed class ValueModel : IBoardValuation
     public const int CurrentSchema = 1;
     private static readonly Lazy<ValueModel> ultimate = new(() => Embedded("ultimate-model.json") ?? throw new InvalidOperationException("The Ultimate value model is missing."));
     private static readonly Lazy<ValueModel> ultimateMultiplayer = new(() => Embedded("ultimate-multiplayer-model.json"));
+    private static readonly Lazy<ValueModel> smgMultiplayer = new(() => Embedded("smg-multiplayer-model.json"));
 
     [ThreadStatic] private static float[] input;
     [ThreadStatic] private static float[] hidden;
@@ -29,6 +30,8 @@ public sealed class ValueModel : IBoardValuation
     public static ValueModel Ultimate => ultimate.Value;
     /// <summary>The model Ultimate plays while more than two players remain, or null when no such model is bundled.</summary>
     public static ValueModel UltimateMultiplayer => ultimateMultiplayer.Value;
+    /// <summary>The model <see cref="AI.SmgStrategy"/> plays while more than two players remain, or null when none is bundled.</summary>
+    public static ValueModel SmgMultiplayer => smgMultiplayer.Value;
 
     private static ValueModel Embedded(string name)
     {

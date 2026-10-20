@@ -60,7 +60,7 @@ public static class ObservationEncoder
         var to = command.Kind == CommandKind.Occupy ? observation.Capture.To : command.Kind == CommandKind.Trade ? command.BonusTerritory : command.To;
         var source = from >= 0 ? board.Troops[from] : 0;
         var target = to >= 0 ? board.Troops[to] : 0;
-        var odds = command.Kind == CommandKind.Attack ? BattleOdds.Estimate(source - 1, target) : default;
+        var odds = command.Kind == CommandKind.Attack ? evaluator.Odds(source - 1, target) : default;
         var available = command.Kind == CommandKind.Place ? observation.Reinforcements : command.Kind == CommandKind.Occupy ? observation.Capture.Maximum : Math.Max(0, source - 1);
         float[] values = [(from + 1) / 43f, (to + 1) / 43f, Army(command.Count), command.Count / (float)Math.Max(1, available),
             Army(source), Army(target), NeighborFraction(observation, board, from, false), NeighborFraction(observation, board, to, true),

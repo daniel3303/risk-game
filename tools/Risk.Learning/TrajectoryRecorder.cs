@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Risk.Learning.Models;
 using Risk.Sim;
 using Risk.Sim.AI;
 using Risk.Sim.AI.Planning;
@@ -17,7 +18,10 @@ public static class TrajectoryRecorder
         Record(map, 2, firstSeed, games, output, model, threads, log);
 
     /// <param name="league">The league policy of each seed modulo four, null for a game of learners only; null uses <see cref="DefaultLeague"/>.</param>
-    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log, IReadOnlyList<string> league = null)
+    /// <param name="model">The learners' model; null plays Master in duels and Ultimate's hand-written terms in larger games.</param>
+    /// <param name="track">The games' rules; null is <see cref="LearningTrack.Ultimate"/>'s.</param>
+    public static void Record(WorldMap map, int players, int firstSeed, int games, string output, ValueModel model, int threads, TextWriter log, IReadOnlyList<string> league = null,
+        LearningTrack track = null)
     {
         var format = TrajectoryFormat.For(players);
         var watch = Stopwatch.StartNew();
@@ -31,7 +35,7 @@ public static class TrajectoryRecorder
         // Each game is appended as soon as it ends, so an interrupted run loses at most the games still in progress.
         Parallel.ForEach(seeds, new ParallelOptions { MaxDegreeOfParallelism = threads }, seed =>
         {
-            var result = Play(map, players, seed, model, league);
+            var result = Play(map, players, seed, model, league, track);
             var bytes = new byte[result.Length * sizeof(float)];
             Buffer.BlockCopy(result, 0, bytes, 0, bytes.Length);
             lock (writeLock)
@@ -62,10 +66,11 @@ public static class TrajectoryRecorder
         return policy == null ? (null, -1) : (policy, seed / 4 % players);
     }
 
-    public static float[] Play(WorldMap map, int players, int seed, ValueModel model, IReadOnlyList<string> league = null)
+    public static float[] Play(WorldMap map, int players, int seed, ValueModel model, IReadOnlyList<string> league = null, LearningTrack track = null)
     {
+        track ??= LearningTrack.Ultimate;
         var format = TrajectoryFormat.For(players);
-        var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), new(CardMode.Fixed, SetupMode.Automatic), new SeededRandom(seed));
+        var game = new Game(map, Enumerable.Range(0, players).Select(i => ((char)('A' + i)).ToString()).ToArray(), track.Rules, new SeededRandom(seed));
         var strategies = Strategies(players, seed, model, league, out var leagueSeat);
         var tuning = players == 2 ? ExpertTuning.Master : ExpertTuning.Ultimate;
         var pending = new List<(int Player, float[] Row)>();
@@ -101,12 +106,15 @@ public static class TrajectoryRecorder
         return result;
     }
 
-    /// <summary>Learners in every seat except the league seat (-1 when there is none); duel learners are Master with an optional duel model.</summary>
+    /// <summary>
+    /// Learners in every seat except the league seat (-1 when there is none); duel learners are Master with an optional duel model,
+    /// and larger games' learners play Ultimate's hand-written terms without a model.
+    /// </summary>
     private static IPlayerStrategy[] Strategies(int players, int seed, ValueModel model, IReadOnlyList<string> league, out int leagueSeat)
     {
         IPlayerStrategy learner = players == 2
             ? model == null ? new MasterStrategy() : new ExpertStrategy(ExpertTuning.Master with { Valuation = model })
-            : new ExpertStrategy(ExpertTuning.Ultimate with { Valuation = new UltimateValuation(ValueModel.Ultimate, model ?? ValueModel.UltimateMultiplayer) });
+            : new ExpertStrategy(ExpertTuning.Ultimate with { Valuation = new UltimateValuation(ValueModel.Ultimate, model) });
         var (policy, seat) = players == 2 ? (null, -1) : League(players, seed, league);
         leagueSeat = seat;
         return Enumerable.Range(0, players).Select(i => i == seat ? PolicyCatalog.Create(policy, unchecked(seed * 1000003 + i * 7919)) : learner).ToArray();

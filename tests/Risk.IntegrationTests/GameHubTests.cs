@@ -143,6 +143,15 @@ public sealed class GameHubTests : IClassFixture<GameFactory>
         room.Revision.Should().Be(revision);
     }
 
+    [Fact]
+    public async Task Create_BalancedBlitzDice_IsRefusedByTheLobby()
+    {
+        await using var host = factory.Connection();
+        await host.StartAsync(cancellation);
+        Func<Task> create = () => host.InvokeAsync<Welcome>("Create", "Commander", new GameOptions(Dice: DiceMode.BalancedBlitz), cancellation);
+        await create.Should().ThrowAsync<HubException>().WithMessage("*valid rules*");
+    }
+
     private static async Task<RoomSnapshot> Revision(ChannelReader<RoomSnapshot> reader, long revision, CancellationToken cancellation)
     {
         while (true)

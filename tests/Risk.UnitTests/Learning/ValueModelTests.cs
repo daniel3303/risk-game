@@ -57,6 +57,28 @@ public sealed class ValueModelTests
     }
 
     [Fact]
+    public void SmgMultiplayer_EmbeddedModel_CorrectsFourPlayerBalancedBlitzBoards()
+    {
+        var model = ValueModel.SmgMultiplayer;
+        model.Should().NotBeNull();
+        model.Encoding.Should().BeSameAs(BoardEncoding.Multiplayer);
+        model.Members.Should().NotBeEmpty().And.OnlyContain(m => m.Inputs == BoardEncoding.Multiplayer.Count);
+        var game = TestWorld.Game(4, new(CardMode.Fixed, SetupMode.Automatic, DiceMode.BalancedBlitz), 55);
+        var smg = new SmgStrategy();
+        var corrections = new List<double>();
+        for (var actions = 0; game.State.Phase != Phase.Finished && actions < 300; actions++)
+        {
+            var observation = GameObservation.From(game);
+            var evaluator = new PositionEvaluator(observation, ExpertTuning.Ultimate);
+            var board = PlannerBoard.From(observation);
+            if (observation.Phase == Phase.Attack) corrections.Add(model.Correction(evaluator, board, evaluator.HandScore(board)));
+            game.Apply(observation.Player, smg.Choose(observation));
+        }
+        corrections.Should().NotBeEmpty().And.OnlyContain(c => double.IsFinite(c) && Math.Abs(c) <= model.Limit);
+        corrections.Should().Contain(c => c != 0);
+    }
+
+    [Fact]
     public void Correction_ThreePlayerGame_LeavesTheHandScoreUnchanged()
     {
         var game = TestWorld.Game(3, new(), 53);
