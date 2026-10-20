@@ -255,9 +255,20 @@ dotnet run --project tools/Risk.Learning -c Release -- improve --players 3 --fir
 - On attack-phase boards from a ranked public game, Ultimate attacked at 8 of 15 decisions, while Master and Expert attacked at all 15. It refused captures with 92–100% odds.
 - The cause is the generation 4 multiplayer model (trained on three-player true-dice games) together with frontier defence. The dice odds are not the cause: with the model removed, the same planner attacked at all 15.
 - `smg` (`SmgStrategy`, `smg-learned-planner`) is Ultimate's planner and duel model with its own multiplayer model, trained under those rules. It is never offered in the lobby.
-- Until a model passes the gate, `smg` plays the hand-written multiplayer terms alone.
 - The model trains with `improve --track smg --players 4 --model hand`: league self-play, the fit and both gate checks all run under balanced blitz, with a fair share of 25%.
-- A candidate is bundled as `src/Risk.Sim/Learning/smg-multiplayer-model.json` only after it passes that gate.
+- The bundled `src/Risk.Sim/Learning/smg-multiplayer-model.json` is generation 4 of that chain (20,000 games per generation from seed 2,000,000). Each generation passed the gate against the one before:
+
+| Generation | Against the previous learner | Turtle against it | Against three Masters (seeds 3,000,000+200) |
+|---|---|---|---|
+| Hand-written terms | – | – | 39.0% |
+| 1 | 71.9% (normal 70.6–73.2%) | 1.3% | 76.4% (normal 73.4–79.4%) |
+| 2 | 48.5% (normal 47.0–50.1%) | 0.9% | – |
+| 3 | 49.8% (normal 48.2–51.4%) | 0.1% | – |
+| 4 | 47.6% (normal 46.0–49.2%) | 0.3% | 82.9% (normal 80.4–85.4%) |
+
+- Against three Masters, generation 4 attacked in 99% of its turns, and in 99% of the turns that offered an attack with at least 80% odds. On the ranked game's boards it attacked at 14 of 15 decisions.
+- Each generation plays longer games against copies of itself: 32 rounds for generation 1 and 99 for generation 4, with 9 of 40 such games unfinished at round 200. Against Masters its games stay short (14 rounds) and all finished.
+- The chain was stopped during generation 5, whose recording had slowed to about 14 hours.
 
 ## Limits
 
